@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Svelte 4 Tailwind 4 Popup",
+  "version": "1.0",
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "permissions": [],
+  "host_permissions": []
+}
