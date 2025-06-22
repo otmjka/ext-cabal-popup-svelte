@@ -9,6 +9,12 @@
     ...other
   }: IWidgetAside = $props();
 
+  const limitation = {
+    delta: {
+      x: 0,
+      y: 0,
+    }
+  }
 
   const onMoveableStart = (e) => {
     if (!draggable) {
@@ -24,19 +30,17 @@
 </script>
 
 <aside 
-  class="min-w-xs w-fit h-[320px]"
+  class="widget-aside ff-chakra max-w-xs w-full min-h-[320px] h-fit flex flex-col text-white bg-[#04070C] border border-white/40 {other.class}"
   onmovablestart={onMoveableStart}
   onmovableend ={onMoveableEnd}
   use:movable={{ 
     ignore: '.not-draggable',
     cursor: draggable,
-    limit: { parent: 'screen' } 
+    limit: { 
+      parent: 'screen',
+      ...(!draggable && {...limitation})
+    } 
   }}
 >
-  <div 
-    class="w-full h-full flex flex-col bg-[#04070C] border border-white/40 {other.class}"
-    class:not-draggable={!draggable}
-  >
-    {@render children?.()}
-  </div>
+  {@render children?.()}
 </aside>

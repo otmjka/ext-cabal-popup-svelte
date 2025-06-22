@@ -1,29 +1,15 @@
 <script lang="ts">
-  import { type Snippet } from 'svelte';
-   // Types
-  type TButtonVariant = 'primary' | 'secondary' | 'ghost';
-  type TButtonSize = 'sm' | 'md' | 'lg';
+  import { twMerge } from 'tailwind-merge';
 
-  interface IButton {
-    variant?: TButtonVariant,
-    size?: TButtonSize,
-    block?: boolean,
-    disabled?: boolean,
-    loading?: boolean,
-    wrapperClass?: string,
-    children?: Snippet,
-    onclick?: () => void,
-    class?: string
-  }
+  // Types
+  import type { IButton } from './types';
 
   // Props
   let {
-    variant = 'primary',
+    variant = 'buy',
     size = 'md',
-    block = false,
     disabled = false,
-    loading = false,
-    wrapperClass = '',
+    clipped = false,
     onclick,
     children,
     ...other
@@ -31,18 +17,23 @@
 
   // Data
   const variants = {
-    'primary': "bg-[#5BBE7B] hover:bg-[#87C999]",
-    'secondary': "bg-[#E96B82] hover:bg-[#DE8C9C]",
-    'ghost': "bg-transparent bg-[#36383C] border border-[#9B9B9F]",
+    'buy': "bg-[#5BBE7B] hover:bg-[#87C999] font-bold",
+    'sell': "bg-[#E96B82] hover:bg-[#DE8C9C] font-bold",
+    'ghost': "bg-transparent hover:bg-[#36383C] border border-[#9B9B9F] text-white  font-base",
   }
 
   // Reactive
   let cssClass = $derived.by(() => {
-    return [
-      `ff-chakra font-bold px-4 h-8 flex w-fit items-center justify-center cursor-pointer`,
-      variants[variant] || variants.primary,
+    const classList = [
+      `px-[16px] h-[32px] w-fit`,
+      `flex flex-nowrap items-center justify-center`,
+      `whitespace-nowrap cursor-pointer outline-none`,
+      `ff-chakra text-[14px]/[14px] text-[#04070C]`,
+      clipped ? 'btn-clipped' : '',
+      variants[variant] ?? variants.buy,
       other?.class
     ].join(' ');
+    return twMerge(classList);
   });
 
   /**
@@ -57,10 +48,15 @@
 
 <button
   type="button"
-  class="{cssClass}"
+  class={cssClass}
   {disabled}
   onclick={onClick}
 >
   {@render children?.()}
 </button>
 
+<style scoped>
+  .btn-clipped {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, calc(0% + 13px) 100%, 0% calc(100% - 12px));
+  }
+</style>
