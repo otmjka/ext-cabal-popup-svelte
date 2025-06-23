@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import "tailwindcss" prefix(e);
 
 .ff-chakra {
   font-family: "Chakra Petch", sans-serif;
@@ -13,7 +13,7 @@
 
 
 .widget-aside {
-  @apply select-none;
+  @apply e:select-none;
 }
 
 .text-buy {

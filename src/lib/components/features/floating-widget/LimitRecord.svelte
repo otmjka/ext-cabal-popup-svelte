@@ -27,30 +27,30 @@
   }
 </script>
 
-<tr class="[&>td]:px-[8px] [&>td]:py-[5px]">
-  <td class="font-semibold">
+<tr class="e:[&>td]:px-[8px] e:[&>td]:py-[5px]">
+  <td class="e:font-semibold">
     {limit.ticker}
   </td>
   <td 
-    class:text-buy={limit.type === "negative"}
-    class:text-sell={limit.type != "negative"}
+    class:e:text-buy={limit.type === "negative"}
+    class:e:text-sell={limit.type != "negative"}
   >
     {limit.limitType}
   </td>
-  <td class="text-right">
+  <td class="e:text-right">
     {limit.mc}
   </td>
-  <td class="w-[42px]">
+  <td class="e:w-[42px]">
     <button
-      class="cursor-pointer"
+      class="e:cursor-pointer"
       onclick={onEditClick}
     >
       <PencilIcon size={16} />
     </button>
   </td>
-  <td class="w-[42px]">
+  <td class="e:w-[42px]">
     <button
-      class="cursor-pointer"
+      class="e:cursor-pointer"
       onclick={onTrashClick}
     >
       <TrashIcon size={16} />

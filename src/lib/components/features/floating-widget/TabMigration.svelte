@@ -32,17 +32,17 @@
   }
 </script>
 
-<div class="flex flex-col gap-[12px] h-full">
-  <Section variant="buy" class="flex flex-col gap-y-[10px] h-full">
-    <div class="flex justify-between items-center">
-      <h4 class="text-[18px]/[18px] font-medium text-buy">
+<div class="e:flex e:flex-col e:gap-[12px] e:h-full">
+  <Section variant="buy" class="e:flex e:flex-col e:gap-y-[10px] e:h-full">
+    <div class="e:flex e:justify-between e:items-center">
+      <h4 class="e:text-[18px]/[18px] e:font-medium e:text-buy">
         Buy
       </h4>
     </div>
 
-    <div class="w-full grid grid-cols-3 gap-[10px]">
-      <div class="flex flex-col gap-y-[4px]">
-        <label for="" class="text-[12px]/[12px]">
+    <div class="e:w-full e:grid e:grid-cols-3 e:gap-[10px]">
+      <div class="e:flex e:flex-col e:gap-y-[4px]">
+        <label for="" class="e:text-[12px]/[12px]">
           Tip
         </label>
         <Input 
@@ -56,8 +56,8 @@
         />
       </div>
 
-      <div class="flex flex-col gap-y-[4px]">
-        <label for="" class="text-[12px]/[12px]">
+      <div class="e:flex e:flex-col e:gap-y-[4px]">
+        <label for="" class="e:text-[12px]/[12px]">
           Priority Fee
         </label>
         <Input 
@@ -71,8 +71,8 @@
         />
       </div>
 
-      <div class="flex flex-col gap-y-[4px]">
-        <label for="" class="text-[12px]/[12px]">
+      <div class="e:flex e:flex-col e:gap-y-[4px]">
+        <label for="" class="e:text-[12px]/[12px]">
           Slippage
         </label>
         <Input 
@@ -87,7 +87,7 @@
       </div>
     </div>
 
-    <div class="w-full grid grid-cols-3 gap-[10px]">
+    <div class="e:w-full e:grid e:grid-cols-3 e:gap-[10px]">
       <Input 
         value={amountBuy} 
         variant="buy"
@@ -101,29 +101,29 @@
       <Button 
         clipped
         variant="buy" 
-        class="w-full col-span-2 gap-[6px] px-[4px]"
+        class="e:w-full e:col-span-2 e:gap-[6px] e:px-[4px]"
         onclick={onBuySnipeClick}
       >
         <span>
           Activate Snipe
         </span>
-        <span class="flex items-center gap-[4px]">
+        <span class="e:flex e:items-center e:gap-[4px]">
           5.00 <SolanaCircleIcon />
         </span>
       </Button>
     </div>
   </Section>
 
-  <Section variant="sell" class="flex flex-col gap-y-[10px] h-full">
-    <div class="flex justify-between items-center">
-      <h4 class="text-[18px]/[18px] font-medium text-sell">
+  <Section variant="sell" class="e:flex e:flex-col e:gap-y-[10px] e:h-full">
+    <div class="e:flex e:justify-between e:items-center">
+      <h4 class="e:text-[18px]/[18px] e:font-medium e:text-sell">
         Sell
       </h4>
     </div>
 
-    <div class="w-full grid grid-cols-3 gap-[10px]">
-      <div class="flex flex-col gap-y-[4px]">
-        <label for="" class="text-[12px]/[12px]">
+    <div class="e:w-full e:grid e:grid-cols-3 e:gap-[10px]">
+      <div class="e:flex e:flex-col e:gap-y-[4px]">
+        <label for="" class="e:text-[12px]/[12px]">
           Tip
         </label>
         <Input 
@@ -137,8 +137,8 @@
         />
       </div>
 
-      <div class="flex flex-col gap-y-[4px]">
-        <label for="" class="text-[12px]/[12px]">
+      <div class="e:flex e:flex-col e:gap-y-[4px]">
+        <label for="" class="e:text-[12px]/[12px]">
           Priority Fee
         </label>
         <Input 
@@ -152,8 +152,8 @@
         />
       </div>
 
-      <div class="flex flex-col gap-y-[4px]">
-        <label for="" class="text-[12px]/[12px]">
+      <div class="e:flex e:flex-col e:gap-y-[4px]">
+        <label for="" class="e:text-[12px]/[12px]">
           Slippage
         </label>
         <Input 
@@ -168,7 +168,7 @@
       </div>
     </div>
 
-    <div class="w-full grid grid-cols-3 gap-[10px]">
+    <div class="e:w-full e:grid e:grid-cols-3 e:gap-[10px]">
       <Input 
         value={amountSell} 
         variant="sell"
@@ -182,13 +182,13 @@
       <Button 
         clipped
         variant="sell" 
-        class="w-full col-span-2 gap-[6px] px-[4px]"
+        class="e:w-full e:col-span-2 e:gap-[6px] e:px-[4px]"
         onclick={onSellSnipeClick}
       >
         <span>
           Activate Snipe
         </span>
-        <span class="flex items-center gap-[4px]">
+        <span class="e:flex e:items-center e:gap-[4px]">
           {amountSell ?? 0}%
         </span>
       </Button>

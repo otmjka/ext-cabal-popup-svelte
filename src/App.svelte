@@ -2,6 +2,6 @@
   import FloatingWidget from '@/components/features/floating-widget/FloatingWidget.svelte';
 </script>
 
-<main class="w-full h-dvh bg-slate-100 flex justify-end p-3">
+<main class="e:w-full e:h-dvh e:bg-slate-100 e:flex e:justify-end e:p-3">
   <FloatingWidget />
 </main>

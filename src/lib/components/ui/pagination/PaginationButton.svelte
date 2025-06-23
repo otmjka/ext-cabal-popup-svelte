@@ -19,7 +19,7 @@
   // Reactive
   let cssClass = $derived.by(() => {
     const classList = [
-      `cursor-pointer outline-none bg-white/30 hover:bg-white/80 rounded-full p-[1px]`,
+      `e:cursor-pointer e:outline-none e:bg-white/30 e:hover:bg-white/80 e:rounded-full e:p-[1px]`,
       other?.class
     ].join(' ');
     return twMerge(classList);
@@ -42,8 +42,8 @@
   onclick={onClick}
 >
   {#if action === 'prev'}
-    <ChevronLeftIcon class="text-black/50" size={16} />
+    <ChevronLeftIcon class="e:text-black/50" size={16} />
   {:else}
-    <ChevronRightIcon class="text-black/50" size={16} />
+    <ChevronRightIcon class="e:text-black/50" size={16} />
   {/if}
 </button>

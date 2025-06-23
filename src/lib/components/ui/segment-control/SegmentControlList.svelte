@@ -13,8 +13,8 @@
   // Reactive
   let cssClass = $derived.by(() => {
     const classList = [
-      `border-[1px] border-[#36383C]`,
-      `flex items-center w-fit`,
+      `e:border-[1px] e:border-[#36383C]`,
+      `e:flex e:items-center e:w-fit`,
       other?.class
     ].join(' ');
     return twMerge(classList);

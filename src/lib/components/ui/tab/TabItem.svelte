@@ -13,15 +13,15 @@
 
   // Data
   const variants = {
-    'default': "text-gray-400 border-b-transparent hover:text-gray-300",
-    'active': "text-white border-white",
+    'default': "e:text-gray-400 e:border-b-transparent e:hover:text-gray-300",
+    'active': "e:text-white e:border-white",
   }
 
   // Reactive
   let cssClass = $derived.by(() => {
     return [
-      `ff-chakra font-base px-[8px] h-[28px] flex w-fit items-center justify-center cursor-pointer`,
-      `border-b`,
+      `ff-chakra e:font-base e:px-[8px] e:h-[28px] e:flex e:w-fit e:items-center e:justify-center e:cursor-pointer`,
+      `e:border-b`,
       active ? variants.active : variants.default,
       other?.class
     ].join(' ');

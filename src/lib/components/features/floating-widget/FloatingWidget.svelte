@@ -37,8 +37,8 @@
   }
 </script>
 
-<WidgetAside {draggable} class="p-[8px] gap-y-[12px] max-h-[380px] h-full">
-  <header class="flex justify-between">
+<WidgetAside {draggable} class="e:p-[8px] e:gap-y-[12px] e:max-h-[380px] e:h-full">
+  <header class="e:flex e:justify-between">
     <TabList>
       {#each tabs as tab}
         <TabItem 
@@ -49,7 +49,7 @@
         </TabItem>
       {/each}
     </TabList>
-    <div class="flex gap-[8px]">
+    <div class="e:flex e:gap-[8px]">
       <WidgetControlButton 
         title={draggable ? 'pin' : 'unpin'}
         onclick={() => { draggable = !draggable }}

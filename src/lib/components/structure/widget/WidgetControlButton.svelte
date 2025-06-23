@@ -21,7 +21,7 @@
 
 <button
   type="button"
-  class="size-[30px] bg-[#36383C] text-white flex items-center justify-center cursor-pointer {other?.class}"
+  class="e:size-[30px] e:bg-[#36383C] e:text-white e:flex e:items-center e:justify-center e:cursor-pointer {other?.class}"
   {disabled}
   title={other?.title}
   onclick={onClick}

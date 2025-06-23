@@ -10,15 +10,15 @@
 
   // Data
   const variants = {
-    'buy': "bg-[#15251980] border-[#5BBE7B80]",
-    'sell': "bg-[#2B161A80] border-[#E96B8280]",
-    'ghost': "bg-gray-400/20  border-gray-400/40",
+    'buy': "e:bg-[#15251980] e:border-[#5BBE7B80]",
+    'sell': "e:bg-[#2B161A80] e:border-[#E96B8280]",
+    'ghost': "e:bg-gray-400/20 e:border-gray-400/40",
   }
 
   // Reactive
   let cssClass = $derived.by(() => {
     return [
-      `w-full rounded-[2px] border px-[8px] py-[8px]`,
+      `e:w-full e:rounded-[2px] e:border e:px-[8px] e:py-[8px]`,
       variants[variant] || variants.buy,
       other?.class
     ].join(' ');

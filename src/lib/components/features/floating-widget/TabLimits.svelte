@@ -63,7 +63,7 @@
   });
 </script>
 
-<div class="w-full flex flex-col gap-y-[10px]">
+<div class="e:w-full e:flex e:flex-col e:gap-y-[10px]">
   <SegmentControlList>
     {#each segments as el}
       <SegmentControlItem
@@ -74,34 +74,34 @@
       </SegmentControlItem>
     {/each}
   </SegmentControlList>
-  <div class="w-full border-[1px] border-white/20 rounded-[2px]">
-    <table class="text-[12px]/[12px] w-full">
-      <thead class="[&>tr>th]:font-normal [&>tr>th]:uppercase [&>tr>th]:px-[8px] [&>tr>th]:py-[5px] text-white/50 bg-white/10">
+  <div class="e:w-full e:border-[1px] e:border-white/20 e:rounded-[2px]">
+    <table class="e:text-[12px]/[12px] e:w-full">
+      <thead class="e:[&>tr>th]:font-normal e:[&>tr>th]:uppercase e:[&>tr>th]:px-[8px] e:[&>tr>th]:py-[5px] e:text-white/50 e:bg-white/10">
         <tr>
-          <th class="w-1/3 text-left">
+          <th class="e:w-1/3 e:text-left">
             $Ticker
           </th>
-          <th class="w-1/3 text-left">
+          <th class="e:w-1/3 e:text-left">
             Limit Type
           </th>
-          <th class="w-1/3 text-right">
-            <span class="flex justify-end gap-[4px] items-center">
+          <th class="e:w-1/3 e:text-right">
+            <span class="e:flex e:justify-end e:gap-[4px] e:items-center">
               MC 
               <SolanaCircleIcon />
             </span>
           </th>
-          <th class="w-[40px]"></th>
-          <th class="w-[40px]"></th>
+          <th class="e:w-[40px]"></th>
+          <th class="e:w-[40px]"></th>
         </tr>
       </thead>
-      <tbody class="bg-white/5">
+      <tbody class="e:bg-white/5">
         {#each limits as limit}
           <LimitRecord {limit} />
         {/each}
       </tbody>
-      <tfoot class="[&>tr>th]:font-normal [&>tr>th]:px-[8px] [&>tr>th]:py-[5px] text-white/50 bg-white/10">
+      <tfoot class="e:[&>tr>th]:font-normal e:[&>tr>th]:px-[8px] e:[&>tr>th]:py-[5px] e:text-white/50 e:bg-white/10">
         <tr>
-          <th colspan="3" class="text-right">
+          <th colspan="3" class="e:text-right">
             {page}/{total}
           </th>
           <th>

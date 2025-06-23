@@ -22,15 +22,15 @@
 
   // Data
   const variants: Record<TInputVariant, string> = {
-    'buy': "bg-[#152519] border-[#5BBE7B]",
-    'sell': "bg-[#2E0F0F] border-[#FF5C5C]",
-    'default': "bg-[#36383C] border-white/30",
+    'buy': "e:bg-[#152519] e:border-[#5BBE7B]",
+    'sell': "e:bg-[#2E0F0F] e:border-[#FF5C5C]",
+    'default': "e:bg-[#36383C] e:border-white/30",
   }
 
   // Reactive
   let wrapperCssClass = $derived.by(() => {
     const classList = [
-      `flex items-center relative`,
+      `e:flex e:items-center e:relative`,
       other?.class,
     ].join(' ');
     return twMerge(classList);
@@ -38,11 +38,11 @@
 
   let inputCssClass = $derived.by(() => {
     const classList = [
-      `outline-none`,
-      `flex w-full h-[32px] pl-[8px] border-[1px]`,
-      `ff-chakra text-[14px]/[14px] text-white`,
+      `e:outline-none`,
+      `e:flex e:w-full e:h-[32px] e:pl-[8px] e:border-[1px]`,
+      `ff-chakra e:text-[14px]/[14px] e:text-white`,
       `input--controls-hidden`,
-      icon ? 'pr-[26px]' : 'pr-[8px]',
+      icon ? 'e:pr-[26px]' : 'e:pr-[8px]',
       variants[variant] ?? variants.buy,
       inputClass,
     ].join(' ');
@@ -66,12 +66,12 @@
   >
 
   {#if icon}
-    <span class="absolute right-[8px] outline-none">
+    <span class="e:absolute e:right-[8px] e:outline-none">
       {#if icon === 'sol'}
         <SolanaCircleIcon />
       {/if}
       {#if icon === 'percent'}
-        <PercentIcon class="text-white/50" size={12} />
+        <PercentIcon class="e:text-white/50" size={12} />
       {/if}
     </span>
   {/if}

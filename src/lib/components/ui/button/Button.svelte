@@ -17,18 +17,18 @@
 
   // Data
   const variants = {
-    'buy': "bg-[#5BBE7B] hover:bg-[#87C999] font-bold",
-    'sell': "bg-[#E96B82] hover:bg-[#DE8C9C] font-bold",
-    'ghost': "bg-transparent hover:bg-[#36383C] border border-[#9B9B9F] text-white  font-base",
+    'buy': "e:bg-[#5BBE7B] e:hover:bg-[#87C999] e:font-bold",
+    'sell': "e:bg-[#E96B82] e:hover:bg-[#DE8C9C] e:font-bold",
+    'ghost': "e:bg-transparent e:hover:bg-[#36383C] e:border e:border-[#9B9B9F] e:text-white e:font-base",
   }
 
   // Reactive
   let cssClass = $derived.by(() => {
     const classList = [
-      `px-[16px] h-[32px] w-fit`,
-      `flex flex-nowrap items-center justify-center`,
-      `whitespace-nowrap cursor-pointer outline-none`,
-      `ff-chakra text-[14px]/[14px] text-[#04070C]`,
+      `e:px-[16px] e:h-[32px] e:w-fit`,
+      `e:flex e:flex-nowrap e:items-center e:justify-center`,
+      `e:whitespace-nowrap e:cursor-pointer e:outline-none`,
+      `ff-chakra e:text-[14px]/[14px] e:text-[#04070C]`,
       clipped ? 'btn-clipped' : '',
       variants[variant] ?? variants.buy,
       other?.class

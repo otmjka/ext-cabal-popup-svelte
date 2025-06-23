@@ -40,23 +40,23 @@
   }
 </script>
 
-<div class="flex flex-col gap-[12px]">
-  <Section variant="buy" class="flex flex-col gap-y-[10px]">
-    <div class="flex justify-between items-center">
-      <h4 class="text-[18px]/[18px] font-medium">
+<div class="e:flex e:flex-col e:gap-[12px]">
+  <Section variant="buy" class="e:flex e:flex-col e:gap-y-[10px]">
+    <div class="e:flex e:justify-between e:items-center">
+      <h4 class="e:text-[18px]/[18px] font-medium">
         Quick <span class="text-buy">Buy</span>
       </h4>
 
-      <div class="text-[12px] flex gap-x-[8px] items-center">
-        <span class="flex items-center">
+      <div class="e:text-[12px] e:flex e:gap-x-[8px] e:items-center">
+        <span class="e:flex e:items-center">
           Buys: 1
         </span>
-        <span class="flex gap-x-[4px] items-center">
+        <span class="e:flex e:gap-x-[4px] e:items-center">
           5 <SolanaCircleIcon />
         </span>
       </div>
     </div>
-    <div class="w-full grid grid-cols-4 gap-[10px]">
+    <div class="e:w-full e:grid e:grid-cols-4 e:gap-[10px]">
       {#each $quickBuyStore as el, index}
         <Input 
           bind:value={$quickBuyStore[index]} 
@@ -69,13 +69,13 @@
         />
       {/each}
     </div>
-    <div class="w-full grid grid-cols-4 gap-[10px]">
+    <div class="e:w-full e:grid e:grid-cols-4 e:gap-[10px]">
       <Input 
         value={amountBuy} 
         variant="buy"
         type="number" 
         icon="sol" 
-        class="col-span-3"
+        class="e:col-span-3"
         placeholder="Enter SOL amount"
         min={0.001}
         max={100}
@@ -87,7 +87,7 @@
       <Button 
         clipped
         variant="buy" 
-        class="w-full"
+        class="e:w-full"
         onclick={onBuyClick}
       >
         Buy
@@ -95,27 +95,27 @@
     </div>
   </Section>
 
-  <Section variant="sell" class="flex flex-col gap-y-[10px] mb-[24px]">
-    <div class="flex justify-between items-center">
-      <h4 class="text-[18px]/[18px] font-medium">
+  <Section variant="sell" class="e:flex e:flex-col e:gap-y-[10px] e:mb-[24px]">
+    <div class="e:flex e:justify-between e:items-center">
+      <h4 class="e:text-[18px]/[18px] e:font-medium">
         Quick <span class="text-sell">Sell</span>
       </h4>
 
-      <div class="text-[12px] flex gap-x-[8px] items-center">
-        <span class="flex items-center">
+      <div class="e:text-[12px] e:flex e:gap-x-[8px] e:items-center">
+        <span class="e:flex e:items-center">
           {token} 8M
         </span>
-        <span class="flex gap-x-[4px] items-center">
+        <span class="e:flex e:gap-x-[4px] e:items-center">
           8 <SolanaCircleIcon />
         </span>
 
-        <span class="flex gap-x-[4px] items-center">
+        <span class="e:flex e:gap-x-[4px] e:items-center">
           +60% 
         </span>
       </div>
     </div>
 
-    <div class="w-full grid grid-cols-4 gap-[10px]">
+    <div class="e:w-full e:grid e:grid-cols-4 e:gap-[10px]">
       {#each $quickSellStore as el, index}
         <Input 
           bind:value={$quickSellStore[index]} 
@@ -129,11 +129,11 @@
       {/each}
     </div>
 
-    <div class="w-full grid grid-cols-8 gap-[10px]">
+    <div class="e:w-full e:grid e:grid-cols-8 e:gap-[10px]">
       <Button 
         clipped
         variant="sell"
-        class="col-span-3 w-full px-[8px]"
+        class="e:col-span-3 e:w-full e:px-[8px]"
         onclick={onSellInitialsClick}
       >
         Sell initials
@@ -143,7 +143,7 @@
         variant="sell"
         type="number" 
         icon="sol" 
-        class="col-span-3 w-full"
+        class="e:col-span-3 e:w-full"
         placeholder="Enter %"
         min={0.001}
         max={100}
@@ -152,7 +152,7 @@
       <Button 
         clipped
         variant="sell" 
-        class="col-span-2 w-full"
+        class="e:col-span-2 e:w-full"
         onclick={onSellClick}
       >
         Sell
@@ -160,7 +160,7 @@
     </div>
   </Section>
 
-  <footer class="flex justify-between gap-[4px]">
+  <footer class="e:flex e:justify-between e:gap-[4px]">
     <ToggleButton 
       bind:enabled={autoLimits}
       onclick={onAutolimitsClick}
@@ -170,7 +170,7 @@
 
     <Button 
       variant="ghost" 
-      class="gap-[6px] px-[8px]"
+      class="e:gap-[6px] e:px-[8px]"
       onclick={onShareClick}
     >
       <ShareIcon size={14} />

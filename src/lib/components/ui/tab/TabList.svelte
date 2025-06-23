@@ -8,6 +8,6 @@
   }: ITabList = $props();
 </script>
 
-<ul class="flex {other?.class}">
+<ul class="e:flex {other?.class}">
   {@render children?.()}
 </ul>

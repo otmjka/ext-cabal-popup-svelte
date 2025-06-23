@@ -30,7 +30,7 @@
 </script>
 
 <aside 
-  class="widget-aside ff-chakra max-w-xs w-full min-h-[320px] h-fit flex flex-col text-white bg-[#04070C] border border-white/40 {other.class}"
+  class="widget-aside ff-chakra e:max-w-xs e:w-full e:min-h-[320px] e:h-fit e:flex e:flex-col e:text-white e:bg-[#04070C] e:border-[1px] e:border-white/40 {other.class}"
   onmovablestart={onMoveableStart}
   onmovableend ={onMoveableEnd}
   use:movable={{ 
