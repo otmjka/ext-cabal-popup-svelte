@@ -22,7 +22,7 @@ export default defineConfig({
 				assetFileNames: 'assets-content/[name]-[hash][extname]'
 			}
 		},
-		outDir: 'cabal-extension-dist', // Вывод в ту же папку dist
+		outDir: '../../dist', // Вывод в ту же папку dist
 		emptyOutDir: false, // Не очищаем dist, чтобы сохранить HTML-файлы
 		target: 'esnext',
 		minify: false, // Отключаем минификацию для отладки (опционально)
