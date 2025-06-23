@@ -15,10 +15,7 @@
 
   // Data
   let amountBuy: number | undefined = $state();
-
   let amountSell: number | undefined = $state();
-  let quickSellList = $state([0.5, 1, 2, 5]);
-
   let autoLimits = $state(true);
 
   // Methods
