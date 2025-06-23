@@ -35,7 +35,7 @@
 <div class="e:flex e:flex-col e:gap-[12px] e:h-full">
   <Section variant="buy" class="e:flex e:flex-col e:gap-y-[10px] e:h-full">
     <div class="e:flex e:justify-between e:items-center">
-      <h4 class="e:text-[18px]/[18px] e:font-medium e:text-buy">
+      <h4 class="e:text-[18px]/[18px] e:font-bold text-buy">
         Buy
       </h4>
     </div>
@@ -116,7 +116,7 @@
 
   <Section variant="sell" class="e:flex e:flex-col e:gap-y-[10px] e:h-full">
     <div class="e:flex e:justify-between e:items-center">
-      <h4 class="e:text-[18px]/[18px] e:font-medium e:text-sell">
+      <h4 class="e:text-[18px]/[18px] e:font-bold text-sell">
         Sell
       </h4>
     </div>
