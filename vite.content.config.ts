@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
-import { resolve } from 'path';
 import path from 'path';
 import tailwindcss from '@tailwindcss/vite';
 
@@ -14,7 +13,7 @@ export default defineConfig({
 	build: {
 		rollupOptions: {
 			input: {
-				content: resolve(__dirname, 'src/content.ts')
+				content: path.resolve(__dirname, 'src/content.ts')
 			},
 			output: {
 				format: 'iife', // Формат IIFE для Chrome Extensions
