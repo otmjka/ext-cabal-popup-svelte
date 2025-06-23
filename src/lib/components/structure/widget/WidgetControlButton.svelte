@@ -21,10 +21,21 @@
 
 <button
   type="button"
-  class="e:size-[30px] e:bg-[#36383C] e:text-white e:flex e:items-center e:justify-center e:cursor-pointer {other?.class}"
+  class="ext-widget-control-btn {other?.class}"
   {disabled}
   title={other?.title}
   onclick={onClick}
 >
   {@render children?.()}
 </button>
+
+<style scoped>
+  @reference "@src/app.css";
+
+  .ext-widget-control-btn {
+    @apply e:flex e:items-center e:justify-center;
+    @apply e:size-[30px];
+    @apply e:bg-[#36383C] e:text-white;
+    @apply e:cursor-pointer;
+  }
+</style>

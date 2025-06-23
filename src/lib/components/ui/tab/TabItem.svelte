@@ -20,8 +20,8 @@
   // Reactive
   let cssClass = $derived.by(() => {
     return [
-      `ff-chakra e:font-base e:px-[8px] e:h-[28px] e:flex e:w-fit e:items-center e:justify-center e:cursor-pointer`,
-      `e:border-b`,
+      `ff-chakra ext-tab-item`,
+      ``,
       active ? variants.active : variants.default,
       other?.class
     ].join(' ');
@@ -47,3 +47,20 @@
     {@render children?.()}
   </button>
 </li>
+
+
+<style scoped>
+  @reference "@src/app.css";
+
+  .ext-tab-item {
+    @apply e:flex e:items-center e:justify-center;
+    @apply e:font-normal e:px-[8px] e:h-[28px] e:w-fit e:cursor-pointer;
+    @apply e:border-b-[1px];
+  }
+  .ext-tab-item--default {
+    @apply e:text-gray-400 e:border-b-transparent e:hover:text-gray-300;
+  }
+  .ext-tab-item--active {
+    @apply e:text-white e:border-white;
+  }
+</style>

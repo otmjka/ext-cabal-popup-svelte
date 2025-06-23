@@ -30,7 +30,7 @@
 </script>
 
 <aside 
-  class="widget-aside ff-chakra e:max-w-xs e:w-full e:min-h-[320px] e:h-fit e:flex e:flex-col e:text-white e:bg-[#04070C] e:border-[1px] e:border-white/40 {other.class}"
+  class="ext-widget-aside ff-chakra {other.class}"
   onmovablestart={onMoveableStart}
   onmovableend ={onMoveableEnd}
   use:movable={{ 
@@ -44,3 +44,14 @@
 >
   {@render children?.()}
 </aside>
+
+<style scoped>
+  @reference "@src/app.css";
+
+  .ext-widget-aside {
+    @apply e:max-w-xs e:w-full e:min-h-[320px] e:h-fit;
+    @apply e:flex e:flex-col;
+    @apply e:text-white e:bg-[#04070C];
+    @apply e:border-[1px] e:border-white/40;
+  }
+</style>
