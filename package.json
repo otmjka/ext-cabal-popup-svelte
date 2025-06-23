@@ -9,7 +9,8 @@
 		"preview": "vite preview",
 		"check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json",
 		"format": "prettier --write .",
-		"lint": "prettier --check ."
+		"lint": "prettier --check .",
+		"build:content": "vite build --config vite.content.config.ts"
 	},
 	"devDependencies": {
 		"@lucide/svelte": "^0.522.0",
