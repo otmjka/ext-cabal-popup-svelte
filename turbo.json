@@ -3,9 +3,9 @@
   "ui": "tui",
   "tasks": {
     "build": {
+      "cache": false,
       "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".dist/**", "!dist/cache/**"]
+      "inputs": ["$TURBO_DEFAULT$", ".env*"]
     },
     "lint": {
       "dependsOn": ["^lint"]
