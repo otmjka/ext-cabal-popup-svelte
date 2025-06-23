@@ -38,6 +38,14 @@
   const onShareClick = () => {
     console.log('onShareClick');
   }
+
+  const setBuyAmount = (amount: number) => {
+    amountBuy = amount;
+  }
+
+  const setSellAmount = (amount: number) => {
+    amountSell = amount;
+  }
 </script>
 
 <div class="e:flex e:flex-col e:gap-[12px]">
@@ -57,16 +65,14 @@
       </div>
     </div>
     <div class="e:w-full e:grid e:grid-cols-4 e:gap-[10px]">
-      {#each $quickBuyStore as el, index}
-        <Input 
-          bind:value={$quickBuyStore[index]} 
-          variant="buy"
-          type="number" 
-          icon="sol" 
-          min={0.001}
-          max={100}
-          step={0.001}
-        />
+      {#each $quickBuyStore as el}
+        <Button 
+          variant="buy-secondary"
+          class="e:gap-x-[4px] e:w-full e:px-[2px]"
+          onclick={() => { setBuyAmount(el); }}
+        >
+          {el} <SolanaCircleIcon />
+        </Button>
       {/each}
     </div>
     <div class="e:w-full e:grid e:grid-cols-4 e:gap-[10px]">
@@ -112,20 +118,22 @@
         <span class="e:flex e:gap-x-[4px] e:items-center">
           +60% 
         </span>
+
+        <span>
+          <img src="/src/assets/sell-switch.svg" alt="">
+        </span>
       </div>
     </div>
 
     <div class="e:w-full e:grid e:grid-cols-4 e:gap-[10px]">
-      {#each $quickSellStore as el, index}
-        <Input 
-          bind:value={$quickSellStore[index]} 
-          variant="sell"
-          type="number" 
-          icon="sol" 
-          min={0.001}
-          max={100}
-          step={0.001}
-        />
+      {#each $quickSellStore as el}
+        <Button 
+          variant="sell-secondary"
+          class="e:gap-x-[4px] e:w-full e:px-[2px]"
+          onclick={() => { setSellAmount(el); }}
+        >
+          {el} <SolanaCircleIcon />
+        </Button>
       {/each}
     </div>
 

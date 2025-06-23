@@ -18,8 +18,10 @@
   // Data
   const variants = {
     'buy': "e:bg-[#5BBE7B] e:hover:bg-[#87C999] e:font-bold",
+    'buy-secondary': "e:bg-[#2D4B33] e:hover:bg-[#45714D] e:font-normal e:text-white",
     'sell': "e:bg-[#E96B82] e:hover:bg-[#DE8C9C] e:font-bold",
-    'ghost': "e:bg-transparent e:hover:bg-[#36383C] e:border e:border-[#9B9B9F] e:text-white e:font-base",
+    'sell-secondary': "e:bg-[#562D34] e:hover:bg-[#82444F] e:font-normal e:text-white",
+    'ghost': "e:bg-transparent e:hover:bg-[#36383C] e:border e:border-[#9B9B9F] e:text-[#9B9C9E] e:font-bold",
   }
 
   // Reactive

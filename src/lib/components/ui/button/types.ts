@@ -1,6 +1,6 @@
 import { type Snippet } from 'svelte';
 
-export type TButtonVariant = 'buy' | 'sell' | 'ghost';
+export type TButtonVariant = 'buy' | 'buy-secondary' | 'sell' | 'sell-secondary' | 'ghost';
 export type TButtonSize = 'sm' | 'md' | 'lg';
 
 export interface IButton {
