@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
-// import solidPlugin from 'vite-plugin-solid';
 import { resolve } from 'path';
 import path from 'path';
 import tailwindcss from '@tailwindcss/vite';
@@ -31,20 +30,3 @@ export default defineConfig({
 		sourcemap: true // Включаем sourcemaps для отладки
 	}
 });
-
-// import { svelte } from '@sveltejs/vite-plugin-svelte';
-// import tailwindcss from '@tailwindcss/vite';
-// import path from 'path';
-
-// https://vite.dev/config/
-// export default defineConfig({
-//     resolve: {
-//     alias: {
-//       '@': path.resolve(__dirname, './src/lib'),
-//     },
-//   },
-//   plugins: [
-//     tailwindcss(),
-//     svelte()
-//   ],
-// })
