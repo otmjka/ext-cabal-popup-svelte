@@ -19,7 +19,7 @@
   // Reactive
   let cssClass = $derived.by(() => {
     const classList = [
-      `e:cursor-pointer e:outline-none e:bg-white/30 e:hover:bg-white/80 e:rounded-full e:p-[1px]`,
+      `ext-pagination-button`,
       other?.class
     ].join(' ');
     return twMerge(classList);
@@ -47,3 +47,13 @@
     <ChevronRightIcon class="e:text-black/50" size={16} />
   {/if}
 </button>
+
+<style scoped>
+  @reference "@src/app.css";
+
+  .ext-pagination-button {
+    @apply e:cursor-pointer e:outline-none;
+    @apply e:bg-white/30 e:hover:bg-white/80;
+    @apply e:rounded-full e:p-[1px];
+  }
+</style>

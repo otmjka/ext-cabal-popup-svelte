@@ -8,18 +8,11 @@
     ...other
   }: ISection = $props();
 
-  // Data
-  const variants = {
-    'buy': "e:bg-[#15251980] e:border-[#5BBE7B80]",
-    'sell': "e:bg-[#2B161A80] e:border-[#E96B8280]",
-    'ghost': "e:bg-gray-400/20 e:border-gray-400/40",
-  }
-
   // Reactive
   let cssClass = $derived.by(() => {
     return [
-      `e:w-full e:rounded-[2px] e:border e:px-[8px] e:py-[8px]`,
-      variants[variant] || variants.buy,
+      `ext-section`,
+      `ext-section--${variant}`,
       other?.class
     ].join(' ');
   });
@@ -28,3 +21,23 @@
 <div class={cssClass}>
   {@render children?.()}
 </div>
+
+<style scoped>
+  @reference "@src/app.css";
+
+  .ext-section {
+    @apply e:w-full e:rounded-[2px] e:border e:px-[8px] e:py-[8px];
+  }
+
+  .ext-section--buy {
+    @apply e:bg-[#15251980] e:border-[#5BBE7B80];
+  }
+
+  .ext-section--sell {
+    @apply e:bg-[#2B161A80] e:border-[#E96B8280];
+  }
+
+  .ext-section--ghost {
+    @apply e:bg-gray-400/20 e:border-gray-400/40;
+  }
+</style>

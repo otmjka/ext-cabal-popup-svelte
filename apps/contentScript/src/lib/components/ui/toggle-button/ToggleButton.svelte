@@ -14,21 +14,13 @@
     ...other
   }: IToggleButton = $props();
 
-  // Data
-  const variants = {
-    'buy': "e:bg-[#5BBE7B] e:hover:bg-[#87C999] e:font-bold",
-    'sell': "e:bg-[#E96B82] e:hover:bg-[#DE8C9C] e:font-bold",
-    'ghost': "e:bg-[#9B9C9E] e:hover:bg-[#9B9C9E]  e:font-bold",
-  }
-
   // Reactive
   let cssClass = $derived.by(() => {
     const classList = [
-      `e:pl-[20px] e:pr-[8px] e:h-[32px] e:w-fit e:relative`,
-      `e:flex e:flex-nowrap e:items-center e:justify-center`,
-      `e:whitespace-nowrap e:cursor-pointer`,
-      `ff-chakra e:text-[14px]/[14px] e:text-[#04070C]`,
-      enabled ? variants[variant] ?? variants.buy : variants.ghost,
+      `ff-chakra`,
+      `ext-toggle-btn`,
+      enabled ? `ext-toggle-btn--enabled` : ``,
+      enabled ? `ext-toggle-btn--${variant}` : `ext-toggle-btn--ghost`,
       other?.class
     ].join(' ');
     return twMerge(classList);
@@ -52,7 +44,7 @@
   onclick={onClick}
 > 
   <span 
-    class="e:absolute e:left-[8px] e:size-[8px] e:rounded-full"
+    class="ext-toggle-btn-indicator"
     class:e:ring-[1px]={!enabled}
     class:e:ring-black={!enabled}
     class:e:ring-inset={!enabled}
@@ -60,3 +52,37 @@
   ></span>
   {@render children?.()}
 </button>
+
+<style scoped>
+  @reference "@src/app.css";
+
+  .ext-toggle-btn {
+    @apply e:pl-[20px] e:pr-[8px] e:h-[32px] e:w-fit e:relative;
+    @apply e:flex e:flex-nowrap e:items-center e:justify-center;
+    @apply e:whitespace-nowrap e:cursor-pointer;
+    @apply e:text-[14px]/[14px] e:text-[#04070C];
+  }
+
+  .ext-toggle-btn--buy {
+    @apply e:bg-[#5BBE7B] e:hover:bg-[#87C999] e:font-bold;
+  }
+  
+  .ext-toggle-btn--sell {
+    @apply e:bg-[#E96B82] e:hover:bg-[#DE8C9C] e:font-bold;
+  }
+
+  .ext-toggle-btn--ghost {
+    @apply e:bg-[#9B9C9E] e:hover:bg-[#9B9C9E] e:font-bold;
+  }
+
+  .ext-toggle-btn-indicator {
+    @apply e:absolute e:left-[8px] e:size-[8px] e:rounded-full;
+  }
+
+  :not(.ext-toggle-btn--enabled) .ext-toggle-btn-indicator {
+    @apply e:ring-[1px] e:ring-black e:ring-inset;
+  }
+  .ext-toggle-btn--enabled .ext-toggle-btn-indicator {
+    @apply e:bg-black;
+  }
+</style>

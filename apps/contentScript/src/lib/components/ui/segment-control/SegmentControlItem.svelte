@@ -16,13 +16,9 @@
   // Reactive
   let cssClass = $derived.by(() => {
     const classList = [
-      `e:px-[8px] e:py-[4px] e:w-full`,
-      `e:border-r-[1px] e:border-r-[#36383C] e:last:border-r-0`,
-      `e:flex e:flex-nowrap e:items-center e:justify-center`,
-      `e:whitespace-nowrap e:cursor-pointer`,
-      `ff-chakra e:text-[12px]/[12px]`,
-      active ? `e:bg-[#9B9C9E]` : ``,
-      active ? `e:text-black` : `e:text-white`,
+      `ext-segment-control-item`,
+      `ff-chakra `,
+      active ? `ext-segment-control-item--active` : ``,
       other?.class
     ].join(' ');
     return twMerge(classList);
@@ -46,3 +42,19 @@
 >
   {@render children?.()}
 </button>
+
+<style scoped>
+  @reference "@src/app.css";
+
+  .ext-segment-control-item {
+    @apply e:px-[8px] e:py-[4px] e:w-full;
+    @apply e:border-r-[1px] e:border-r-[#36383C] e:last:border-r-0;
+    @apply e:flex e:flex-nowrap e:items-center e:justify-center;
+    @apply e:whitespace-nowrap e:cursor-pointer;
+    @apply e:text-[12px]/[12px] e:text-white;
+  }
+
+  .ext-segment-control-item--active {
+    @apply e:bg-[#9B9C9E] e:text-black;
+  }
+</style>
