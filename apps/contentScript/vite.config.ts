@@ -5,14 +5,14 @@ import path from 'path';
 
 // https://vite.dev/config/
 export default defineConfig({
-    resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src/lib'),
+	resolve: {
+		alias: {
+			'@': path.resolve(__dirname, './src/lib'),
       '@src': path.resolve(__dirname, './src'),
-    },
-  },
-  plugins: [
-    tailwindcss(),
-    svelte()
-  ],
-})
+		}
+	},
+	plugins: [tailwindcss(), svelte()],
+	build: {
+		outDir: './dev-dist' // Вывод в ту же папку dist
+	}
+});
