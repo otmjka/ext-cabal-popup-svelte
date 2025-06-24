@@ -7,6 +7,7 @@
     SlippageIcon, TipIcon, PriorityFeeIcon, 
     MevProtectionIcon, TxProcessorIcon  
   } from '@/components/icons';
+  import TradeStats from './TradeStats.svelte';
   import Footer from './Footer.svelte';
   
   // Stores
@@ -73,34 +74,7 @@
     }
   });
 
-  let tradeStats = $derived.by(() => {
-    return {
-      bought: {
-        label: 'Bought',
-        value: 0,
-        trend: 'positive',
-        icon: SolanaIcon
-      },
-      sold: {
-        label: 'Sold',
-        value: 70.90,
-        trend: 'negative',
-        icon: SolanaIcon
-      },
-      holding: {
-        label: 'Holding',
-        value: 15.20,
-        trend: 'neutral',
-        icon: SolanaIcon
-      },
-      pnl: {
-        label: 'PnL',
-        value: `+0 (+0%)`,
-        trend: 'positive',
-        icon: SolanaIcon
-      },
-    }
-  });
+
   let tradeType: TNavItem = $state(tradeTypes[0]);
   let tailingType: TNavItem = $state(TRAILING_TYPES[1]);
   let amountSell: number | undefined = $state();
@@ -237,7 +211,7 @@
       onclick={onBuyClick}
     >
       <span class="e:flex e:gap-x-[4px]">
-        Buy {amountSell} <SolanaCircleIcon />
+        Sell {amountSell} <SolanaCircleIcon />
       </span> {token}
     </Button>
   {/if}
@@ -254,24 +228,11 @@
   {/if}
 </div>
 
-{#if tradeType.key === 'market' || tradeType.key === 'limit'}
-  <div class="e:w-full e:flex e:justify-between e:mb-[8px]">
-    {#each Object.values(tradeStats) as stat}
-      <div class="text-12px e:flex e:flex-col e:items-center e:gap-y-[4px]">
-        <p class="e:text-[#9B9C9E]">
-          {stat.label}
-        </p>
-        <p 
-          class="text-buy e:flex e:gap-x-[4px] e:items-center"
-          class:text-sell={stat.trend === 'negative'}
-          class:text-buy={stat.trend === 'positive'}
-          class:e:text-white={stat.trend === 'neutral'}
-        >
-          <stat.icon size={10} />
-          {stat.value}
-        </p>
-      </div>
-    {/each}
-  </div>
+<div 
+  class="e:w-full e:flex e:flex-col e:gap-[8px] e:h-[56px]"
+  class:e:flex={tradeType.key !== 'trailing'}
+  class:e:hidden={tradeType.key === 'trailing'}
+>
+  <TradeStats />
   <Footer />
-{/if}
+</div>
