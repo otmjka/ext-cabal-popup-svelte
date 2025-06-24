@@ -15,6 +15,9 @@ if (url.startsWith(SiteWhitelist.gmgnai)) {
 	console.log('gmgn', mint);
 
 	mount(Content, {
-		target: root
+		target: root,
+		props: {
+			mint
+		}
 	});
 }
