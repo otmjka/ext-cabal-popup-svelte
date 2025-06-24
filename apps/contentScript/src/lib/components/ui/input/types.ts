@@ -4,7 +4,7 @@ export interface IInput {
   value?: string | number;
   type?: 'text' | 'password' | 'email' | 'number';
   variant?: TInputVariant,
-  icon: 'sol' | 'percent' | undefined,
+  icon?: 'sol' | 'percent' | undefined,
   class?: string,
   placeholder?: string,
   min?: number,

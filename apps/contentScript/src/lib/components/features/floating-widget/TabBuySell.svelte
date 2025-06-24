@@ -173,7 +173,7 @@
       bind:enabled={autoLimits}
       onclick={onAutolimitsClick}
     >
-      {autoLimits ? 'AutoLimits Activated' : 'Enable AutoLimits'}
+      AutoLimits {autoLimits ? 'Enabled' : 'Disabled'}
     </ToggleButton>
 
     <Button 

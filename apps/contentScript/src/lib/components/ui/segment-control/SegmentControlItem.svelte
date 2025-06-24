@@ -43,11 +43,21 @@
   {@render children?.()}
 </button>
 
-<style scoped>
+<!-- 
+<style >
   @reference "@src/app.css";
 
+
+  .ext-segment-control-list--md .ext-segment-control-item {
+    @apply e:py-[4px];
+  }
+
+  .ext-segment-control-list--lg .ext-segment-control-item {
+    @apply e:py-[4px];
+  }
+
   .ext-segment-control-item {
-    @apply e:px-[8px] e:py-[4px] e:w-full;
+    @apply e:px-[8px] e:w-full;
     @apply e:border-r-[1px] e:border-r-[#36383C] e:last:border-r-0;
     @apply e:flex e:flex-nowrap e:items-center e:justify-center;
     @apply e:whitespace-nowrap e:cursor-pointer;
@@ -57,4 +67,5 @@
   .ext-segment-control-item--active {
     @apply e:bg-[#9B9C9E] e:text-black;
   }
-</style>
+</style> 
+-->

@@ -11,18 +11,12 @@
     ...other
   }: ITabItem = $props();
 
-  // Data
-  const variants = {
-    'default': "e:text-gray-400 e:border-b-transparent e:hover:text-gray-300",
-    'active': "e:text-white e:border-white",
-  }
-
   // Reactive
   let cssClass = $derived.by(() => {
     return [
       `ff-chakra ext-tab-item`,
       ``,
-      active ? variants.active : variants.default,
+      active ? 'ext-tab-item--active' : 'ext-tab-item--default',
       other?.class
     ].join(' ');
   });

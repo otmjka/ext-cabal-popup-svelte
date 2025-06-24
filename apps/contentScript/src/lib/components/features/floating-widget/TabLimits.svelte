@@ -64,16 +64,19 @@
 </script>
 
 <div class="e:w-full e:flex e:flex-col e:gap-y-[10px]">
-  <SegmentControlList>
-    {#each segments as el}
-      <SegmentControlItem
-        active={segment.key === el.key}
-        onclick={() => { onSegmentClick(el) }}
-      >
-        {el.label}
-      </SegmentControlItem>
-    {/each}
-  </SegmentControlList>
+  <div  class="e:w-full e:flex e:justify-start">
+    <SegmentControlList>
+      {#each segments as el}
+        <SegmentControlItem
+          active={segment.key === el.key}
+          onclick={() => { onSegmentClick(el) }}
+        >
+          {el.label}
+        </SegmentControlItem>
+      {/each}
+    </SegmentControlList>
+  </div>
+
   <div class="e:w-full e:border-[1px] e:border-white/20 e:rounded-[2px]">
     <table class="e:text-[12px]/[12px] e:w-full">
       <thead class="e:[&>tr>th]:font-normal e:[&>tr>th]:uppercase e:[&>tr>th]:px-[8px] e:[&>tr>th]:py-[5px] e:text-white/50 e:bg-white/10">

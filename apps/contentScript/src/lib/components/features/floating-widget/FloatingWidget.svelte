@@ -2,9 +2,7 @@
   // Components
   import { WidgetAside, WidgetControlButton } from '@/components/structure';
   import { TabList, TabItem } from '@/components/ui';
-
-  import PinIcon from "@lucide/svelte/icons/pin";
-  import PinOffIcon from "@lucide/svelte/icons/pin-off";
+  import Settings from "@lucide/svelte/icons/settings";
 
   import TabBuySell from './TabBuySell.svelte';
   import TabMigration from './TabMigration.svelte';
@@ -27,7 +25,6 @@
     },
   ];
 
-  let draggable = $state(false);
   let collapsed = $state(false);
   let activeTab: TNavItem = $state(tabs[0]);
 
@@ -35,9 +32,18 @@
   const onTabClick = (tab: TNavItem) => {
     activeTab = tab;
   }
+
+  const onSettingsClick = () => {
+    console.log('Settings');
+  }
 </script>
 
-<WidgetAside {draggable} class="e:p-[8px] e:gap-y-[12px] e:max-h-[380px] e:h-full">
+<WidgetAside 
+  draggable 
+  width={320} 
+  height={380}
+  class="e:p-[8px] e:gap-y-[12px]" 
+>
   <header class="e:flex e:justify-between">
     <TabList>
       {#each tabs as tab}
@@ -51,14 +57,10 @@
     </TabList>
     <div class="e:flex e:gap-[8px]">
       <WidgetControlButton 
-        title={draggable ? 'pin' : 'unpin'}
-        onclick={() => { draggable = !draggable }}
+        title='Settings'
+        onclick={onSettingsClick}
       >
-        {#if draggable}
-          <PinIcon size={16} />
-        {:else}
-          <PinOffIcon size={16}  />
-        {/if}
+        <Settings size={16}  />
       </WidgetControlButton>
       <WidgetControlButton title={collapsed ? 'expand' : 'collapse'}>
         _

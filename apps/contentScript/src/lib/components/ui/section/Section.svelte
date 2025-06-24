@@ -30,7 +30,7 @@
   }
 
   .ext-section--buy {
-    @apply e:bg-[#15251980] e:border-[#5BBE7B80];
+    @apply e:bg-[#1525194D] e:border-[#5BBE7B80];
   }
 
   .ext-section--sell {

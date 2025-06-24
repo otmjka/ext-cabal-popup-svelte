@@ -33,7 +33,12 @@
   }
 </script>
 
-<WidgetAside {draggable} class="e:p-[8px] e:gap-y-[12px] e:max-h-[380px] e:h-full">
+<WidgetAside 
+  {draggable} 
+  width={320} 
+  height={442}
+  class="e:p-[8px] e:gap-y-[12px]"
+>
   <header class="e:flex e:justify-between">
     <TabList>
       {#each tabs as tab}

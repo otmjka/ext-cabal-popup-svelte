@@ -1,0 +1,30 @@
+@reference "@src/app.css";
+
+.ext-segment-control-list {
+  @apply e:border-[1px] e:border-[#36383C];
+  @apply e:flex e:items-center;
+}
+
+.ext-segment-control-list--md .ext-segment-control-item {
+  @apply e:h-[20px];
+}
+
+.ext-segment-control-list--lg .ext-segment-control-item {
+  @apply e:h-[30px];
+}
+
+.ext-segment-control-item {
+  @apply e:px-[8px] e:w-full;
+  @apply e:border-r-[1px] e:border-r-[#36383C] e:last:border-r-0;
+  @apply e:flex e:flex-nowrap e:items-center e:justify-center;
+  @apply e:whitespace-nowrap e:cursor-pointer;
+  @apply e:text-[12px]/[12px] e:text-white;
+}
+
+.ext-segment-control-item:not(.ext-segment-control-item--active) {
+  @apply e:hover:bg-white/5;
+}
+
+.ext-segment-control-item--active {
+  @apply e:bg-[#9B9C9E] e:text-black;
+}
