@@ -23,11 +23,7 @@
 				isReady: false
 			}));
 
-			contentAppStore.subscribe((store) => {
-				if (store.tabMint) {
-					subscribeToken({ mint: store.tabMint });
-				}
-			});
+			subscribeToken({ mint });
 		};
 
 		const handleBlur = () => {
