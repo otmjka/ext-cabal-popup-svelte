@@ -35,14 +35,14 @@
 <div class="e:flex e:flex-col e:gap-[12px] e:h-full">
   <Section variant="buy" class="e:flex e:flex-col e:gap-y-[10px] e:h-full">
     <div class="e:flex e:justify-between e:items-center">
-      <h4 class="e:text-[18px]/[18px] e:font-bold text-buy">
+      <h4 class="text-18px e:font-bold text-buy">
         Buy
       </h4>
     </div>
 
     <div class="e:w-full e:grid e:grid-cols-3 e:gap-[10px]">
       <div class="e:flex e:flex-col e:gap-y-[4px]">
-        <label for="" class="e:text-[12px]/[12px]">
+        <label for="" class="text-12px">
           Tip
         </label>
         <Input 
@@ -57,7 +57,7 @@
       </div>
 
       <div class="e:flex e:flex-col e:gap-y-[4px]">
-        <label for="" class="e:text-[12px]/[12px]">
+        <label for="" class="text-12px">
           Priority Fee
         </label>
         <Input 
@@ -72,7 +72,7 @@
       </div>
 
       <div class="e:flex e:flex-col e:gap-y-[4px]">
-        <label for="" class="e:text-[12px]/[12px]">
+        <label for="" class="text-12px">
           Slippage
         </label>
         <Input 
@@ -116,14 +116,14 @@
 
   <Section variant="sell" class="e:flex e:flex-col e:gap-y-[10px] e:h-full">
     <div class="e:flex e:justify-between e:items-center">
-      <h4 class="e:text-[18px]/[18px] e:font-bold text-sell">
+      <h4 class="text-18px e:font-bold text-sell">
         Sell
       </h4>
     </div>
 
     <div class="e:w-full e:grid e:grid-cols-3 e:gap-[10px]">
       <div class="e:flex e:flex-col e:gap-y-[4px]">
-        <label for="" class="e:text-[12px]/[12px]">
+        <label for="" class="text-12px">
           Tip
         </label>
         <Input 
@@ -138,7 +138,7 @@
       </div>
 
       <div class="e:flex e:flex-col e:gap-y-[4px]">
-        <label for="" class="e:text-[12px]/[12px]">
+        <label for="" class="text-12px">
           Priority Fee
         </label>
         <Input 
@@ -153,7 +153,7 @@
       </div>
 
       <div class="e:flex e:flex-col e:gap-y-[4px]">
-        <label for="" class="e:text-[12px]/[12px]">
+        <label for="" class="text-12px">
           Slippage
         </label>
         <Input 

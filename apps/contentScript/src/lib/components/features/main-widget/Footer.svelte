@@ -2,7 +2,7 @@
   import FileIcon from "@lucide/svelte/icons/file";
 </script>
 
-<div class="e:w-full e:flex e:items-center e:justify-between text-light-gray e:text-[12px]/[12px] e:font-medium">
+<div class="e:w-full e:flex e:items-center e:justify-between text-light-gray text-12px e:font-medium">
   <img 
     src="/src/assets/cabal_logo.svg" 
     alt="" 

@@ -38,7 +38,7 @@
 </script>
 
 {#if dragging}
-  <div class="e:z-[999997] e:fixed e:inset-0 e:size-full e:bg-black/20">
+  <div class="e:z-[999997] e:fixed e:inset-0 e:size-full">
   </div>
 {/if}
 

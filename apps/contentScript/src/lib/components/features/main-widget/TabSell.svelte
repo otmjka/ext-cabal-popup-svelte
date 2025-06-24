@@ -82,11 +82,11 @@
   
   <Section variant="buy" class="e:flex e:flex-col e:gap-y-[10px]">
     <div class="e:flex e:justify-between e:items-center">
-      <h4 class="e:text-[18px]/[18px] e:font-bold">
+      <h4 class="text-18px e:font-bold">
         Quick <span class="text-buy">Buy</span>
       </h4>
 
-      <div class="e:text-[12px] e:flex e:gap-x-[8px] e:items-center">
+      <div class="text-12px e:flex e:gap-x-[8px] e:items-center">
         <span class="e:flex e:items-center">
           Buys: 1
         </span>
@@ -134,11 +134,11 @@
 
   <Section variant="sell" class="e:flex e:flex-col e:gap-y-[10px] e:mb-[24px]">
     <div class="e:flex e:justify-between e:items-center">
-      <h4 class="e:text-[18px]/[18px] e:font-bold">
+      <h4 class="text-18px e:font-bold">
         Quick <span class="text-sell">Sell</span>
       </h4>
 
-      <div class="e:text-[12px] e:flex e:gap-x-[8px] e:items-center">
+      <div class="text-12px e:flex e:gap-x-[8px] e:items-center">
         <span class="e:flex e:items-center">
           {token} 8M
         </span>

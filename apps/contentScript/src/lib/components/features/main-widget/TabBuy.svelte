@@ -194,7 +194,7 @@
     {#if tradeType.key === 'limit' || tradeType.key === 'trailing'}
       <div class="e:w-full e:relative e:mb-[8px]">
         <Input bind:value={limitAmount} variant="default" />
-        <span class="e:absolute e:top-[10px] e:right-[10px] e:text-[12px]/[12px] e:text-white/50 e:font-normal">
+        <span class="e:absolute e:top-[10px] e:right-[10px] text-12px e:text-white/50 e:font-normal">
           $MKT CAP
         </span>
       </div>
@@ -226,7 +226,7 @@
     {#each Object.values(stats) as stat}
       <div class="e:flex e:items-center e:gap-x-[4px] e:py-[6px] e:px-[6px]">
         <stat.icon />
-        <span class="e:text-[12px]/[12px] e:text-[#9B9C9E]">
+        <span class="text-12px e:text-[#9B9C9E]">
           {stat.value} {stat.suffix}
         </span>
       </div>
@@ -261,7 +261,7 @@
 {#if tradeType.key === 'market' || tradeType.key === 'limit'}
   <div class="e:w-full e:flex e:justify-between">
     {#each Object.values(tradeStats) as stat}
-      <div class="e:text-[12px]/[12px] e:flex e:flex-col e:items-center e:gap-y-[4px]">
+      <div class="text-12px e:flex e:flex-col e:items-center e:gap-y-[4px]">
         <p class="e:text-[#9B9C9E]">
           {stat.label}
         </p>

@@ -34,8 +34,8 @@
 
   .ext-widget-control-btn {
     @apply e:flex e:items-center e:justify-center;
-    @apply e:size-[30px];
-    @apply e:bg-[#36383C] e:text-white;
+    @apply e:size-[28px];
+    @apply e:bg-[#36383C] e:hover:bg-[#3f4146] e:text-white;
     @apply e:cursor-pointer;
   }
 </style>
