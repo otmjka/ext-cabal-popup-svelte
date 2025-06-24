@@ -21,27 +21,34 @@
 
   // Methods
   const onMoveableStart = (e: Event) => {
-    dragging = true;
     if (!draggable) {
       e.preventDefault();
+      return;
     }
+    dragging = true;
   }
 
   const onMoveableEnd = (e: Event) => {
-    dragging = false;
     if (!draggable) {
       e.preventDefault();
+      return;
     }
+    dragging = false;
   }
 </script>
 
+{#if dragging}
+  <div class="e:z-[999997] e:fixed e:inset-0 e:size-full e:bg-black/20">
+  </div>
+{/if}
+
 <aside 
   class="ext-widget-aside ff-chakra {other.class}"
-  class:e:z-[99999]={dragging}
-  class:e:z-[99998]={!dragging}
+  class:e:z-[999999]={dragging}
+  class:e:z-[999998]={!dragging}
   style={`width: ${width}px; !important; height: ${height}px !important;`}
   onmovablestart={onMoveableStart}
-  onmovableend ={onMoveableEnd}
+  onmovableend={onMoveableEnd}
   use:movable={{ 
     ignore: '.not-draggable',
     cursor: draggable,
