@@ -29,25 +29,22 @@
 
 	// Reactive
 	let wrapperCssClass = $derived.by(() => {
-		const classList = [`e:flex e:items-center e:relative`, other?.class].join(' ');
+		const classList = [`ext-input-wrapper`, other?.class].join(' ');
 		return twMerge(classList);
 	});
 
 	let inputCssClass = $derived.by(() => {
 		const classList = [
-			`e:outline-none`,
-			`e:flex e:w-full e:h-[32px] e:pl-[8px] e:border-[1px]`,
-			`ff-chakra e:text-[14px]/[14px] e:text-white`,
-			`input--controls-hidden`,
-			icon ? 'e:pr-[26px]' : 'e:pr-[8px]',
-			variants[variant] ?? variants.buy,
+			`ff-chakra input--controls-hidden`,
+			`ext-input`,
+			icon ? 'ext-input--with-icon' : '',
+			`ext-input--${variant}`,
 			inputClass
 		].join(' ');
 		return twMerge(classList);
 	});
 
 	const onChange = (e: Event) => {
-		console.log('!!!');
 		if (type) onchange?.(e);
 	};
 </script>
@@ -56,7 +53,7 @@
 	<input {...other} {disabled} {type} class={inputCssClass} bind:value onchange={onChange} />
 
 	{#if icon}
-		<span class="e:absolute e:right-[8px] e:outline-none">
+		<span class="e:absolute e:right-[8px]">
 			{#if icon === 'sol'}
 				<SolanaCircleIcon />
 			{/if}
@@ -66,3 +63,33 @@
 		</span>
 	{/if}
 </div>
+
+<style scoped>
+	@reference "@src/app.css";
+
+	.ext-input-wrapper {
+		@apply e:flex e:items-center e:relative;
+	}
+
+	.ext-input {
+		@apply e:outline-none;
+		@apply e:flex e:w-full e:h-[32px] e:px-[8px] e:border-[1px];
+		@apply e:text-[14px]/[14px] e:text-white;
+	}
+
+	.ext-input--with-icon {
+		@apply e:pr-[26px];
+	}
+
+	.ext-input--buy {
+		@apply e:bg-[#152519] e:border-[#5BBE7B];
+	}
+
+	.ext-input--sell {
+		@apply e:bg-[#2E0F0F] e:border-[#FF5C5C];
+	}
+
+	.ext-input--default {
+		@apply e:bg-[#36383C] e:border-white/30;
+	}
+</style>

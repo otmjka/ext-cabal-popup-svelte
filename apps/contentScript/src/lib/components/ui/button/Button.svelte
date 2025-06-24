@@ -15,27 +15,12 @@
 		...other
 	}: IButton = $props();
 
-	// Data
-	const variants = {
-		buy: 'e:bg-[#5BBE7B] e:hover:bg-[#87C999] e:font-bold e:text-[#04070C]',
-		'buy-secondary': 'e:bg-[#2D4B33] e:hover:bg-[#45714D] e:font-normal e:text-white',
-		sell: 'e:bg-[#E96B82] e:hover:bg-[#DE8C9C] e:font-bold e:text-[#04070C]',
-		'sell-secondary': 'e:bg-[#562D34] e:hover:bg-[#82444F] e:font-normal e:text-white',
-		ghost:
-			'e:bg-transparent e:hover:bg-[#36383C] e:border-[1px] e:border-[#9B9B9F] e:text-[#9B9C9E] e:font-bold'
-	};
-
 	// Reactive
 	let cssClass = $derived.by(() => {
 		const classList = [
-			// `e:px-[16px] e:h-[32px] e:w-fit`,
-			// `e:flex e:flex-nowrap e:items-center e:justify-center`,
-			// `e:whitespace-nowrap e:cursor-pointer e:outline-none`,
-			// `ff-chakra !e:text-[14px]/[14px]`,
 			`btn ff-chakra`,
+			`bnt-${variant}`,
 			clipped ? 'btn-clipped' : '',
-			variants[variant] ? `bnt-${variant}` : 'bnt-buy',
-			// variants[variant] ?? variants.buy,
 			other?.class
 		].join(' ');
 		return twMerge(classList);

@@ -13,8 +13,7 @@
   // Reactive
   let cssClass = $derived.by(() => {
     const classList = [
-      `e:border-[1px] e:border-[#36383C]`,
-      `e:flex e:items-center e:w-fit`,
+      `ext-segment-control-list`,
       other?.class
     ].join(' ');
     return twMerge(classList);
@@ -24,3 +23,12 @@
 <div class={cssClass}>
   {@render children?.()}
 </div>
+
+<style scoped>
+  @reference "@src/app.css";
+
+  .ext-segment-control-list {
+    @apply e:border-[1px] e:border-[#36383C];
+    @apply e:flex e:items-center e:w-fit;
+  }
+</style>
