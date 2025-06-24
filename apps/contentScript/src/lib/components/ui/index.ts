@@ -14,3 +14,4 @@ export { default as TabList } from './tab/TabList.svelte';
 export { default as TabItem } from './tab/TabItem.svelte';
 
 export { default as PaginationButton } from './pagination/PaginationButton.svelte';
+export { default as Paper } from './paper/Paper.svelte';
