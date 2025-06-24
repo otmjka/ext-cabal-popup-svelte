@@ -4,38 +4,42 @@
   import { TabList, TabItem } from '@/components/ui';
   import Settings from "@lucide/svelte/icons/settings";
 
-  import TabBuySell from './TabBuySell.svelte';
-  import TabMigration from './TabMigration.svelte';
-  import TabLimits from './TabLimits.svelte';
+	import TabBuySell from './TabBuySell.svelte';
+	import TabMigration from './TabMigration.svelte';
+	import TabLimits from './TabLimits.svelte';
 
-  // Types
-  import type { TNavItem } from '@/types/app';
+	// Types
+	import type { TNavItem } from '@/types/app';
 
-  // Data
-  const tabs: TNavItem[] = [
-    {
-      key: 'trade',
-      label: 'Buy/Sell',
-    }, {
-      key: 'migration',
-      label: 'Migration',
-    }, {
-      key: 'limits',
-      label: 'Limits',
-    },
-  ];
+	// Data
+	const tabs: TNavItem[] = [
+		{
+			key: 'trade',
+			label: 'Buy/Sell'
+		},
+		{
+			key: 'migration',
+			label: 'Migration'
+		},
+		{
+			key: 'limits',
+			label: 'Limits'
+		}
+	];
+	type WidgetState = { onOpenSettings: () => void };
+	let props = $props<{ state: WidgetState }>();
 
-  let collapsed = $state(false);
-  let activeTab: TNavItem = $state(tabs[0]);
+	let collapsed = $state(false);
+	let activeTab: TNavItem = $state(tabs[0]);
 
-  // Methods
-  const onTabClick = (tab: TNavItem) => {
-    activeTab = tab;
-  }
+	// Methods
+	const onTabClick = (tab: TNavItem) => {
+		activeTab = tab;
+	};
 
-  const onSettingsClick = () => {
-    console.log('Settings');
-  }
+	const onSettingsClick = () => {
+		props.state.onOpenSettings();
+	};
 </script>
 
 <WidgetAside 
@@ -70,13 +74,13 @@
     </header>
   {/snippet}
 
-  {#if activeTab.key === 'trade'}
-    <TabBuySell />
-  {/if}
-  {#if activeTab.key === 'migration'}
-    <TabMigration />
-  {/if}
-    {#if activeTab.key === 'limits'}
-    <TabLimits />
-  {/if}
+	{#if activeTab.key === 'trade'}
+		<TabBuySell />
+	{/if}
+	{#if activeTab.key === 'migration'}
+		<TabMigration />
+	{/if}
+	{#if activeTab.key === 'limits'}
+		<TabLimits />
+	{/if}
 </WidgetAside>
