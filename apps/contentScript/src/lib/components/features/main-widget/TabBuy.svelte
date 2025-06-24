@@ -1,7 +1,7 @@
 <script lang="ts">
   // Components
   import { SegmentControlItem, SegmentControlList, Button, Input, Section } from '@/components/ui';
-  import { BalanceSol } from "@/components/shared";
+  import { BalanceSol, QuickTradeActions } from "@/components/shared";
   import { 
     SolanaCircleIcon, SolanaIcon, 
     SlippageIcon, TipIcon, PriorityFeeIcon, 
@@ -110,6 +110,8 @@
   // Methods
   const onTradeTypeClick = (el: TNavItem) => {
     tradeType = el;
+    amountBuy = 0;
+    limitAmount = 0;
   }
 
   const onBuyClick = () => {
@@ -164,17 +166,11 @@
         </SegmentControlList>
       {/if}
 
-      <div class="e:w-full e:grid e:grid-cols-4 e:gap-[10px]">
-        {#each $quickBuyStore as el}
-          <Button 
-            variant="buy-secondary"
-            class="e:gap-x-[4px] e:w-full e:px-[2px]"
-            onclick={() => { setBuyAmount(el); }}
-          >
-            {el} <SolanaCircleIcon />
-          </Button>
-        {/each}
-      </div>
+      <QuickTradeActions 
+        type="buy" 
+        actions={$quickBuyStore} 
+        onclick={setBuyAmount}
+      />
       <Input 
         value={amountBuy} 
         variant="buy"
@@ -259,7 +255,7 @@
 </div>
 
 {#if tradeType.key === 'market' || tradeType.key === 'limit'}
-  <div class="e:w-full e:flex e:justify-between">
+  <div class="e:w-full e:flex e:justify-between e:mb-[8px]">
     {#each Object.values(tradeStats) as stat}
       <div class="text-12px e:flex e:flex-col e:items-center e:gap-y-[4px]">
         <p class="e:text-[#9B9C9E]">

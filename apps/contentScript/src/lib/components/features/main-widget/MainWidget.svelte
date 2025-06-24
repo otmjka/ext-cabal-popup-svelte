@@ -37,35 +37,36 @@
   {draggable} 
   width={320} 
   height={442}
-  class="e:p-[8px] e:gap-y-[12px]"
 >
-  <header class="e:flex e:justify-between">
-    <TabList>
-      {#each tabs as tab}
-        <TabItem 
-          onclick={() => { onTabClick(tab) }}
-          active={activeTab.key === tab.key}
+  {#snippet header()}
+    <header class="e:flex e:justify-between">
+      <TabList>
+        {#each tabs as tab}
+          <TabItem 
+            onclick={() => { onTabClick(tab) }}
+            active={activeTab.key === tab.key}
+          >
+            {tab.label}
+          </TabItem>
+        {/each}
+      </TabList>
+      <div class="e:flex e:gap-[8px]">
+        <WidgetControlButton 
+          title={draggable ? 'pin' : 'unpin'}
+          onclick={() => { draggable = !draggable }}
         >
-          {tab.label}
-        </TabItem>
-      {/each}
-    </TabList>
-    <div class="e:flex e:gap-[8px]">
-      <WidgetControlButton 
-        title={draggable ? 'pin' : 'unpin'}
-        onclick={() => { draggable = !draggable }}
-      >
-        {#if draggable}
-          <PinIcon size={16} />
-        {:else}
-          <PinOffIcon size={16}  />
-        {/if}
-      </WidgetControlButton>
-      <WidgetControlButton title={collapsed ? 'expand' : 'collapse'}>
-        _
-      </WidgetControlButton>
-    </div>
-  </header>
+          {#if draggable}
+            <PinIcon size={16} />
+          {:else}
+            <PinOffIcon size={16}  />
+          {/if}
+        </WidgetControlButton>
+        <WidgetControlButton title={collapsed ? 'expand' : 'collapse'}>
+          _
+        </WidgetControlButton>
+      </div>
+    </header>
+  {/snippet}
 
   {#if activeTab.key === 'buy'}
     <TabBuy />

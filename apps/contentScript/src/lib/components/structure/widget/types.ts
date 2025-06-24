@@ -13,6 +13,7 @@ export interface IWidgetAside {
   draggable?: boolean,
   width?: number,
   height?: number,
+  header?: Snippet,
   children?: Snippet,
   class?: string,
 }

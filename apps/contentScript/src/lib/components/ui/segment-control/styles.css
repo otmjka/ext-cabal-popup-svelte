@@ -17,7 +17,7 @@
   @apply e:px-[8px] e:w-full;
   @apply e:border-r-[1px] e:border-r-[#36383C] e:last:border-r-0;
   @apply e:flex e:flex-nowrap e:items-center e:justify-center;
-  @apply e:whitespace-nowrap e:cursor-pointer;
+  @apply e:whitespace-nowrap e:cursor-pointer e:select-none e:outline-none;
   @apply e:text-[12px]/[12px] e:text-white;
 }
 

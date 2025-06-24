@@ -18,9 +18,10 @@
 	// Reactive
 	let cssClass = $derived.by(() => {
 		const classList = [
-			`btn ff-chakra`,
-			`bnt-${variant}`,
-			clipped ? 'btn-clipped' : '',
+      `e:px-[16px]`,
+			`ext-btn ff-chakra`,
+			`ext-bnt-${variant}`,
+			clipped ? 'ext-btn-clipped' : '',
 			other?.class
 		].join(' ');
 		return twMerge(classList);
@@ -42,34 +43,34 @@
 <style scoped>
 	@reference "@src/app.css";
 
-	.btn {
-		@apply e:px-[16px] e:h-[32px];
+	.ext-btn {
+		@apply e:h-[32px];
 		@apply e:flex e:flex-nowrap e:items-center e:justify-center;
-		@apply e:whitespace-nowrap e:cursor-pointer e:outline-none;
+		@apply e:whitespace-nowrap e:cursor-pointer e:select-none e:outline-none;
 		@apply e:text-[14px]/[14px];
 	}
 
-	.bnt-buy {
+	.ext-bnt-buy {
 		@apply e:bg-[#5BBE7B] e:hover:bg-[#87C999] e:font-bold e:text-[#04070C];
 	}
 
-	.bnt-buy-secondary {
+	.ext-bnt-buy-secondary {
 		@apply e:bg-[#152519] e:hover:bg-[#45714D] e:font-normal e:text-white;
 	}
 
-	.bnt-sell {
+	.ext-bnt-sell {
 		@apply e:bg-[#E96B82] e:hover:bg-[#DE8C9C] e:font-bold e:text-[#04070C];
 	}
 
-	.bnt-sell-secondary {
+	.ext-bnt-sell-secondary {
 		@apply e:bg-[#562D34] e:hover:bg-[#82444F] e:font-normal e:text-white;
 	}
 
-	.bnt-ghost {
+	.ext-bnt-ghost {
 		@apply e:bg-transparent e:hover:bg-[#36383C] e:border-[1px] e:border-[#9B9B9F] e:text-[#9B9C9E] e:font-bold;
 	}
 
-	.btn-clipped {
+	.ext-btn-clipped {
 		clip-path: polygon(0 0, 100% 0, 100% 100%, calc(0% + 13px) 100%, 0% calc(100% - 12px));
 	}
 </style>
