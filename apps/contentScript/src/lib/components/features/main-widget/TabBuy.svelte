@@ -110,6 +110,8 @@
   // Methods
   const onTradeTypeClick = (el: TNavItem) => {
     tradeType = el;
+    amountBuy = 0;
+    limitAmount = 0;
   }
 
   const onBuyClick = () => {
