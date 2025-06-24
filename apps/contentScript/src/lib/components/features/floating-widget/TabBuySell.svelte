@@ -2,6 +2,7 @@
   // Components
   import ShareIcon from "@lucide/svelte/icons/share";
   import { Button, ToggleButton, Input, Section } from '@/components/ui';
+  import { QuickTradeActions } from "@/components/shared";
   import SolanaCircleIcon from '@/components/icons/SolanaCircleIcon.svelte';
   
   // Stores
@@ -64,17 +65,11 @@
         </span>
       </div>
     </div>
-    <div class="e:w-full e:grid e:grid-cols-4 e:gap-[10px]">
-      {#each $quickBuyStore as el}
-        <Button 
-          variant="buy-secondary"
-          class="e:gap-x-[4px] e:w-full e:px-[2px]"
-          onclick={() => { setBuyAmount(el); }}
-        >
-          {el} <SolanaCircleIcon />
-        </Button>
-      {/each}
-    </div>
+    <QuickTradeActions 
+      type="buy" 
+      actions={$quickBuyStore} 
+      onclick={setBuyAmount}
+    />
     <div class="e:w-full e:grid e:grid-cols-4 e:gap-[10px]">
       <Input 
         value={amountBuy} 
@@ -125,17 +120,11 @@
       </div>
     </div>
 
-    <div class="e:w-full e:grid e:grid-cols-4 e:gap-[10px]">
-      {#each $quickSellStore as el}
-        <Button 
-          variant="sell-secondary"
-          class="e:gap-x-[4px] e:w-full e:px-[2px]"
-          onclick={() => { setSellAmount(el); }}
-        >
-          {el} <SolanaCircleIcon />
-        </Button>
-      {/each}
-    </div>
+    <QuickTradeActions 
+      type="sell" 
+      actions={$quickSellStore} 
+      onclick={setSellAmount}
+    />
 
     <div class="e:w-full e:grid e:grid-cols-8 e:gap-[10px]">
       <Button 

@@ -76,17 +76,18 @@
   @reference "@src/app.css";
 
   .ext-widget-aside {
-    @apply e:max-w-xs e:w-full e:min-h-[320px] e:h-full;
-    @apply e:flex e:flex-col e:gap-y-[12px];
+    @apply e:max-w-xs e:w-full e:h-full;
+    @apply e:flex e:flex-col;
+    /* @apply e:gap-y-[8px]; */
     @apply e:text-white e:bg-[#04070C];
     @apply e:ring-[1px] e:ring-white/40;
     /* @apply e:border-[1px] e:border-white/40; */
   }
 
   .ext-widget-aside--header {
-    @apply e:w-full e:px-[8px] e:pt-[8px];
+    @apply e:w-full e:px-[8px] e:py-[6px] e:hover:bg-white/5;
   }
   .ext-widget-aside--body {
-    @apply e:px-[8px];
+    @apply e:p-[8px]  e:h-full e:flex e:flex-col;
   }
 </style>
