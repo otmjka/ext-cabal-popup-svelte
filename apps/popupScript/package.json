@@ -10,7 +10,7 @@
 		"check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json",
 		"format": "prettier --write .",
 		"lint": "prettier --check .",
-		"build": "vite build --config vite.popup.config.ts"
+		"build:tmp": "vite build --config vite.popup.config.ts"
 	},
 	"devDependencies": {
 		"@lucide/svelte": "^0.522.0",
