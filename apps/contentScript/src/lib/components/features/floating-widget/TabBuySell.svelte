@@ -8,9 +8,17 @@
 	// Stores
 	import quickBuyStore from '@/stores/quick-buy';
 	import quickSellStore from '@/stores/quick-sell';
+	import { contentAppStore } from '@/stores/contentAppStore';
+	import { onDestroy } from 'svelte';
 
 	// Props
-	let { ticker } = $props<{ contentState: { isWidgetReady: boolean; ticker: string } }>();
+	let ticker = $state('-');
+	let unsubscribe = contentAppStore.subscribe(($store) => {
+		console.log('Store changed:', $store);
+		ticker = $store.tokenStatus?.ticker || '--';
+
+		// Выполнить нужные действия при изменении
+	});
 
 	// Data
 	let amountBuy: number | undefined = $state();
@@ -45,6 +53,7 @@
 	const setSellAmount = (amount: number) => {
 		amountSell = amount;
 	};
+	onDestroy(unsubscribe);
 </script>
 
 <div class="e:flex e:flex-col e:gap-[12px]">
