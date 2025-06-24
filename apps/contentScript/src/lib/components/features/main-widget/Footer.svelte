@@ -4,7 +4,7 @@
 
 <div class="e:h-[20px]e:w-full e:flex e:items-center e:justify-between text-light-gray text-12px e:font-medium">
   <img 
-    src="/src/assets/cabal_logo.svg" 
+    src="./src/assets/cabal_logo.svg" 
     alt="" 
     class="e:size-[18px]"
   >

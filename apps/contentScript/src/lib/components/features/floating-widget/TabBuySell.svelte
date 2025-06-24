@@ -3,7 +3,7 @@
   import ShareIcon from "@lucide/svelte/icons/share";
   import { Button, ToggleButton, Input, Section } from '@/components/ui';
   import { QuickTradeActions } from "@/components/shared";
-  import SolanaCircleIcon from '@/components/icons/SolanaCircleIcon.svelte';
+  import { SellSwitchIcon, SolanaCircleIcon } from "@/components/icons";
   
   // Stores
   import quickBuyStore from '@/stores/quick-buy';
@@ -115,7 +115,7 @@
         </span>
 
         <span>
-          <img src="/src/assets/sell-switch.svg" alt="">
+          <SellSwitchIcon />
         </span>
       </div>
     </div>

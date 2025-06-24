@@ -2,11 +2,8 @@
   // Components
   import { SegmentControlItem, SegmentControlList, Button, Input, Section } from '@/components/ui';
   import { BalanceSol, QuickTradeActions } from "@/components/shared";
-  import { 
-    SolanaCircleIcon, SolanaIcon, 
-    SlippageIcon, TipIcon, PriorityFeeIcon, 
-    MevProtectionIcon, TxProcessorIcon  
-  } from '@/components/icons';
+  import { SolanaCircleIcon } from '@/components/icons';
+  import TokenStats from './TokenStats.svelte';
   import TradeStats from './TradeStats.svelte';
   import Footer from './Footer.svelte';
   
@@ -38,70 +35,6 @@
       key: "trailing"
     }
   ];
-
-  let stats = $derived.by(() => {
-    return {
-      'slippage ': {
-        value: 20,
-        prefix: '',
-        suffix: '%',
-        icon: SlippageIcon,
-      },
-      'tip': {
-        value: 0.001,
-        prefix: '',
-        suffix: '',
-        icon: TipIcon,
-      }, 
-      'priority_fee': {
-        value: 0.0001,
-        prefix: '',
-        suffix: '',
-        icon: PriorityFeeIcon,
-      },
-      'mev_protection': {
-        value: "On",
-        prefix: '',
-        suffix: '',
-        icon: MevProtectionIcon,
-      },
-      'tx_processors': {
-        value: 5,
-        prefix: '',
-        suffix: '',
-        icon: TxProcessorIcon,
-      },
-    }
-  });
-
-  let tradeStats = $derived.by(() => {
-    return {
-      bought: {
-        label: 'Bought',
-        value: 0,
-        trend: 'positive',
-        icon: SolanaIcon
-      },
-      sold: {
-        label: 'Sold',
-        value: 70.90,
-        trend: 'negative',
-        icon: SolanaIcon
-      },
-      holding: {
-        label: 'Holding',
-        value: 15.20,
-        trend: 'neutral',
-        icon: SolanaIcon
-      },
-      pnl: {
-        label: 'PnL',
-        value: `+0 (+0%)`,
-        trend: 'positive',
-        icon: SolanaIcon
-      },
-    }
-  });
   let tradeType: TNavItem = $state(tradeTypes[0]);
   let tailingType: TNavItem = $state(TRAILING_TYPES[1]);
   let amountBuy: number | undefined = $state();
@@ -173,7 +106,7 @@
         onclick={setBuyAmount}
       />
       <Input 
-        value={amountBuy} 
+        bind:value={amountBuy} 
         variant="buy"
         type="number" 
         icon="sol" 
@@ -219,16 +152,7 @@
     {/if}
   </div>
 
-  <div class="e:w-full e:flex e:justify-between">
-    {#each Object.values(stats) as stat}
-      <div class="e:flex e:items-center e:gap-x-[4px] e:py-[6px] e:px-[6px]">
-        <stat.icon />
-        <span class="text-12px e:text-[#9B9C9E]">
-          {stat.value} {stat.suffix}
-        </span>
-      </div>
-    {/each}
-  </div>
+  <TokenStats />
 
   {#if tradeType.key === 'market'}
     <Button 
