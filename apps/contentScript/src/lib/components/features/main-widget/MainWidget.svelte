@@ -8,7 +8,6 @@
 
   import TabBuy from './TabBuy.svelte';
   import TabSell from './TabSell.svelte';
-  import Footer from './Footer.svelte';
 
   // Types
   import type { TNavItem } from '@/types/app';
