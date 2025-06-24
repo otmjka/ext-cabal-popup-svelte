@@ -27,19 +27,11 @@
 		}
 	];
 
-	type ContentState = {
-		isWidgetReady: boolean;
-		ticker: string;
-	};
-
 	type State = {
-		contentState: ContentState;
-		handleOpenSettings: () => void;
+		onOpenSettings: () => void;
 	};
 
-	const { widgetState } = $props<{ state: State }>();
-
-	const { contentState, onOpenSettings } = widgetState;
+	let props = $props<{ widgetState: State }>();
 
 	let collapsed = $state(false);
 	let activeTab: TNavItem = $state(tabs[0]);
@@ -50,7 +42,7 @@
 	};
 
 	const onSettingsClick = () => {
-		onOpenSettings();
+		props.onOpenSettings();
 	};
 </script>
 
@@ -80,7 +72,7 @@
 	{/snippet}
 
 	{#if activeTab.key === 'trade'}
-		<TabBuySell {contentState} />
+		<TabBuySell />
 	{/if}
 	{#if activeTab.key === 'migration'}
 		<TabMigration />
