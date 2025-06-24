@@ -16,6 +16,6 @@
   @reference "@src/app.css";
 
   .ext-tab-list {
-    @apply e:flex;
+    @apply e:flex e:h-[28px];
   }
 </style>

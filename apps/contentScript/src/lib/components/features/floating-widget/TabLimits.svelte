@@ -78,7 +78,7 @@
   </div>
 
   <div class="e:w-full e:border-[1px] e:border-white/20 e:rounded-[2px]">
-    <table class="e:text-[12px]/[12px] e:w-full">
+    <table class="text-12px e:w-full">
       <thead class="e:[&>tr>th]:font-normal e:[&>tr>th]:uppercase e:[&>tr>th]:px-[8px] e:[&>tr>th]:py-[5px] e:text-white/50 e:bg-white/10">
         <tr>
           <th class="e:w-1/3 e:text-left">

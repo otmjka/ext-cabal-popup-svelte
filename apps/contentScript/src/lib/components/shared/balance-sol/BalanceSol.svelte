@@ -12,7 +12,7 @@
   } = $props();
 </script>
 
-<div class="e:flex e:items-center e:gap-x-[4px] e:text-[12px]/[12px] e:font-bold e:text-white">
+<div class="text-12px e:flex e:items-center e:gap-x-[4px] e:font-bold e:text-white">
   {#if walletIcon}
     <WalletIcon size={14} class="e:mr-[4px] text-light-gray" />
   {/if}

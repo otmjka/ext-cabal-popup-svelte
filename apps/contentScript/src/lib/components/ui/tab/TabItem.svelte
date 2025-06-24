@@ -46,8 +46,9 @@
   @reference "@src/app.css";
 
   .ext-tab-item {
+    @apply e:text-[14px]/[14px];
     @apply e:flex e:items-center e:justify-center;
-    @apply e:font-normal e:px-[8px] e:h-[28px] e:w-fit e:cursor-pointer;
+    @apply e:font-normal e:px-[6px] e:h-[28px] e:w-fit e:cursor-pointer;
     @apply e:border-b-[1px];
   }
   .ext-tab-item--default {

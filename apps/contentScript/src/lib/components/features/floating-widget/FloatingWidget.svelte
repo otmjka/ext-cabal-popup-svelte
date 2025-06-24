@@ -3,6 +3,7 @@
 	import { WidgetAside, WidgetControlButton } from '@/components/structure';
 	import { TabList, TabItem } from '@/components/ui';
 	import Settings from '@lucide/svelte/icons/settings';
+	import Move from '@lucide/svelte/icons/move';
 
 	import TabBuySell from './TabBuySell.svelte';
 	import TabMigration from './TabMigration.svelte';
@@ -56,10 +57,14 @@
 				</TabItem>
 			{/each}
 		</TabList>
-		<div class="e:flex e:gap-[8px]">
+		<div class="e:flex e:gap-[4px]">
+			<WidgetControlButton title="Move" onclick={onSettingsClick}>
+				<Move size={16} />
+			</WidgetControlButton>
 			<WidgetControlButton title="Settings" onclick={onSettingsClick}>
 				<Settings size={16} />
 			</WidgetControlButton>
+
 			<WidgetControlButton title={collapsed ? 'expand' : 'collapse'}>_</WidgetControlButton>
 		</div>
 	</header>
