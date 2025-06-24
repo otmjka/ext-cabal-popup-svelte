@@ -129,7 +129,7 @@ export const msgListener = (
 	// }
 	sendResponse({ ok: true });
 };
-export function useStartCabalService() {
+export function useCabalService() {
 	return {
 		// saveBuySellSettings,
 		// subscribeTokenPromise,
