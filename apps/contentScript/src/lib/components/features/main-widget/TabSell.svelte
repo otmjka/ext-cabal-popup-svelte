@@ -1,15 +1,23 @@
 <script lang="ts">
   // Components
-  import ShareIcon from "@lucide/svelte/icons/share";
-  import { SegmentControlItem, SegmentControlList, Button, ToggleButton, Input, Section } from '@/components/ui';
-  import SolanaCircleIcon from '@/components/icons/SolanaCircleIcon.svelte';
+  import { SegmentControlItem, SegmentControlList, Button, Input, Section } from '@/components/ui';
+  import { BalanceSol, QuickTradeActions } from "@/components/shared";
+  import { 
+    SolanaCircleIcon, SolanaIcon, 
+    SlippageIcon, TipIcon, PriorityFeeIcon, 
+    MevProtectionIcon, TxProcessorIcon  
+  } from '@/components/icons';
+  import Footer from './Footer.svelte';
   
   // Stores
-  import quickBuyStore from '@/stores/quick-buy';
   import quickSellStore from '@/stores/quick-sell';
+  import quickMcLimitsStore from '@/stores/quick-mc-limits';
 
-  // types
+  // Types
   import type { TNavItem } from '@/types/app';
+
+  // Constants
+  import { TRAILING_TYPES } from '@/constants/trailing';
 
   // Props
   let {
@@ -17,7 +25,7 @@
   } = $props();
 
   // Data
-  const segments: TNavItem[] = [
+  const tradeTypes: TNavItem[] = [
     {
       label: "Market",
       key: "market"
@@ -29,191 +37,241 @@
       key: "trailing"
     }
   ];
-  let segment: TNavItem = $state(segments[0]);
-  let amountBuy: number | undefined = $state();
+
+  let stats = $derived.by(() => {
+    return {
+      'slippage ': {
+        value: 20,
+        prefix: '',
+        suffix: '%',
+        icon: SlippageIcon,
+      },
+      'tip': {
+        value: 0.001,
+        prefix: '',
+        suffix: '',
+        icon: TipIcon,
+      }, 
+      'priority_fee': {
+        value: 0.0001,
+        prefix: '',
+        suffix: '',
+        icon: PriorityFeeIcon,
+      },
+      'mev_protection': {
+        value: "On",
+        prefix: '',
+        suffix: '',
+        icon: MevProtectionIcon,
+      },
+      'tx_processors': {
+        value: 5,
+        prefix: '',
+        suffix: '',
+        icon: TxProcessorIcon,
+      },
+    }
+  });
+
+  let tradeStats = $derived.by(() => {
+    return {
+      bought: {
+        label: 'Bought',
+        value: 0,
+        trend: 'positive',
+        icon: SolanaIcon
+      },
+      sold: {
+        label: 'Sold',
+        value: 70.90,
+        trend: 'negative',
+        icon: SolanaIcon
+      },
+      holding: {
+        label: 'Holding',
+        value: 15.20,
+        trend: 'neutral',
+        icon: SolanaIcon
+      },
+      pnl: {
+        label: 'PnL',
+        value: `+0 (+0%)`,
+        trend: 'positive',
+        icon: SolanaIcon
+      },
+    }
+  });
+  let tradeType: TNavItem = $state(tradeTypes[0]);
+  let tailingType: TNavItem = $state(TRAILING_TYPES[1]);
   let amountSell: number | undefined = $state();
-  let autoLimits = $state(true);
+  let limitAmount: number | undefined = $state();
+  let mcPercent: number = $state(0);
 
   // Methods
-  const onSegmentClick = (el: TNavItem) => {
-    segment = el;
+  const onTradeTypeClick = (el: TNavItem) => {
+    tradeType = el;
+    amountSell = 0;
+    limitAmount = 0;
   }
 
   const onBuyClick = () => {
     console.log('onBuyClick');
   }
 
-  const onSellClick = () => {
-    console.log('onSellClick');
-  }
-
-  const onSellInitialsClick = () => {
-    console.log('onSellInitialsClick');
-  }
-
-  const onAutolimitsClick = (e: Event) => {
-    console.log('onAutolimitsClick', autoLimits, e);
-  }
-
-  const onShareClick = () => {
-    console.log('onShareClick');
-  }
-
-  const setBuyAmount = (amount: number) => {
-    amountBuy = amount;
+  const onPlaceLimitOrderClick = () => {
+    console.log('onPlaceLimitOrderClick');
   }
 
   const setSellAmount = (amount: number) => {
     amountSell = amount;
   }
+
+  const setMcPercent = (amount: number) => {
+    mcPercent = amount;
+  }
+
+  const setTrailingType = (el: TNavItem) => {
+    tailingType = el;
+  }
 </script>
 
-<div class="e:flex e:flex-col e:gap-[12px]">
+<div class="e:flex e:flex-col e:gap-[12px] e:h-full">
+  <div class="e:w-full e:flex e:justify-between">
     <SegmentControlList>
-    {#each segments as el}
-      <SegmentControlItem
-        active={segment.key === el.key}
-        onclick={() => { onSegmentClick(el) }}
-      >
-        {el.label}
-      </SegmentControlItem>
-    {/each}
-  </SegmentControlList>
+      {#each tradeTypes as el}
+        <SegmentControlItem
+          active={tradeType.key === el.key}
+          onclick={() => { onTradeTypeClick(el) }}
+        >
+          {el.label}
+        </SegmentControlItem>
+      {/each}
+    </SegmentControlList>
+
+    <BalanceSol walletIcon balance={12.56} />
+  </div>
   
-  <Section variant="buy" class="e:flex e:flex-col e:gap-y-[10px]">
-    <div class="e:flex e:justify-between e:items-center">
-      <h4 class="text-18px e:font-bold">
-        Quick <span class="text-buy">Buy</span>
-      </h4>
+  <div class="e:w-full e:flex e:flex-col e:gap-[8px]">
+    <Section variant="sell" class="e:flex e:flex-col e:gap-y-[10px]">
+      {#if tradeType.key === 'trailing'}
+        <SegmentControlList class="e:w-full">
+          {#each TRAILING_TYPES as type}
+            <SegmentControlItem 
+              active={tailingType.key === type.key}
+              onclick={() => setTrailingType(type)}
+            >
+              {type.label}
+            </SegmentControlItem>
+          {/each}
+        </SegmentControlList>
+      {/if}
 
-      <div class="text-12px e:flex e:gap-x-[8px] e:items-center">
-        <span class="e:flex e:items-center">
-          Buys: 1
-        </span>
-        <span class="e:flex e:gap-x-[4px] e:items-center">
-          5 <SolanaCircleIcon />
-        </span>
-      </div>
-    </div>
-    <div class="e:w-full e:grid e:grid-cols-4 e:gap-[10px]">
-      {#each $quickBuyStore as el}
-        <Button 
-          variant="buy-secondary"
-          class="e:gap-x-[4px] e:w-full e:px-[2px]"
-          onclick={() => { setBuyAmount(el); }}
-        >
-          {el} <SolanaCircleIcon />
-        </Button>
-      {/each}
-    </div>
-    <div class="e:w-full e:grid e:grid-cols-4 e:gap-[10px]">
-      <Input 
-        value={amountBuy} 
-        variant="buy"
-        type="number" 
-        icon="sol" 
-        class="e:col-span-3"
-        placeholder="Enter SOL amount"
-        min={0.001}
-        max={100}
-        step={0.001}
-        onchange={() => {
-          console.log('amountBuy', amountBuy);
-        }}
+      <QuickTradeActions 
+        type="sell" 
+        actions={$quickSellStore} 
+        onclick={setSellAmount}
       />
-      <Button 
-        clipped
-        variant="buy" 
-        class="e:w-full"
-        onclick={onBuyClick}
-      >
-        Buy
-      </Button>
-    </div>
-  </Section>
-
-  <Section variant="sell" class="e:flex e:flex-col e:gap-y-[10px] e:mb-[24px]">
-    <div class="e:flex e:justify-between e:items-center">
-      <h4 class="text-18px e:font-bold">
-        Quick <span class="text-sell">Sell</span>
-      </h4>
-
-      <div class="text-12px e:flex e:gap-x-[8px] e:items-center">
-        <span class="e:flex e:items-center">
-          {token} 8M
-        </span>
-        <span class="e:flex e:gap-x-[4px] e:items-center">
-          8 <SolanaCircleIcon />
-        </span>
-
-        <span class="e:flex e:gap-x-[4px] e:items-center">
-          +60% 
-        </span>
-
-        <span>
-          <img src="/src/assets/sell-switch.svg" alt="">
-        </span>
-      </div>
-    </div>
-
-    <div class="e:w-full e:grid e:grid-cols-4 e:gap-[10px]">
-      {#each $quickSellStore as el}
-        <Button 
-          variant="sell-secondary"
-          class="e:gap-x-[4px] e:w-full e:px-[2px]"
-          onclick={() => { setSellAmount(el); }}
-        >
-          {el} <SolanaCircleIcon />
-        </Button>
-      {/each}
-    </div>
-
-    <div class="e:w-full e:grid e:grid-cols-8 e:gap-[10px]">
-      <Button 
-        clipped
-        variant="sell"
-        class="e:col-span-3 e:w-full e:px-[8px]"
-        onclick={onSellInitialsClick}
-      >
-        Sell initials
-      </Button>
       <Input 
         value={amountSell} 
         variant="sell"
         type="number" 
         icon="sol" 
-        class="e:col-span-3 e:w-full"
-        placeholder="Enter %"
+        class="e:col-span-3"
+        placeholder="Enter custom amount"
         min={0.001}
         max={100}
         step={0.001}
+        onchange={() => {
+          console.log('amountSell', amountSell);
+        }}
       />
-      <Button 
-        clipped
-        variant="sell" 
-        class="e:col-span-2 e:w-full"
-        onclick={onSellClick}
-      >
-        Sell
-      </Button>
-    </div>
-  </Section>
+    </Section>
 
-  <footer class="e:flex e:justify-between e:gap-[4px]">
-    <ToggleButton 
-      bind:enabled={autoLimits}
-      onclick={onAutolimitsClick}
-    >
-      {autoLimits ? 'AutoLimits Activated' : 'Enable AutoLimits'}
-    </ToggleButton>
+    {#if tradeType.key === 'limit' || tradeType.key === 'trailing'}
+      <div class="e:w-full e:relative e:mb-[8px]">
+        <Input bind:value={limitAmount} variant="default" />
+        <span class="e:absolute e:top-[10px] e:right-[10px] text-12px e:text-white/50 e:font-normal">
+          $MKT CAP
+        </span>
+      </div>
 
+      <div class="e:w-full e:relative e:grid e:grid-cols-4 e:gap-x-[16px]">
+        <div class="e:col-span-3">
+          <SegmentControlList class="e:w-full" size="lg">
+            {#each $quickMcLimitsStore as mcLimit}
+              <SegmentControlItem 
+                active={mcPercent == mcLimit}
+                onclick={() => setMcPercent(mcLimit)}
+              >
+                {mcLimit > 0 ? '+' : ''}{mcLimit}%
+              </SegmentControlItem>
+            {/each}
+          </SegmentControlList>
+        </div>
+
+        <Input 
+          bind:value={mcPercent} 
+          variant="default" 
+          icon="percent" 
+        />
+      </div>
+    {/if}
+  </div>
+
+  <div class="e:w-full e:flex e:justify-between">
+    {#each Object.values(stats) as stat}
+      <div class="e:flex e:items-center e:gap-x-[4px] e:py-[6px] e:px-[6px]">
+        <stat.icon />
+        <span class="text-12px e:text-[#9B9C9E]">
+          {stat.value} {stat.suffix}
+        </span>
+      </div>
+    {/each}
+  </div>
+
+  {#if tradeType.key === 'market'}
     <Button 
-      variant="ghost" 
-      class="e:gap-[6px] e:px-[8px]"
-      onclick={onShareClick}
+      clipped
+      variant="sell" 
+      class="e:w-full e:gap-x-[8px]"
+      onclick={onBuyClick}
     >
-      <ShareIcon size={14} />
-      Share P&L
+      <span class="e:flex e:gap-x-[4px]">
+        Buy {amountSell} <SolanaCircleIcon />
+      </span> {token}
     </Button>
-  </footer>
+  {/if}
+
+  {#if tradeType.key === 'trailing'}
+    <Button 
+      clipped
+      variant="sell" 
+      class="e:w-full e:gap-x-[8px]"
+      onclick={onPlaceLimitOrderClick}
+    >
+      Place Limit Order
+    </Button>
+  {/if}
 </div>
+
+{#if tradeType.key === 'market' || tradeType.key === 'limit'}
+  <div class="e:w-full e:flex e:justify-between e:mb-[8px]">
+    {#each Object.values(tradeStats) as stat}
+      <div class="text-12px e:flex e:flex-col e:items-center e:gap-y-[4px]">
+        <p class="e:text-[#9B9C9E]">
+          {stat.label}
+        </p>
+        <p 
+          class="text-buy e:flex e:gap-x-[4px] e:items-center"
+          class:text-sell={stat.trend === 'negative'}
+          class:text-buy={stat.trend === 'positive'}
+          class:e:text-white={stat.trend === 'neutral'}
+        >
+          <stat.icon size={10} />
+          {stat.value}
+        </p>
+      </div>
+    {/each}
+  </div>
+  <Footer />
+{/if}
