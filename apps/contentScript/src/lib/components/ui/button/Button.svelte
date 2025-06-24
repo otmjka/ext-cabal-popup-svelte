@@ -54,7 +54,7 @@
 	}
 
 	.bnt-buy-secondary {
-		@apply e:bg-[#2D4B33] e:hover:bg-[#45714D] e:font-normal e:text-white;
+		@apply e:bg-[#152519] e:hover:bg-[#45714D] e:font-normal e:text-white;
 	}
 
 	.bnt-sell {

@@ -32,8 +32,8 @@
     {limit.ticker}
   </td>
   <td 
-    class:e:text-buy={limit.type === "negative"}
-    class:e:text-sell={limit.type != "negative"}
+    class:text-buy={limit.type === "negative"}
+    class:text-sell={limit.type != "negative"}
   >
     {limit.limitType}
   </td>

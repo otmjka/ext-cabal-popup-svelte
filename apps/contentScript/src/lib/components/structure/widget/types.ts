@@ -8,3 +8,11 @@ export interface IWidgetControlButton {
   class?: string,
   title?: string,
 }
+
+export interface IWidgetAside {
+  draggable?: boolean,
+  width?: number,
+  height?: number,
+  children?: Snippet,
+  class?: string,
+}
