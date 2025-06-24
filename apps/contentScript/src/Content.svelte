@@ -4,20 +4,21 @@
 	import { useContentManager } from '@/hooks/useContentManager';
 	export let mint: string;
 
-	const { isWidgetReady, handleOpenSettings } = useContentManager({ mint });
+	const { contentState, handleOpenSettings } = useContentManager({ mint });
+	$: widgetState = { contentState: $contentState, handleOpenSettings };
 </script>
 
 <main class="e:absolute e:top-0 e:right-0 e:z-[200]">
-	{#if $isWidgetReady}
-		<FloatingWidget state={{ onOpenSettings: handleOpenSettings }} />
+	{#if $contentState.isWidgetReady}
+		<FloatingWidget {widgetState} />
 	{:else}
 		<div class="e:text-white e:bg-black e:p-2 e:rounded-md">
 			<div>Loading…</div>
-			<!-- <div>
+			<div>
 				<pre class="e:text-xs e:bg-gray-900 e:text-white e:p-2 e:rounded">
-	{JSON.stringify($contentAppStore, null, 2)}
-</pre>
-			</div> -->
+					{JSON.stringify($contentAppStore, null, 2)}
+				</pre>
+			</div>
 		</div>
 	{/if}
 </main>

@@ -4,13 +4,21 @@ import { useCabalService } from './useCabalService';
 import { contentAppStore } from '../stores/contentAppStore';
 import { writable } from 'svelte/store';
 
+type ContentState = {
+	isWidgetReady: boolean;
+	ticker: string;
+};
+
 export const useContentManager = ({ mint }: { mint: Mint }) => {
 	const { registerTab, startListen, subscribeToken } = useCabalService();
 
-	const isWidgetReady = writable(false); // локальный стор
+	const contentState = writable<ContentState>({ isWidgetReady: false, ticker: '' });
 
 	const unsubscribe = contentAppStore.subscribe((store) => {
-		isWidgetReady.set(store.isWidgetReady);
+		contentState.set({
+			isWidgetReady: store.isWidgetReady,
+			ticker: store.tokenStatus?.ticker ?? '-'
+		});
 	});
 
 	onMount(() => {
@@ -48,7 +56,7 @@ export const useContentManager = ({ mint }: { mint: Mint }) => {
 
 	const handleOpenSettings = () => window.open(chrome.runtime.getURL('home.html'), '_blank');
 	return {
-		isWidgetReady,
+		contentState,
 		handleOpenSettings
 	};
 };
