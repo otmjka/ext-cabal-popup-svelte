@@ -45,7 +45,7 @@
 	.btn {
 		@apply e:px-[16px] e:h-[32px];
 		@apply e:flex e:flex-nowrap e:items-center e:justify-center;
-		@apply e:whitespace-nowrap e:cursor-pointer e:outline-none;
+		@apply e:whitespace-nowrap e:cursor-pointer e:select-none e:outline-none;
 		@apply e:text-[14px]/[14px];
 	}
 

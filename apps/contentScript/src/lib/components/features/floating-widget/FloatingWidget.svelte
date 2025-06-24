@@ -3,7 +3,6 @@
   import { WidgetAside, WidgetControlButton } from '@/components/structure';
   import { TabList, TabItem } from '@/components/ui';
   import Settings from "@lucide/svelte/icons/settings";
-  import Move from "@lucide/svelte/icons/move";
 
   import TabBuySell from './TabBuySell.svelte';
   import TabMigration from './TabMigration.svelte';
@@ -43,38 +42,33 @@
   draggable 
   width={320} 
   height={380}
-  class="e:p-[8px] e:gap-y-[12px]" 
 >
-  <header class="e:flex e:justify-between">
-    <TabList>
-      {#each tabs as tab}
-        <TabItem 
-          onclick={() => { onTabClick(tab) }}
-          active={activeTab.key === tab.key}
+  {#snippet header()}
+    <header class="e:flex e:justify-between">
+      <TabList>
+        {#each tabs as tab}
+          <TabItem 
+            onclick={() => { onTabClick(tab) }}
+            active={activeTab.key === tab.key}
+          >
+            {tab.label}
+          </TabItem>
+        {/each}
+      </TabList>
+      <div class="e:flex e:gap-[8px]">
+        <WidgetControlButton 
+          title='Settings'
+          onclick={onSettingsClick}
         >
-          {tab.label}
-        </TabItem>
-      {/each}
-    </TabList>
-    <div class="e:flex e:gap-[4px]">
-      <WidgetControlButton 
-        title='Move'
-        onclick={onSettingsClick}
-      >
-        <Move size={16}  />
-      </WidgetControlButton>
-      <WidgetControlButton 
-        title='Settings'
-        onclick={onSettingsClick}
-      >
-        <Settings size={16}  />
-      </WidgetControlButton>
+          <Settings size={16}  />
+        </WidgetControlButton>
 
-      <WidgetControlButton title={collapsed ? 'expand' : 'collapse'}>
-        _
-      </WidgetControlButton>
-    </div>
-  </header>
+        <WidgetControlButton title={collapsed ? 'expand' : 'collapse'}>
+          _
+        </WidgetControlButton>
+      </div>
+    </header>
+  {/snippet}
 
   {#if activeTab.key === 'trade'}
     <TabBuySell />
