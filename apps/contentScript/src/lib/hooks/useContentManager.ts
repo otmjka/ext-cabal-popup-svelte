@@ -2,9 +2,17 @@ import type { Mint } from '../types/cabalSharedTypes';
 import { onMount, onDestroy } from 'svelte';
 import { useCabalService } from './useCabalService';
 import { contentAppStore } from '../stores/contentAppStore';
+import { writable } from 'svelte/store';
 
 export const useContentManager = ({ mint }: { mint: Mint }) => {
 	const { registerTab, startListen, subscribeToken } = useCabalService();
+
+	const isWidgetReady = writable(false); // локальный стор
+
+	const unsubscribe = contentAppStore.subscribe((store) => {
+		isWidgetReady.set(store.isWidgetReady);
+	});
+
 	onMount(() => {
 		console.log('[onMount]', mint, location.href);
 		contentAppStore.update((store) => ({ ...store, tabMint: mint }));
@@ -34,11 +42,13 @@ export const useContentManager = ({ mint }: { mint: Mint }) => {
 			console.log('[cleanup]');
 			window.removeEventListener('focus', handleFocus);
 			window.removeEventListener('blur', handleBlur);
+			unsubscribe();
 		};
 	});
 
 	const handleOpenSettings = () => window.open(chrome.runtime.getURL('home.html'), '_blank');
 	return {
+		isWidgetReady,
 		handleOpenSettings
 	};
 };
