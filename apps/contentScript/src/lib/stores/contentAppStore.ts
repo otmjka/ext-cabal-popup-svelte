@@ -10,6 +10,7 @@ type ContentAppStore = {
 	tabMint: string | undefined;
 	mint: string | undefined;
 	isReady: boolean;
+	isWidgetReady: boolean;
 	url: string;
 	shouldSetApiKey: boolean;
 	apiKeyError?: string;
@@ -23,6 +24,7 @@ const initialState: ContentAppStore = {
 	tabMint: undefined,
 	mint: undefined,
 	isReady: false,
+	isWidgetReady: false,
 	url: '',
 	shouldSetApiKey: false,
 	apiKeyError: undefined,
@@ -32,8 +34,29 @@ const initialState: ContentAppStore = {
 	lastTradeEvent: null
 };
 
-export const contentAppStore = writable<ContentAppStore>(initialState);
+const { subscribe, set, update: internalUpdate } = writable<ContentAppStore>(initialState);
 
-export function resetContentAppStore() {
-	contentAppStore.set(initialState);
-}
+const update = (updater: (state: ContentAppStore) => ContentAppStore) => {
+	internalUpdate((state) => {
+		const next = updater(state);
+
+		const shouldBeReady =
+			next.isReady && next.tokenStatus !== null && next.tradeStats !== null && next.config !== null;
+
+		return {
+			...next,
+			isWidgetReady: shouldBeReady
+		};
+	});
+};
+
+const resetContentAppStore = () => {
+	set(initialState);
+};
+
+export const contentAppStore = {
+	subscribe,
+	set,
+	update,
+	reset: resetContentAppStore
+};

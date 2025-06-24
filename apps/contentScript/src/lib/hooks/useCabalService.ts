@@ -48,18 +48,18 @@ const messageHandler = (message, sender, sendResponse) => {
 		metaToStatus(message);
 	}
 
-	switch (message.type) {
+	switch (message.eventName) {
 		case CabalUserActivityStreamMessages.tradeStats:
-			console.log('tradeStats', message);
+			console.log('[tradeStats]', message);
 			contentAppStore.update((store) => ({ ...store, tradeStats: message.data }));
 			break;
 		case CabalTradeStreamMessages.tradeEvent:
-			console.log('tradeEvent', message);
+			console.log('[tradeEvent]', message);
 
 			contentAppStore.update((store) => ({ ...store, lastTradeEvent: message.data }));
 			break;
 		case 'tokenStatus':
-			console.log('tokenStatus', message);
+			console.log('tokenStatus[]]', message);
 			contentAppStore.update((store) => ({ ...store, tokenStatus: message.data }));
 			break;
 	}
