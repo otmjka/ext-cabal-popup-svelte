@@ -1,5 +1,6 @@
-import { z } from 'zod';
 import type { StrBigInt, TokenStatusParsed, TradeStatsParsed } from '@/types/cabalSharedTypes';
+import { parsedNumberSchema } from './parsers';
+import { oneTokenPriceInSol } from './token';
 
 export const formatLamports = ({
 	solBalance,
@@ -10,21 +11,6 @@ export const formatLamports = ({
 	tokenDecimals: number;
 	toFixed: number;
 }) => Number(Number(solBalance) / Math.pow(10, tokenDecimals)).toFixed(toFixed);
-
-const bigintStringSchema = z.string().refine(
-	(val) => {
-		try {
-			BigInt(val); // Пытаемся преобразовать в BigInt
-			return true;
-		} catch {
-			return false;
-		}
-	},
-	{
-		message: 'Строка должна быть валидным bigint числом'
-	}
-);
-const parsedNumberSchema = bigintStringSchema.transform((val) => Number(val));
 
 // {
 //     "mint": "7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr",
@@ -60,21 +46,6 @@ const parsedNumberSchema = bigintStringSchema.transform((val) => Number(val));
 
 // baseLiq (POPCAT) 16139087_229_039_483
 // quoteLiq (SOL) 33,062_018,174,929
-
-// 1 token price in SOL
-// quoteLiq / baseLiq = 33,062,018,174,929 / 16,139,087,229,039,483 ≈ 0.002048 SOL
-export const oneTokenPriceInSol = ({
-	quoteLiq,
-	baseLiq
-}: {
-	quoteLiq: StrBigInt;
-	baseLiq: StrBigInt;
-}) => {
-	const qLiq = parsedNumberSchema.parse(quoteLiq);
-	const bLiq = parsedNumberSchema.parse(baseLiq);
-
-	return qLiq / bLiq;
-};
 
 export const formatTradeData = ({
 	tradeStats,

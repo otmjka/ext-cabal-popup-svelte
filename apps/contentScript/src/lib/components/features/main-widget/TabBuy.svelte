@@ -12,15 +12,6 @@
 	import quickMcLimitsStore from '@/stores/quick-mc-limits';
 	import { contentAppStore } from '@/stores/contentAppStore';
 
-	// Props
-	let props = $props<{
-		handlers: {
-			onMarketBuySol: (amount: number) => void;
-			onOpenSettings: () => void;
-			onMarketSellPerc: (value: number) => void;
-		};
-	}>();
-
 	// Types
 	import type { TNavItem } from '@/types/app';
 
@@ -28,8 +19,12 @@
 	import { TRAILING_TYPES } from '@/constants/trailing';
 	import { getSolBalance } from '@/untils/formatters';
 	import { onDestroy } from 'svelte';
+	import type { ContentManagerHandlers } from '@/hooks/useContentManager';
 
 	// Props
+	let props = $props<{
+		handlers: ContentManagerHandlers;
+	}>();
 
 	// Data
 	const tradeTypes: TNavItem[] = [

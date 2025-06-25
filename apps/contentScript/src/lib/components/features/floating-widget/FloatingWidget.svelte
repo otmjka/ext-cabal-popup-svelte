@@ -10,6 +10,7 @@
 
 	// Types
 	import type { TNavItem } from '@/types/app';
+	import type { ContentManagerHandlers } from '@/hooks/useContentManager';
 
 	// Data
 	const tabs: TNavItem[] = [
@@ -28,11 +29,7 @@
 	];
 
 	let props = $props<{
-		handlers: {
-			onMarketBuySol: (amount: number) => void;
-			onOpenSettings: () => void;
-			onMarketSellPerc: (value: number) => void;
-		};
+		handlers: ContentManagerHandlers;
 	}>();
 
 	let collapsed = $state(false);

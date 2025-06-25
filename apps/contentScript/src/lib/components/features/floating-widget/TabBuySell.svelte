@@ -12,14 +12,11 @@
 	import { contentAppStore } from '@/stores/contentAppStore';
 	import { onDestroy } from 'svelte';
 	import { calculatePnL, formatTradeData } from '@/untils/formatters';
+	import type { ContentManagerHandlers } from '@/hooks/useContentManager';
 
 	// Props
 	let props = $props<{
-		handlers: {
-			onMarketBuySol: (amount: number) => void;
-			onOpenSettings: () => void;
-			onMarketSellPerc: (value: number) => void;
-		};
+		handlers: ContentManagerHandlers;
 	}>();
 
 	let ticker = $state('-');
@@ -89,10 +86,10 @@
 	};
 
 	const onSellClick = () => {
-		console.log('onBuyClick', amountSell, sellUnittype);
-		// if (sellUnittype === 'SOL') {
-		// 	props.onMarketSellSol(amountBuy);
-		// }
+		console.log('onSellClick', amountSell, sellUnittype);
+		if (sellUnittype === 'SOL') {
+			props.handlers.onMarketSellSol(amountSell);
+		}
 
 		if (sellUnittype === 'percent') {
 			props.handlers.onMarketSellPerc(amountSell);

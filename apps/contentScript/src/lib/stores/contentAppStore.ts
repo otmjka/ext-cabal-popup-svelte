@@ -6,7 +6,7 @@ import type {
 } from '@/types/cabalSharedTypes';
 import { writable } from 'svelte/store';
 
-type ContentAppStore = {
+export type ContentAppStore = {
 	tabMint: string | undefined;
 	mint: string | undefined;
 	isReady: boolean;
