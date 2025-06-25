@@ -6,6 +6,12 @@
 	import { SellSwitchIcon, SolanaCircleIcon } from '@/components/icons';
 
 	// Stores
+<<<<<<< HEAD
+=======
+	import quickBuyStore from '@/stores/quick-buy';
+	import quickSellStore from '@/stores/quick-sell';
+  import quickSellPercentStore from "@/stores/quick-sell-percent";
+>>>>>>> main
 	import { contentAppStore } from '@/stores/contentAppStore';
 	import { onDestroy } from 'svelte';
 	import { calculatePnL, formatTradeData } from '@/untils/formatters';
@@ -59,8 +65,13 @@
 	let amountBuy: number | undefined = $state();
 	let amountSell: number | undefined = $state();
 	let autoLimits = $state(true);
+  let sellUnittype: "SOL" | "percent" = $state('SOL');
 
 	// Methods
+
+  const toggleSellUnit = () => {
+    sellUnittype = sellUnittype === "SOL" ? "percent" : "SOL";
+  }
 	const onBuyClick = () => {
 		console.log('onBuyClick', amountBuy);
 		props.onMarketBuySol(amountBuy);
@@ -89,6 +100,9 @@
 	const setSellAmount = (amount: number) => {
 		amountSell = amount;
 	};
+	const setSellPercent = (amount: number) => {
+		amountSell = amount;
+	};
 
 	onDestroy(unsubscribe);
 </script>
@@ -111,7 +125,7 @@
 		<QuickTradeActions type="buy" actions={quickBuys} onclick={setBuyAmount} />
 		<div class="e:w-full e:grid e:grid-cols-4 e:gap-[10px]">
 			<Input
-				value={amountBuy}
+				bind:value={amountBuy}
 				variant="buy"
 				type="number"
 				icon="sol"
@@ -146,13 +160,24 @@
 
 				<span class="e:flex e:gap-x-[4px] e:items-center"> {pnlPerc} % </span>
 
-				<span>
+				<button onclick={toggleSellUnit} class="e:cursor-pointer">
 					<SellSwitchIcon />
-				</span>
+				</button>
 			</div>
 		</div>
 
-		<QuickTradeActions type="sell" actions={quickSells} onclick={setSellAmount} />
+		<QuickTradeActions
+			type="sell"
+			unit={sellUnittype}
+			actions={sellUnittype === 'SOL' ? $quickSellStore : $quickSellPercentStore}
+			onclick={() => {
+				if (sellUnittype === 'SOL') {
+					setSellAmount;
+				} else {
+					setSellPercent;
+				}
+			}}
+		/>
 
 		<div class="e:w-full e:grid e:grid-cols-8 e:gap-[10px]">
 			<Button
@@ -164,7 +189,7 @@
 				Sell initials
 			</Button>
 			<Input
-				value={amountSell}
+				bind:value={amountSell}
 				variant="sell"
 				type="number"
 				icon="sol"
