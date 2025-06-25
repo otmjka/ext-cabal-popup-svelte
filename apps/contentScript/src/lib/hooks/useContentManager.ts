@@ -2,15 +2,9 @@ import type { Mint } from '../types/cabalSharedTypes';
 import { onMount } from 'svelte';
 import { useCabalService } from './useCabalService';
 import { contentAppStore } from '../stores/contentAppStore';
-import { writable } from 'svelte/store';
-
-type ContentState = {
-	isWidgetReady: boolean;
-	ticker: string;
-};
 
 export const useContentManager = ({ mint }: { mint: Mint }) => {
-	const { registerTab, startListen, subscribeToken, marketBuy } = useCabalService();
+	const { registerTab, startListen, subscribeToken, marketBuy, marketSell } = useCabalService();
 
 	let tabMint: string | undefined = '';
 
@@ -60,8 +54,21 @@ export const useContentManager = ({ mint }: { mint: Mint }) => {
 		}
 		marketBuy({ mint: tabMint, amountSol: value });
 	};
+
+	const handleMarketSellPerc = (value: number) => {
+		console.log('[handleMarketSellPerc]', value, tabMint);
+		if (!value || !tabMint) {
+			return;
+		}
+		const amountBps = value * 100;
+		marketSell({ mint: tabMint, amountBps });
+	};
+
 	return {
-		onMarketBuySol: handleMarketBuySol,
-		onOpenSettings: handleOpenSettings
+		handlers: {
+			onMarketSellPerc: handleMarketSellPerc,
+			onMarketBuySol: handleMarketBuySol,
+			onOpenSettings: handleOpenSettings
+		}
 	};
 };

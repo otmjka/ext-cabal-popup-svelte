@@ -7,22 +7,32 @@
   import PinOffIcon from "@lucide/svelte/icons/pin-off";
 	import MenuIcon from '@lucide/svelte/icons/menu';
 
-  import TabBuy from './TabBuy.svelte';
-  import TabSell from './TabSell.svelte';
+	import TabBuy from './TabBuy.svelte';
+	import TabSell from './TabSell.svelte';
 
-  // Types
-  import type { TNavItem } from '@/types/app';
+	// Types
+	import type { TNavItem } from '@/types/app';
 
-  // Data
-  const tabs: TNavItem[] = [
-    {
-      key: 'buy',
-      label: 'Buy',
-    }, {
-      key: 'sell',
-      label: 'Sell',
-    },
-  ];
+  // Props
+  let props = $props<{
+		handlers: {
+			onMarketBuySol: (amount: number) => void;
+			onOpenSettings: () => void;
+			onMarketSellPerc: (value: number) => void;
+		};
+	}>();
+
+	// Data
+	const tabs: TNavItem[] = [
+		{
+			key: 'buy',
+			label: 'Buy'
+		},
+		{
+			key: 'sell',
+			label: 'Sell'
+		}
+	];
 
   const menu = [
     {
@@ -99,10 +109,10 @@
     </header>
   {/snippet}
 
-  {#if activeTab.key === 'buy'}
-    <TabBuy />
-  {/if}
-  {#if activeTab.key === 'sell'}
-    <TabSell />
-  {/if}
+	{#if activeTab.key === 'buy'}
+		<TabBuy handlers={props.handlers} />
+	{/if}
+	{#if activeTab.key === 'sell'}
+		<TabSell />
+	{/if}
 </WidgetAside>
