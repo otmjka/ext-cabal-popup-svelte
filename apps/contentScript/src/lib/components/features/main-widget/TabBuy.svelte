@@ -69,7 +69,7 @@
   }
 </script>
 
-<div class="e:flex e:flex-col e:gap-[12px] e:h-full">
+<div class="e:flex e:flex-col e:gap-[8px] e:h-full">
   <div class="e:w-full e:flex e:justify-between">
     <SegmentControlList>
       {#each tradeTypes as el}
@@ -122,14 +122,14 @@
     </Section>
 
     {#if tradeType.key === 'limit' || tradeType.key === 'trailing'}
-      <div class="e:w-full e:relative e:mb-[8px]">
+      <div class="e:w-full e:relative">
         <Input bind:value={limitAmount} variant="default" />
         <span class="e:absolute e:top-[10px] e:right-[10px] text-12px e:text-white/50 e:font-normal">
           $MKT CAP
         </span>
       </div>
 
-      <div class="e:w-full e:relative e:grid e:grid-cols-4 e:gap-x-[16px]">
+      <div class="e:w-full e:relative e:grid e:grid-cols-4 e:gap-x-[12px]">
         <div class="e:col-span-3">
           <SegmentControlList class="e:w-full" size="lg">
             {#each $quickMcLimitsStore as mcLimit}
@@ -181,8 +181,6 @@
 
 <div 
   class="e:w-full e:flex e:flex-col e:gap-[8px] e:h-[60px]"
-  class:e:flex={tradeType.key !== 'trailing'}
-  class:e:hidden={tradeType.key === 'trailing'}
 >
   <TradeStats />
   <Footer />

@@ -44,7 +44,7 @@
 
 <div class="e:w-full e:flex e:justify-between">
   {#each Object.values(stats) as stat}
-    <div class="e:flex e:items-center e:gap-x-[4px] e:py-[6px] e:px-[6px]">
+    <div class="e:flex e:items-center e:gap-x-[4px] e:py-[4px] e:px-[6px]">
       <stat.icon />
       <span class="text-12px e:text-[#9B9C9E]">
         {stat.value} {stat.suffix}

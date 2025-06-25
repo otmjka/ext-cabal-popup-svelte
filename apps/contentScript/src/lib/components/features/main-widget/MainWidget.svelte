@@ -36,7 +36,7 @@
 <WidgetAside 
   {draggable} 
   width={320} 
-  height={442}
+  height={356}
 >
   {#snippet header()}
     <header class="e:flex e:justify-between">

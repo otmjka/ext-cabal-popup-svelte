@@ -191,8 +191,6 @@
 
 <div 
   class="e:w-full e:flex e:flex-col e:gap-[8px] e:h-[56px]"
-  class:e:flex={tradeType.key !== 'trailing'}
-  class:e:hidden={tradeType.key === 'trailing'}
 >
   <TradeStats />
   <Footer />
