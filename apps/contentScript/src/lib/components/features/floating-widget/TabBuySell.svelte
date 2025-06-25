@@ -1,23 +1,58 @@
 <script lang="ts">
-  // Components
-  import ShareIcon from "@lucide/svelte/icons/share";
-  import { Button, ToggleButton, Input, Section } from '@/components/ui';
-  import { QuickTradeActions } from "@/components/shared";
-  import { SellSwitchIcon, SolanaCircleIcon } from "@/components/icons";
+	// Components
+	import ShareIcon from '@lucide/svelte/icons/share';
+	import { Button, ToggleButton, Input, Section } from '@/components/ui';
+	import { QuickTradeActions } from '@/components/shared';
+	import { SellSwitchIcon, SolanaCircleIcon } from '@/components/icons';
 
 	// Stores
-	import quickBuyStore from '@/stores/quick-buy';
-	import quickSellStore from '@/stores/quick-sell';
 	import { contentAppStore } from '@/stores/contentAppStore';
 	import { onDestroy } from 'svelte';
+	import { calculatePnL, formatTradeData } from '@/untils/formatters';
 
 	// Props
-	let ticker = $state('-');
-	let unsubscribe = contentAppStore.subscribe(($store) => {
-		console.log('Store changed:', $store);
-		ticker = $store.tokenStatus?.ticker || '--';
+	let props = $props<{ onMarketBuySol: (value: number) => void }>();
 
-		// Выполнить нужные действия при изменении
+	let ticker = $state('-');
+	let quickBuys = $state<number[]>([]);
+	let quickSells = $state<number[]>([]);
+	let buys = $state<string>('0');
+	let buyQoute = $state<string>('0');
+	let tokenBalance = $state<string>('-');
+	let tokensInSol = $state<string>('-');
+	let pnlPerc = $state<string>('0');
+	let unsubscribe = contentAppStore.subscribe(($store) => {
+		try {
+			console.log('Store changed:', $store);
+
+			ticker = $store.tokenStatus?.ticker || '-';
+			if ($store.config?.buySell.buyPresetsSol) {
+				quickBuys = $store.config?.buySell.buyPresetsSol;
+			}
+
+			if ($store.config?.buySell.sellPresetsSol) {
+				quickSells = $store.config?.buySell.sellPresetsSol;
+			}
+			if (!$store.tradeStats || !$store.tokenStatus) {
+				return;
+			}
+			const formattedTS = formatTradeData({
+				tradeStats: $store.tradeStats,
+				tokenStatus: $store.tokenStatus
+			});
+			buys = formattedTS.buys;
+			buyQoute = formattedTS.buyQoute;
+			tokenBalance = formattedTS.tokenBalance;
+			tokensInSol = formattedTS.tokensInSol || '0';
+
+			const { percentagePnL } = calculatePnL({
+				tokenStatus: $store.tokenStatus,
+				tradeStats: $store.tradeStats
+			});
+			pnlPerc = `${percentagePnL > 0 ? '+' : ''}${percentagePnL.toFixed(1)}`;
+		} catch (error) {
+			console.error(error);
+		}
 	});
 
 	// Data
@@ -27,7 +62,8 @@
 
 	// Methods
 	const onBuyClick = () => {
-		console.log('onBuyClick');
+		console.log('onBuyClick', amountBuy);
+		props.onMarketBuySol(amountBuy);
 	};
 
 	const onSellClick = () => {
@@ -53,6 +89,7 @@
 	const setSellAmount = (amount: number) => {
 		amountSell = amount;
 	};
+
 	onDestroy(unsubscribe);
 </script>
 
@@ -64,13 +101,14 @@
 			</h4>
 
 			<div class="text-12px e:flex e:gap-x-[8px] e:items-center">
-				<span class="e:flex e:items-center"> Buys: 1 </span>
+				<span class="e:flex e:items-center"> Buys: {buys} </span>
 				<span class="e:flex e:gap-x-[4px] e:items-center">
-					5 <SolanaCircleIcon />
+					{buyQoute}
+					<SolanaCircleIcon />
 				</span>
 			</div>
 		</div>
-		<QuickTradeActions type="buy" actions={$quickBuyStore} onclick={setBuyAmount} />
+		<QuickTradeActions type="buy" actions={quickBuys} onclick={setBuyAmount} />
 		<div class="e:w-full e:grid e:grid-cols-4 e:gap-[10px]">
 			<Input
 				value={amountBuy}
@@ -98,21 +136,23 @@
 
 			<div class="text-12px e:flex e:gap-x-[8px] e:items-center">
 				<span class="e:flex e:items-center">
-					{ticker} 8M
+					{ticker}
+					{tokenBalance}
 				</span>
 				<span class="e:flex e:gap-x-[4px] e:items-center">
-					8 <SolanaCircleIcon />
+					{tokensInSol}
+					<SolanaCircleIcon />
 				</span>
 
-				<span class="e:flex e:gap-x-[4px] e:items-center"> +60% </span>
+				<span class="e:flex e:gap-x-[4px] e:items-center"> {pnlPerc} % </span>
 
-        <span>
-          <SellSwitchIcon />
-        </span>
-      </div>
-    </div>
+				<span>
+					<SellSwitchIcon />
+				</span>
+			</div>
+		</div>
 
-		<QuickTradeActions type="sell" actions={$quickSellStore} onclick={setSellAmount} />
+		<QuickTradeActions type="sell" actions={quickSells} onclick={setSellAmount} />
 
 		<div class="e:w-full e:grid e:grid-cols-8 e:gap-[10px]">
 			<Button
