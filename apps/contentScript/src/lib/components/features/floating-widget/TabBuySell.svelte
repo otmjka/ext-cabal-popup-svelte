@@ -83,7 +83,7 @@
 		<QuickTradeActions type="buy" actions={$quickBuyStore} onclick={setBuyAmount} />
 		<div class="e:w-full e:grid e:grid-cols-4 e:gap-[10px]">
 			<Input
-				value={amountBuy}
+				bind:value={amountBuy}
 				variant="buy"
 				type="number"
 				icon="sol"
@@ -149,7 +149,7 @@
 				Sell initials
 			</Button>
 			<Input
-				value={amountSell}
+				bind:value={amountSell}
 				variant="sell"
 				type="number"
 				icon="sol"
