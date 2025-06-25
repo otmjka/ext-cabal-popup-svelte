@@ -88,6 +88,6 @@
     @apply e:w-full e:px-[8px] e:py-[6px] e:hover:bg-white/5;
   }
   .ext-widget-aside--body {
-    @apply e:p-[8px]  e:h-full e:flex e:flex-col;
+    @apply e:p-[8px] e:h-full e:flex e:flex-col;
   }
 </style>

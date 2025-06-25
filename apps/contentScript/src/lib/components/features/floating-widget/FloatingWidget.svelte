@@ -2,7 +2,7 @@
 	// Components
 	import { WidgetAside, WidgetControlButton } from '@/components/structure';
 	import { TabList, TabItem } from '@/components/ui';
-	import Settings from '@lucide/svelte/icons/settings';
+	import SettingsIcon from '@lucide/svelte/icons/settings';
 
 	import TabBuySell from './TabBuySell.svelte';
 	import TabMigration from './TabMigration.svelte';
@@ -61,9 +61,9 @@
 					</TabItem>
 				{/each}
 			</TabList>
-			<div class="e:flex e:gap-[8px]">
+			<div class="e:flex e:gap-[6px]">
 				<WidgetControlButton title="Settings" onclick={onSettingsClick}>
-					<Settings size={16} />
+					<SettingsIcon size={16} />
 				</WidgetControlButton>
 
 				<WidgetControlButton title={collapsed ? 'expand' : 'collapse'}>_</WidgetControlButton>

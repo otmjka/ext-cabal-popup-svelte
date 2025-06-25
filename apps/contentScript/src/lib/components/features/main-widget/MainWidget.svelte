@@ -1,10 +1,11 @@
 <script lang="ts">
 	// Components
-	import { WidgetAside, WidgetControlButton } from '@/components/structure';
+	import { WidgetAside, WidgetControlButton, WidgetControlDropdown } from '@/components/structure';
 	import { TabList, TabItem } from '@/components/ui';
 
 	import PinIcon from '@lucide/svelte/icons/pin';
 	import PinOffIcon from '@lucide/svelte/icons/pin-off';
+	import MenuIcon from '@lucide/svelte/icons/menu';
 
 	import TabBuy from './TabBuy.svelte';
 	import TabSell from './TabSell.svelte';
@@ -25,10 +26,26 @@
 		}
 	];
 
+	// Props
+
 	let props = $props<{
 		handlers: ContentManagerHandlers;
 	}>();
-
+	const menu = [
+		{
+			label: 'See Limit History',
+			callback: () => {}
+		},
+		{
+			label: 'TX History',
+			callback: () => {}
+		},
+		{
+			label: 'About Cabal',
+			callback: () => {}
+		}
+	];
+	let showMenu = $state(true);
 	let draggable = $state(false);
 	let collapsed = $state(false);
 	let activeTab: TNavItem = $state(tabs[0]);
@@ -36,6 +53,10 @@
 	// Methods
 	const onTabClick = (tab: TNavItem) => {
 		activeTab = tab;
+	};
+
+	const onMenuClick = () => {
+		showMenu = !showMenu;
 	};
 </script>
 
@@ -54,7 +75,7 @@
 					</TabItem>
 				{/each}
 			</TabList>
-			<div class="e:flex e:gap-[8px]">
+			<div class="e:flex e:gap-[6px]">
 				<WidgetControlButton
 					title={draggable ? 'pin' : 'unpin'}
 					onclick={() => {
@@ -68,6 +89,12 @@
 					{/if}
 				</WidgetControlButton>
 				<WidgetControlButton title={collapsed ? 'expand' : 'collapse'}>_</WidgetControlButton>
+
+				<WidgetControlDropdown items={menu} bind:visible={showMenu}>
+					<WidgetControlButton title="Menu" onclick={onMenuClick} active={showMenu}>
+						<MenuIcon size={16} />
+					</WidgetControlButton>
+				</WidgetControlDropdown>
 			</div>
 		</header>
 	{/snippet}

@@ -5,7 +5,7 @@
 	import { SolanaCircleIcon } from '@/components/icons';
 	import TokenStats from './TokenStats.svelte';
 	import TradeStats from './TradeStats.svelte';
-	import Footer from './Footer.svelte';
+	// import Footer from './Footer.svelte';
 
 	// Stores
 	import quickBuyStore from '@/stores/quick-buy';
@@ -193,7 +193,7 @@
 	{/if}
 </div>
 
-<div class="e:w-full e:flex e:flex-col e:gap-[8px] e:h-[60px]">
+<div class="e:w-full e:flex e:flex-col e:gap-[8px]">
 	<TradeStats />
-	<Footer />
+	<!-- <Footer /> -->
 </div>
