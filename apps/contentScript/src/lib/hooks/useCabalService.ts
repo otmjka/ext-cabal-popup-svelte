@@ -1,6 +1,8 @@
 import {
+	BackgroundMessages,
 	CabalTradeStreamMessages,
 	CabalUserActivityStreamMessages,
+	type BuyMarketPayloadMessage,
 	type FromBackgroundMessage,
 	type Mint
 } from '@/types/cabalSharedTypes';
@@ -57,6 +59,7 @@ const messageHandler = (message, sender, sendResponse) => {
 			console.log('[tradeEvent]', message);
 
 			contentAppStore.update((store) => ({ ...store, lastTradeEvent: message.data }));
+
 			break;
 		case 'tokenStatus':
 			console.log('tokenStatus[]]', message);
@@ -71,9 +74,17 @@ const startListen = () => {
 };
 
 const subscribeToken = ({ mint }: { mint: string }) => {
-	chrome.runtime.sendMessage({ type: 'SUBSCRIBE_TOKEN', data: { mint } });
+	chrome.runtime.sendMessage({ type: BackgroundMessages.SUBSCRIBE_TOKEN, data: { mint } });
+};
+
+const marketBuy = ({ mint, amountSol }: { mint: string; amountSol: number }) => {
+	const message: BuyMarketPayloadMessage = {
+		type: BackgroundMessages.BUY_MARKET,
+		data: { mint, amountSol }
+	};
+	chrome.runtime.sendMessage(message);
 };
 
 export const useCabalService = () => {
-	return { registerTab, startListen, subscribeToken };
+	return { registerTab, startListen, subscribeToken, marketBuy };
 };

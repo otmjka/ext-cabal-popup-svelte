@@ -28,6 +28,7 @@
 	];
 
 	type State = {
+		onMarketBuySol: (amount: number) => void;
 		onOpenSettings: () => void;
 	};
 
@@ -42,7 +43,8 @@
 	};
 
 	const onSettingsClick = () => {
-		props.onOpenSettings();
+		console.log('###', props);
+		props.widgetState.onOpenSettings();
 	};
 </script>
 
@@ -72,7 +74,8 @@
 	{/snippet}
 
 	{#if activeTab.key === 'trade'}
-		<TabBuySell />
+		<TabBuySell onMarketBuySol={props.widgetState.onMarketBuySol} />
+		<!-- onSell={props.widgetState.onMarketSell} onAutoLimit={props.widgetState.onAutoLimitClick} -->
 	{/if}
 	{#if activeTab.key === 'migration'}
 		<TabMigration />

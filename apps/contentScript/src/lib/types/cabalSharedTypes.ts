@@ -1,5 +1,7 @@
 import { type BuySellConfig, type CabalConfig } from './cabalConfig';
 
+export type StrBigInt = string;
+
 export enum QuoteKind {
 	SOL = 0,
 	USDC = 1
