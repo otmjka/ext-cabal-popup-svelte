@@ -6,12 +6,9 @@
 	import { SellSwitchIcon, SolanaCircleIcon } from '@/components/icons';
 
 	// Stores
-<<<<<<< HEAD
-=======
 	import quickBuyStore from '@/stores/quick-buy';
 	import quickSellStore from '@/stores/quick-sell';
-  import quickSellPercentStore from "@/stores/quick-sell-percent";
->>>>>>> main
+	import quickSellPercentStore from '@/stores/quick-sell-percent';
 	import { contentAppStore } from '@/stores/contentAppStore';
 	import { onDestroy } from 'svelte';
 	import { calculatePnL, formatTradeData } from '@/untils/formatters';
@@ -65,13 +62,13 @@
 	let amountBuy: number | undefined = $state();
 	let amountSell: number | undefined = $state();
 	let autoLimits = $state(true);
-  let sellUnittype: "SOL" | "percent" = $state('SOL');
+	let sellUnittype: 'SOL' | 'percent' = $state('SOL');
 
 	// Methods
 
-  const toggleSellUnit = () => {
-    sellUnittype = sellUnittype === "SOL" ? "percent" : "SOL";
-  }
+	const toggleSellUnit = () => {
+		sellUnittype = sellUnittype === 'SOL' ? 'percent' : 'SOL';
+	};
 	const onBuyClick = () => {
 		console.log('onBuyClick', amountBuy);
 		props.onMarketBuySol(amountBuy);
