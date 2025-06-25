@@ -80,7 +80,7 @@
 				</span>
 			</div>
 		</div>
-		<QuickTradeActions type="buy" actions={$quickBuyStore} onclick={setBuyAmount} />
+		<QuickTradeActions type="buy" unit="SOL" actions={$quickBuyStore} onclick={setBuyAmount} />
 		<div class="e:w-full e:grid e:grid-cols-4 e:gap-[10px]">
 			<Input
 				bind:value={amountBuy}

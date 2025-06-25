@@ -105,20 +105,30 @@
         actions={$quickSellStore} 
         onclick={setSellAmount}
       />
-      <Input 
-        bind:value={amountSell} 
-        variant="sell"
-        type="number" 
-        icon="sol" 
-        class="e:col-span-3"
-        placeholder="Enter custom amount"
-        min={0.001}
-        max={100}
-        step={0.001}
-        onchange={() => {
-          console.log('amountSell', amountSell);
-        }}
-      />
+
+      <div class="e:grid e:grid-cols-4 e:gap-[10px]">
+        <Button
+          clipped
+          variant="sell"
+          class="e:w-full e:col-span-2 e:px-[8px]"
+        >
+          Sell initials
+        </Button>
+        <Input 
+          bind:value={amountSell} 
+          variant="sell"
+          type="number" 
+          icon="sol" 
+          class="e:col-span-2"
+          placeholder="Enter custom amount"
+          min={0.001}
+          max={100}
+          step={0.001}
+          onchange={() => {
+            console.log('amountSell', amountSell);
+          }}
+        />
+      </div>
     </Section>
 
     {#if tradeType.key === 'limit' || tradeType.key === 'trailing'}

@@ -9,7 +9,7 @@
   // Props
   let {
     type = 'buy',
-    unit = 'sol',
+    unit = 'SOL',
     actions = [],
     onclick
   }: IQuickTradeActions= $props();
