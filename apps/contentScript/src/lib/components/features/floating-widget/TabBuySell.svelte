@@ -111,7 +111,7 @@
 	onDestroy(unsubscribe);
 </script>
 
-<div class="e:flex e:flex-col e:gap-[12px]">
+<div class="e:flex e:flex-col e:gap-[12px] e:h-full">
 	<Section variant="buy" class="e:flex e:flex-col e:gap-y-[10px]">
 		<div class="e:flex e:justify-between e:items-center">
 			<h4 class="text-18px font-700">
@@ -208,15 +208,14 @@
 			</Button>
 		</div>
 	</Section>
-
-	<footer class="e:flex e:justify-between e:gap-[4px]">
-		<ToggleButton bind:enabled={autoLimits} onclick={onAutolimitsClick}>
-			AutoLimits {autoLimits ? 'Enabled' : 'Disabled'}
-		</ToggleButton>
-
-		<Button variant="ghost" class="e:gap-[6px] e:px-[8px]" onclick={onShareClick}>
-			<ShareIcon size={14} />
-			Share P&L
-		</Button>
-	</footer>
 </div>
+<footer class="e:flex e:justify-between e:gap-[4px]">
+  <ToggleButton bind:enabled={autoLimits} onclick={onAutolimitsClick}>
+    AutoLimits {autoLimits ? 'Enabled' : 'Disabled'}
+  </ToggleButton>
+
+  <Button variant="ghost" class="e:gap-[6px] e:px-[8px]" onclick={onShareClick}>
+    <ShareIcon size={14} />
+    Share P&L
+  </Button>
+</footer>

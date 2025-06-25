@@ -31,12 +31,13 @@
 	 * On click
 	 */
 	function onClick() {
-		if (disabled) return;
+		if (disabled) 
+      return;
 		onclick?.();
 	}
 </script>
 
-<button type="button" class={cssClass} {disabled} onclick={onClick}>
+<button {...other} type="button" class={cssClass} {disabled} onclick={onClick}>
 	{@render children?.()}
 </button>
 
