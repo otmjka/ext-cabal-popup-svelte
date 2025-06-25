@@ -178,3 +178,7 @@ export const calculatePnL = ({
 		percentagePnL: totalPercentagePnL
 	};
 };
+
+export const getSolBalance = ({ tradeStats }: { tradeStats: TradeStatsParsed }) => {
+	return (parsedNumberSchema.parse(tradeStats.solBalance) / 1e9).toFixed(3);
+};

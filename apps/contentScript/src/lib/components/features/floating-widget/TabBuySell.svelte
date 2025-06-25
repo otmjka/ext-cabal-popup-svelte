@@ -19,11 +19,14 @@
 	let ticker = $state('-');
 	let quickBuys = $state<number[]>([]);
 	let quickSells = $state<number[]>([]);
+	let quickSellPerc = $state<number[]>([]);
+
 	let buys = $state<string>('0');
 	let buyQoute = $state<string>('0');
 	let tokenBalance = $state<string>('-');
 	let tokensInSol = $state<string>('-');
 	let pnlPerc = $state<string>('0');
+
 	let unsubscribe = contentAppStore.subscribe(($store) => {
 		try {
 			console.log('Store changed:', $store);
@@ -36,6 +39,10 @@
 			if ($store.config?.buySell.sellPresetsSol) {
 				quickSells = $store.config?.buySell.sellPresetsSol;
 			}
+			if ($store.config?.buySell.sellPresetsPerc) {
+				quickSellPerc = $store.config?.buySell.sellPresetsPerc;
+			}
+
 			if (!$store.tradeStats || !$store.tokenStatus) {
 				return;
 			}
@@ -119,7 +126,7 @@
 				</span>
 			</div>
 		</div>
-		<QuickTradeActions type="buy" unit="SOL" actions={$quickBuyStore} onclick={setBuyAmount} />
+		<QuickTradeActions type="buy" unit="SOL" actions={quickBuys} onclick={setBuyAmount} />
 		<div class="e:w-full e:grid e:grid-cols-4 e:gap-[10px]">
 			<Input
 				bind:value={amountBuy}
@@ -166,7 +173,7 @@
 		<QuickTradeActions
 			type="sell"
 			unit={sellUnittype}
-			actions={sellUnittype === 'SOL' ? $quickSellStore : $quickSellPercentStore}
+			actions={sellUnittype === 'SOL' ? quickSells : quickSellPerc}
 			onclick={() => {
 				if (sellUnittype === 'SOL') {
 					setSellAmount;
