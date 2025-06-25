@@ -8,6 +8,7 @@
 	// Stores
 	import quickBuyStore from '@/stores/quick-buy';
 	import quickSellStore from '@/stores/quick-sell';
+  import quickSellPercentStore from "@/stores/quick-sell-percent";
 	import { contentAppStore } from '@/stores/contentAppStore';
 	import { onDestroy } from 'svelte';
 
@@ -24,8 +25,13 @@
 	let amountBuy: number | undefined = $state();
 	let amountSell: number | undefined = $state();
 	let autoLimits = $state(true);
+  let sellUnittype: "SOL" | "percent" = $state('SOL');
 
 	// Methods
+
+  const toggleSellUnit = () => {
+    sellUnittype = sellUnittype === "SOL" ? "percent" : "SOL";
+  }
 	const onBuyClick = () => {
 		console.log('onBuyClick');
 	};
@@ -53,6 +59,10 @@
 	const setSellAmount = (amount: number) => {
 		amountSell = amount;
 	};
+	const setSellPercent = (amount: number) => {
+		amountSell = amount;
+	};
+
 	onDestroy(unsubscribe);
 </script>
 
@@ -106,13 +116,28 @@
 
 				<span class="e:flex e:gap-x-[4px] e:items-center"> +60% </span>
 
-        <span>
+        <button 
+          onclick={toggleSellUnit} 
+          class="e:cursor-pointer"
+        >
           <SellSwitchIcon />
-        </span>
+        </button>
       </div>
     </div>
 
-		<QuickTradeActions type="sell" actions={$quickSellStore} onclick={setSellAmount} />
+		<QuickTradeActions 
+      type="sell" 
+      unit={sellUnittype}
+      actions={sellUnittype === "SOL" ? $quickSellStore : $quickSellPercentStore} 
+      onclick={() => {
+        if (sellUnittype === "SOL") {
+          setSellAmount;
+        }
+        else {
+          setSellPercent
+        }
+      }} 
+    />
 
 		<div class="e:w-full e:grid e:grid-cols-8 e:gap-[10px]">
 			<Button

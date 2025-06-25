@@ -9,6 +9,7 @@
   // Props
   let {
     type = 'buy',
+    unit = 'sol',
     actions = [],
     onclick
   }: IQuickTradeActions= $props();
@@ -26,7 +27,12 @@
       class="e:gap-x-[4px] e:w-full e:!px-[2px]"
       onclick={() => { onClick(action); }}
     >
-      {action} <SolanaCircleIcon />
+      {action} 
+      {#if unit === 'SOL'}
+        <SolanaCircleIcon />
+      {:else}
+        <span>%</span>
+      {/if}
     </Button>
   {/each}
 </div>
