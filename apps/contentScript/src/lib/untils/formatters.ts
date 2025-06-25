@@ -88,8 +88,9 @@ export const formatTradeData = ({
 		return {
 			buys: '-',
 			buyQoute: '-',
+			sellQoute: '-',
 			tokenBalance: '-',
-			estimatedValue: '-'
+			tokensInSol: '-'
 		};
 	}
 	const buyQoute = formatLamports({
@@ -97,6 +98,13 @@ export const formatTradeData = ({
 		tokenDecimals,
 		toFixed: 3
 	});
+
+	const sellQoute =
+		formatLamports({
+			solBalance: tradeStats.sellQoute || '0',
+			tokenDecimals,
+			toFixed: 3
+		}) || '-';
 
 	const tokenBalanceFormatted = formatLamports({
 		solBalance: tradeStats.tokenBalance || '0',
@@ -113,17 +121,11 @@ export const formatTradeData = ({
 		(oneInSol * parsedNumberSchema.parse(tradeStats.tokenBalance)) /
 		Math.pow(10, 9)
 	).toFixed(3);
-	console.log(
-		'### --- $$$ ---',
-		oneInSol,
-		parsedNumberSchema.parse(tradeStats.tokenBalance),
-		(oneInSol * parsedNumberSchema.parse(tradeStats.tokenBalance)) / Math.pow(10, 9),
-		((oneInSol * parsedNumberSchema.parse(tradeStats.tokenBalance)) / Math.pow(10, 9)).toFixed(3)
-	);
 
 	return {
 		buys: String(tradeStats.buys ?? '0'),
-		buyQoute: buyQoute,
+		buyQoute,
+		sellQoute,
 		tokenBalance: tokenBalanceFormatted,
 		tokensInSol: tokensInSol
 	};
@@ -179,6 +181,23 @@ export const calculatePnL = ({
 	};
 };
 
+export const getPnLLabel = ({
+	tokenStatus,
+	tradeStats
+}: {
+	tokenStatus: TokenStatusParsed;
+	tradeStats: TradeStatsParsed;
+}) => {
+	const pnl = calculatePnL({
+		tokenStatus,
+		tradeStats
+	});
+	const prefix = `${pnl.absolutePnL > 0 ? '+' : ''}`;
+	const apnl = Number(pnl.absolutePnL).toFixed(1);
+	const ppnl = Number(pnl.percentagePnL).toFixed(1);
+
+	return `${prefix}${apnl} (${prefix}${ppnl}%)`;
+};
 export const getSolBalance = ({ tradeStats }: { tradeStats: TradeStatsParsed }) => {
 	return (parsedNumberSchema.parse(tradeStats.solBalance) / 1e9).toFixed(3);
 };

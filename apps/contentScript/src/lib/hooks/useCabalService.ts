@@ -4,7 +4,8 @@ import {
 	CabalUserActivityStreamMessages,
 	type BuyMarketPayloadMessage,
 	type FromBackgroundMessage,
-	type Mint
+	type Mint,
+	type SellMarketPayloadMessage
 } from '@/types/cabalSharedTypes';
 import { contentAppStore } from '../stores/contentAppStore';
 
@@ -85,6 +86,14 @@ const marketBuy = ({ mint, amountSol }: { mint: string; amountSol: number }) => 
 	chrome.runtime.sendMessage(message);
 };
 
+const marketSell = ({ mint, amountBps }: { mint: string; amountBps: number }) => {
+	const message: SellMarketPayloadMessage = {
+		type: BackgroundMessages.SELL_MARKET,
+		data: { mint, amountBps }
+	};
+	chrome.runtime.sendMessage(message);
+};
+
 export const useCabalService = () => {
-	return { registerTab, startListen, subscribeToken, marketBuy };
+	return { registerTab, startListen, subscribeToken, marketBuy, marketSell };
 };

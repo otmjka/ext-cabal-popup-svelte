@@ -151,16 +151,29 @@ class CabalService extends EventEmitter {
 	}
 
 	// CabalRpc -> MarketSell
-	async marketSell({ mint, amountBps }: { mint: string; amountBps: number }) {
+	async marketSell({
+		mint,
+		amountBps,
+		slippageBps,
+		priorityFee,
+		tip
+	}: {
+		mint: string;
+		amountBps: number;
+		slippageBps: number;
+		priorityFee: number;
+		tip: number;
+	}) {
 		try {
 			if (amountBps > 10000 || amountBps <= 0) {
 				throw new Error('should be in range of [0;10000]');
 			}
 			const sellParams = {
-				amountBps: amountBps * 100,
+				amountBps,
 				mint,
-				slippageBps: defaultState.sell_slippage,
-				tip: toLamports(defaultState.sell_tip)
+				slippageBps: slippageBps || defaultState.sell_slippage,
+				tip: tip ? toLamports(tip) : toLamports(defaultState.sell_tip),
+				priorityFee: priorityFee ? toLamports(priorityFee) : undefined
 			};
 			console.log('### sell params', sellParams);
 			const result = await this.client.marketSell(sellParams);

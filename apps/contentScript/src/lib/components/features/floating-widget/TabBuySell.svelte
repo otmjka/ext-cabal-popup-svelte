@@ -14,7 +14,13 @@
 	import { calculatePnL, formatTradeData } from '@/untils/formatters';
 
 	// Props
-	let props = $props<{ onMarketBuySol: (value: number) => void }>();
+	let props = $props<{
+		handlers: {
+			onMarketBuySol: (amount: number) => void;
+			onOpenSettings: () => void;
+			onMarketSellPerc: (value: number) => void;
+		};
+	}>();
 
 	let ticker = $state('-');
 	let quickBuys = $state<number[]>([]);
@@ -75,13 +81,22 @@
 
 	const toggleSellUnit = () => {
 		sellUnittype = sellUnittype === 'SOL' ? 'percent' : 'SOL';
+		amountSell = undefined;
 	};
 	const onBuyClick = () => {
 		console.log('onBuyClick', amountBuy);
-		props.onMarketBuySol(amountBuy);
+		props.handlers.onMarketBuySol(amountBuy);
 	};
 
 	const onSellClick = () => {
+		console.log('onBuyClick', amountSell, sellUnittype);
+		// if (sellUnittype === 'SOL') {
+		// 	props.onMarketSellSol(amountBuy);
+		// }
+
+		if (sellUnittype === 'percent') {
+			props.handlers.onMarketSellPerc(amountSell);
+		}
 		console.log('onSellClick');
 	};
 
@@ -174,11 +189,11 @@
 			type="sell"
 			unit={sellUnittype}
 			actions={sellUnittype === 'SOL' ? quickSells : quickSellPerc}
-			onclick={() => {
+			onclick={(value) => {
 				if (sellUnittype === 'SOL') {
-					setSellAmount;
+					setSellAmount(value);
 				} else {
-					setSellPercent;
+					setSellPercent(value);
 				}
 			}}
 		/>

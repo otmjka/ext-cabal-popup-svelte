@@ -6,13 +6,13 @@
 	const { mint } = $props<{ mint: string }>();
 	let isWidgetReady = $state<boolean>(false);
 	contentAppStore.subscribe(($store) => (isWidgetReady = $store.isWidgetReady));
-	const widgetState = useContentManager({ mint });
+	const { handlers } = useContentManager({ mint });
 </script>
 
 <main class="e:absolute e:top-0 e:right-0 e:z-[200]">
 	{#if isWidgetReady}
-		<FloatingWidget {widgetState} />
-		<MainWidget />
+		<FloatingWidget {handlers} />
+		<MainWidget {handlers} />
 	{:else}
 		<div class="e:text-white e:bg-black e:p-2 e:rounded-md">
 			<div>Loading…</div>

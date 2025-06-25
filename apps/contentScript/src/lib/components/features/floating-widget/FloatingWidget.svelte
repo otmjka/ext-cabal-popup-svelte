@@ -27,12 +27,13 @@
 		}
 	];
 
-	type State = {
-		onMarketBuySol: (amount: number) => void;
-		onOpenSettings: () => void;
-	};
-
-	let props = $props<{ widgetState: State }>();
+	let props = $props<{
+		handlers: {
+			onMarketBuySol: (amount: number) => void;
+			onOpenSettings: () => void;
+			onMarketSellPerc: (value: number) => void;
+		};
+	}>();
 
 	let collapsed = $state(false);
 	let activeTab: TNavItem = $state(tabs[0]);
@@ -74,7 +75,7 @@
 	{/snippet}
 
 	{#if activeTab.key === 'trade'}
-		<TabBuySell onMarketBuySol={props.widgetState.onMarketBuySol} />
+		<TabBuySell handlers={props.handlers} />
 		<!-- onSell={props.widgetState.onMarketSell} onAutoLimit={props.widgetState.onAutoLimitClick} -->
 	{/if}
 	{#if activeTab.key === 'migration'}
