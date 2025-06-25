@@ -45,7 +45,7 @@
 			callback: () => {}
 		}
 	];
-	let showMenu = $state(true);
+	let showMenu = $state(false);
 	let draggable = $state(false);
 	let collapsed = $state(false);
 	let activeTab: TNavItem = $state(tabs[0]);
@@ -103,6 +103,6 @@
 		<TabBuy handlers={props.handlers} />
 	{/if}
 	{#if activeTab.key === 'sell'}
-		<TabSell />
+		<TabSell handlers={props.handlers} />
 	{/if}
 </WidgetAside>

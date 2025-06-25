@@ -94,7 +94,6 @@
 		if (sellUnittype === 'percent') {
 			props.handlers.onMarketSellPerc(amountSell);
 		}
-		console.log('onSellClick');
 	};
 
 	const onSellInitialsClick = () => {
@@ -222,12 +221,12 @@
 	</Section>
 </div>
 <footer class="e:flex e:justify-between e:gap-[4px]">
-  <ToggleButton bind:enabled={autoLimits} onclick={onAutolimitsClick}>
-    AutoLimits {autoLimits ? 'Enabled' : 'Disabled'}
-  </ToggleButton>
+	<ToggleButton bind:enabled={autoLimits} onclick={onAutolimitsClick}>
+		AutoLimits {autoLimits ? 'Enabled' : 'Disabled'}
+	</ToggleButton>
 
-  <Button variant="ghost" class="e:gap-[6px] e:px-[8px]" onclick={onShareClick}>
-    <ShareIcon size={14} />
-    Share P&L
-  </Button>
+	<Button variant="ghost" class="e:gap-[6px] e:px-[8px]" onclick={onShareClick}>
+		<ShareIcon size={14} />
+		Share P&L
+	</Button>
 </footer>

@@ -10,15 +10,21 @@
 	// Stores
 	import quickSellStore from '@/stores/quick-sell';
 	import quickMcLimitsStore from '@/stores/quick-mc-limits';
+	import { contentAppStore } from '@/stores/contentAppStore';
 
 	// Types
 	import type { TNavItem } from '@/types/app';
+	import type { ContentManagerHandlers } from '@/hooks/useContentManager';
 
 	// Constants
 	import { TRAILING_TYPES } from '@/constants/trailing';
+	import { getSolBalance } from '@/untils/formatters';
+	import { onDestroy } from 'svelte';
 
 	// Props
-	let { token = '$Alpha' } = $props();
+	let props = $props<{
+		handlers: ContentManagerHandlers;
+	}>();
 
 	// Data
 	const tradeTypes: TNavItem[] = [
@@ -40,6 +46,24 @@
 	let amountSell: number | undefined = $state();
 	let limitAmount: number | undefined = $state();
 	let mcPercent: number = $state(0);
+	let ticker = $state('-');
+	let quickSells = $state<number[]>([]);
+	let solBalance = $state<string>('0');
+	let unsubscribe = contentAppStore.subscribe(($store) => {
+		try {
+			if (!$store.tradeStats) {
+				return;
+			}
+			solBalance = getSolBalance({ tradeStats: $store.tradeStats });
+
+			ticker = $store.tokenStatus?.ticker || '-';
+			if ($store.config?.buySell.sellPresetsSol) {
+				quickSells = $store.config?.buySell.sellPresetsSol;
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	});
 
 	// Methods
 	const onTradeTypeClick = (el: TNavItem) => {
@@ -48,8 +72,9 @@
 		limitAmount = 0;
 	};
 
-	const onBuyClick = () => {
-		console.log('onBuyClick');
+	const onSellClick = () => {
+		console.log('onSellClick', amountSell);
+		props.handlers.onMarketSellSol(amountSell);
 	};
 
 	const onPlaceLimitOrderClick = () => {
@@ -67,6 +92,8 @@
 	const setTrailingType = (el: TNavItem) => {
 		tailingType = el;
 	};
+
+	onDestroy(unsubscribe);
 </script>
 
 <div class="e:flex e:flex-col e:gap-[12px] e:h-full">
@@ -84,7 +111,7 @@
 			{/each}
 		</SegmentControlList>
 
-		<BalanceSol walletIcon balance={12.56} />
+		<BalanceSol walletIcon balance={solBalance} />
 	</div>
 
 	<div class="e:w-full e:flex e:flex-col e:gap-[8px]">
@@ -102,7 +129,7 @@
 				</SegmentControlList>
 			{/if}
 
-			<QuickTradeActions type="sell" actions={$quickSellStore} onclick={setSellAmount} />
+			<QuickTradeActions type="sell" actions={quickSells} onclick={setSellAmount} />
 
 			<div class="e:grid e:grid-cols-4 e:gap-[10px]">
 				<Button clipped variant="sell" class="e:w-full e:col-span-2 e:px-[8px]">
@@ -157,12 +184,12 @@
 	<TokenStats type={'sell'} />
 
 	{#if tradeType.key === 'market'}
-		<Button clipped variant="sell" class="e:w-full e:gap-x-[8px]" onclick={onBuyClick}>
+		<Button clipped variant="sell" class="e:w-full e:gap-x-[8px]" onclick={onSellClick}>
 			<span class="e:flex e:gap-x-[4px]">
 				Sell {amountSell}
 				<SolanaCircleIcon />
 			</span>
-			{token}
+			{ticker}
 		</Button>
 	{/if}
 

@@ -8,7 +8,6 @@
 	// import Footer from './Footer.svelte';
 
 	// Stores
-	import quickBuyStore from '@/stores/quick-buy';
 	import quickMcLimitsStore from '@/stores/quick-mc-limits';
 	import { contentAppStore } from '@/stores/contentAppStore';
 

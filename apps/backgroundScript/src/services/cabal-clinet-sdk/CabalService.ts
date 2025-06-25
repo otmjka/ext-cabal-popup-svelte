@@ -7,7 +7,9 @@ import {
 	CabalStreamEventsHandler,
 	streamNames,
 	CabalTradeStreamMessages,
-	SubscribeTokenReturn
+	SubscribeTokenReturn,
+	ApiOrderParsed,
+	AmountCase
 } from './CabalServiceTypes';
 
 import { CabalUserActivityStreamMessages, Direction, Side, Trigger } from '.';
@@ -110,35 +112,81 @@ class CabalService extends EventEmitter {
 		}
 	}
 	// CabalRpc -> PlaceLimitOrders
-	async placeLimitOrders({ mint }: { mint: string }) {
+	async placeLimitOrders(item: ApiOrderParsed) {
+		debugger;
 		try {
-			debugger;
+			let target;
+			if (item.targetTypeCase === TargetTypeCase.price && item.targetTypeValuePrice) {
+				target = {
+					targetType: {
+						case: 'price' as 'price',
+						value: {
+							price: item.targetTypeValuePrice, // priceOneTokenInSol,
+							direction: item.targetTypeValueDirection
+						}
+					}
+				};
+			}
+
+			if (item.targetTypeCase === TargetTypeCase.profit && item.targetTypeValueProfitPerc) {
+				target = {
+					targetType: {
+						case: 'profit' as 'profit',
+						value: {
+							profitPerc: item.targetTypeValueProfitPerc / 100,
+							direction: item.targetTypeValueDirection
+						}
+					}
+				};
+			}
+
+			if (item.targetTypeCase === TargetTypeCase.movingPerc && item.targetTypeValuePricePerc) {
+				target = {
+					targetType: {
+						case: 'movingPerc' as 'movingPerc',
+						value: {
+							pricePerc: item.targetTypeValuePricePerc / 100,
+							direction: item.targetTypeValueDirection
+						}
+					}
+				};
+			}
+
+			let amount;
+			if (item.amountCase === AmountCase.percBps && item.amountPercBps) {
+				amount = {
+					amountType: {
+						case: item.amountCase,
+						value: item.amountPercBps // 500, // 10%
+						// case: 'fixed'
+						// value: 1_000_000_000n, // 1 POPCAT, 9 decimals
+					}
+				};
+			}
+
+			if (item.amountCase === AmountCase.fixed && item.amountFixed) {
+				amount = {
+					amountType: {
+						case: item.amountCase,
+						value: BigInt(item.amountFixed) // 500, // 10%
+						// case: 'fixed'
+						// value: 1_000_000_000n, // 1 POPCAT, 9 decimals
+					}
+				};
+			}
+
 			const result = await this.client.placeLimitOrders({
-				mint, // 7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr
+				mint: item.mint, // 7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr
 				orders: [
 					{
-						// id?
-						slippageBps: defaultState.sell_slippage, // 20
-						tip: toLamports(defaultState.sell_tip), // 0.001 * 1_000_000_000
-						target: {
-							targetType: {
-								case: 'price',
-								value: {
-									price: 0.0027, // цена в SOL
-									direction: Direction.ABOVE
-								}
-							}
-						},
-						side: Side.SELL,
-						amount: {
-							amountType: {
-								case: 'percBps',
-								value: 500 // 10%
-								// case: 'fixed'
-								// value: 1_000_000_000n, // 1 POPCAT, 9 decimals
-							}
-						},
-						trigger: Trigger.IMMEDIATE
+						id: item.id ? BigInt(item.id) : undefined,
+						slippageBps: item.slippageBps, // 20
+						tip: toLamports(Number(item.tip)), // 0.001 * 1_000_000_000
+						target: target,
+
+						side: item.side,
+						amount,
+						trigger: item.trigger
 					}
 				]
 			});

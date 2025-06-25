@@ -41,8 +41,7 @@
 	};
 
 	const onSettingsClick = () => {
-		console.log('###', props);
-		props.widgetState.onOpenSettings();
+		props.handlers.onOpenSettings();
 	};
 </script>
 
