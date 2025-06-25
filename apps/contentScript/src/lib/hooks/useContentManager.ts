@@ -1,5 +1,5 @@
 import type { Mint } from '../types/cabalSharedTypes';
-import { onMount, onDestroy } from 'svelte';
+import { onMount } from 'svelte';
 import { useCabalService } from './useCabalService';
 import { contentAppStore } from '../stores/contentAppStore';
 import { writable } from 'svelte/store';
@@ -10,15 +10,12 @@ type ContentState = {
 };
 
 export const useContentManager = ({ mint }: { mint: Mint }) => {
-	const { registerTab, startListen, subscribeToken } = useCabalService();
+	const { registerTab, startListen, subscribeToken, marketBuy } = useCabalService();
 
-	const contentState = writable<ContentState>({ isWidgetReady: false, ticker: '' });
+	let tabMint: string | undefined = '';
 
 	const unsubscribe = contentAppStore.subscribe((store) => {
-		contentState.set({
-			isWidgetReady: store.isWidgetReady,
-			ticker: store.tokenStatus?.ticker ?? '-'
-		});
+		tabMint = store.tabMint;
 	});
 
 	onMount(() => {
@@ -55,8 +52,16 @@ export const useContentManager = ({ mint }: { mint: Mint }) => {
 	});
 
 	const handleOpenSettings = () => window.open(chrome.runtime.getURL('home.html'), '_blank');
+
+	const handleMarketBuySol = (value: number) => {
+		console.log('[handleMarketBuySol]', value, tabMint);
+		if (!value || !tabMint) {
+			return;
+		}
+		marketBuy({ mint: tabMint, amountSol: value });
+	};
 	return {
-		contentState,
-		handleOpenSettings
+		onMarketBuySol: handleMarketBuySol,
+		onOpenSettings: handleOpenSettings
 	};
 };
