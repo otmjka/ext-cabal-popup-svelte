@@ -57,6 +57,7 @@ export enum CabalMessageType {
 }
 
 export enum BackgroundMessages {
+	GET_TOKEN_LIMIT_ORDERS = 'GET_TOKEN_LIMIT_ORDERS',
 	PLACE_LIMIT_ORDER = 'PLACE_LIMIT_ORDER',
 	SET_STORAGE_TO_DEFAULT = 'SET_STORAGE_TO_DEFAULT',
 	GET_CONFIG_PROMISE = 'GET_CONFIG_PROMISE',
@@ -108,6 +109,13 @@ export type SubscribeTokenPayloadMessage = {
 	};
 };
 
+export type GetTokenLimitOrdersPayloadMessage = {
+	type: BackgroundMessages.GET_TOKEN_LIMIT_ORDERS;
+	data: {
+		mint: Mint;
+	};
+};
+
 export type SubscribeTokenPromisePayloadMessage = {
 	type: BackgroundMessages.SUBSCRIBE_TOKEN_PROMISE;
 	data: {
@@ -154,6 +162,7 @@ export type SetConfigToDefaultPayloadMessage = {
 };
 
 export type MessageToBgPayload =
+	| GetTokenLimitOrdersPayloadMessage
 	| PopupOpenMessage
 	| InitCabalOnTabMessage
 	| SubscribeTokenPayloadMessage

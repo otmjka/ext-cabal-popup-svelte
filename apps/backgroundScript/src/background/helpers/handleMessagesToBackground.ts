@@ -77,6 +77,13 @@ export const handleMessagesToBackground =
 					message: message as SubscribeTokenPayloadMessage
 				});
 				return true;
+			case BackgroundMessages.GET_TOKEN_LIMIT_ORDERS:
+				handleSubscribeTokenMessage({
+					sendResponse,
+					state,
+					message: message as SubscribeTokenPayloadMessage
+				});
+				return true;
 			case BackgroundMessages.BUY_MARKET:
 				handleBuyMarketMessage({
 					sendResponse,
@@ -92,6 +99,13 @@ export const handleMessagesToBackground =
 				});
 				return true;
 			case BackgroundMessages.PLACE_LIMIT_ORDER:
+				handlePlaceLimitOrder({
+					sendResponse,
+					state,
+					message: message as PlaceLimitOrderPayloadMessage
+				});
+				return true;
+			case BackgroundMessages.GET:
 				handlePlaceLimitOrder({
 					sendResponse,
 					state,
