@@ -1,73 +1,63 @@
-import CabalConnector, {
-  type OnMessageParams,
-} from './background/CabalConnector';
+import CabalConnector, { type OnMessageParams } from './background/CabalConnector';
 import { state } from './background/AppState';
 import { handleMessagesToBackground } from './background/helpers/handleMessagesToBackground';
 import { changeTab } from './background/helpers/changeTab';
 import { sendMessageToActiveTab } from './background/helpers/sendMessageToActiveTab';
 import * as messagesToContent from './background/helpers/messagesToContent';
-
+import { initConfig } from './background/services/CabalStorage/initConfig';
 
 const start = async () => {
-  console.log('cabal background', Date.now());
-  const apiKey = await state.cabalStorage.getApiKey();
-  state.apiKey = apiKey.apiKey;
+	console.log('[bg] cabal start', Date.now());
 
-  console.log('### apiKey', apiKey.apiKey);
-  state.config = await state.cabalStorage.getConfig();
-  console.log('### state.config', state.config);
-  if (!state.config) {
-    console.log(`[background] no config, will init`);
-    await state.cabalStorage?.init();
-    const config = await state.cabalStorage.getConfig();
-    state.config = config;
-    console.log(`[background] state config`, state.config);
-  }
+	await initConfig({ state });
 
-  const cabalConnector = new CabalConnector({
-    state,
-    onSendMessage: (params: OnMessageParams) => {
-      sendMessageToActiveTab(params);
-    },
-  });
+	// connection, reconection, handle cabal messages
+	const cabalConnector = new CabalConnector({
+		state,
+		onSendMessage: (params: OnMessageParams) => {
+			sendMessageToActiveTab(params);
+		}
+	});
 
-  const messagesToBackgroundHandler = handleMessagesToBackground({ state });
+	// message to bg handler
+	const messagesToBackgroundHandler = handleMessagesToBackground({ state });
+	chrome.runtime.onMessage.addListener(messagesToBackgroundHandler);
 
-  const tabsOnActivatedHandler = changeTab({ state });
+	// active tab changed
+	// if registered -> subscribe token
+	const tabsOnActivatedHandler = changeTab({ state });
+	chrome.tabs.onActivated.addListener(tabsOnActivatedHandler);
 
-  chrome.runtime.onMessage.addListener(messagesToBackgroundHandler);
+	chrome.storage.onChanged.addListener((changes, namespace) => {
+		console.log('[background] storage changes!', namespace, changes);
 
-  chrome.tabs.onActivated.addListener(tabsOnActivatedHandler);
+		// config changed
+		if (namespace === 'local' && changes.config) {
+			console.log(`[background] config changed`);
+			state.config = changes.config.newValue;
 
-  chrome.storage.onChanged.addListener((changes, namespace) => {
-    console.log('[background] storage changes!', namespace, changes);
+			sendMessageToActiveTab({
+				message: messagesToContent.configChanged({ state }),
+				state
+			});
+		}
 
-    if (namespace === 'local' && changes.config) {
-      console.log(`[background] send config changed`);
-      state.config = changes.config.newValue;
+		// api key changed
+		if (namespace === 'local' && changes.apiKey) {
+			const newApiKey = changes.apiKey.newValue;
+			console.log('[background][storage][API KEY changed]', newApiKey);
+			state.apiKey = newApiKey;
+			if (state.apiKey) {
+				cabalConnector.scheduleReconnect();
+			}
 
-      sendMessageToActiveTab({
-        message: messagesToContent.configChanged({ state }),
-        state,
-      });
-    }
+			if (!state.apiKey) {
+				cabalConnector.cleanCabalService();
+			}
+		}
+	});
 
-    if (namespace === 'local' && changes.apiKey) {
-      const newApiKey = changes.apiKey.newValue;
-      console.log('API-ключ изменен:', newApiKey);
-      state.apiKey = newApiKey;
-      if (state.apiKey) {
-        cabalConnector.scheduleReconnect();
-      }
-
-      if (!state.apiKey) {
-        cabalConnector.cleanCabalService();
-      }
-      
-    }
-  });
-
-  cabalConnector.initializeCabalService();
+	cabalConnector.initializeCabalService();
 };
 
 start();

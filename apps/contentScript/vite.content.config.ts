@@ -6,8 +6,9 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
 	resolve: {
 		alias: {
+			'@/shared': path.resolve(__dirname, '../../packages/shared'), // Путь к shared
 			'@': path.resolve(__dirname, './src/lib'),
-      '@src': path.resolve(__dirname, './src'),
+			'@src': path.resolve(__dirname, './src')
 		}
 	},
 	plugins: [tailwindcss(), svelte()],

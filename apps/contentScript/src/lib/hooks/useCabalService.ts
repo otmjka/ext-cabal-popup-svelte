@@ -6,7 +6,7 @@ import {
 	type FromBackgroundMessage,
 	type Mint,
 	type SellMarketPayloadMessage
-} from '@/types/cabalSharedTypes';
+} from '@/shared/src/cabalSharedTypes';
 import { contentAppStore } from '../stores/contentAppStore';
 
 const metaToStatus = (message: FromBackgroundMessage) => {
@@ -31,7 +31,7 @@ const registerTab = ({ mint, locationHref }: { mint: Mint; locationHref: string 
 	);
 };
 
-const messageHandler = (message, sender, sendResponse) => {
+const messageHandler = (message: FromBackgroundMessage, sender, sendResponse) => {
 	if (
 		![
 			CabalUserActivityStreamMessages.userActivityPong,
@@ -41,6 +41,7 @@ const messageHandler = (message, sender, sendResponse) => {
 		console.log(`received message: name: ${message?.eventName}`, message);
 	}
 
+	// handle meta
 	if (
 		![
 			CabalUserActivityStreamMessages.userActivityPong,
@@ -57,14 +58,18 @@ const messageHandler = (message, sender, sendResponse) => {
 			contentAppStore.update((store) => ({ ...store, tradeStats: message.data }));
 			break;
 		case CabalTradeStreamMessages.tradeEvent:
-			console.log('[tradeEvent]', message);
-
 			contentAppStore.update((store) => ({ ...store, lastTradeEvent: message.data }));
-
 			break;
-		case 'tokenStatus':
-			console.log('tokenStatus[]]', message);
+		case CabalTradeStreamMessages.tokenStatus:
+			console.log('[tokenStatus]', message);
 			contentAppStore.update((store) => ({ ...store, tokenStatus: message.data }));
+			break;
+		case CabalUserActivityStreamMessages.txnCb:
+			console.log('[Tx]', message);
+			contentAppStore.update((store) => ({
+				...store,
+				txLog: [{ ...message.data }, ...store.txLog]
+			}));
 			break;
 	}
 	sendResponse({ ok: true });

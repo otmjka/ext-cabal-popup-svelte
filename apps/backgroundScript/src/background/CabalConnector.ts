@@ -1,335 +1,322 @@
+import { ConnectError } from '@connectrpc/connect';
+
 import {
-  CabalService,
-  CabalTradeStreamMessages,
-  CabalUserActivityStreamMessages,
-  TokenStatus,
-  TokenTradeStats,
-  TradeEvent,
-  UserResponse,
-} from '../services/cabal-clinet-sdk';
+	CabalService,
+	CabalTradeStreamMessages,
+	CabalUserActivityStreamMessages,
+	TokenStatus,
+	TokenTradeStats,
+	TradeEvent,
+	UserResponse
+} from '@/cabal-clinet-sdk/index';
+import { CabalStreamErrors } from '@/cabal-clinet-sdk/CabalStream';
+import { LandedTxnState } from '@/cabal-clinet-sdk/cabal/CabalRpc/txncb_pb';
+import { FromBackgroundMessage } from '@/shared/src/cabalSharedTypes';
+
 import { config } from './backgroundConfig';
 
 import * as messagesToContent from './helpers/messagesToContent';
-import { ConnectError } from '@connectrpc/connect';
-import { CabalStreamErrors } from '../services/cabal-clinet-sdk/CabalStream';
 import { BackgroundState } from './types';
-import { LandedTxnState } from '../services/cabal-clinet-sdk/cabal/CabalRpc/txncb_pb';
-import { FromBackgroundMessage } from '../shared/types';
 
 export type OnMessageParams = {
-  message: FromBackgroundMessage;
-  state: BackgroundState;
+	message: FromBackgroundMessage;
+	state: BackgroundState;
 };
 
 class CabalConnector {
-  state: BackgroundState;
-  onSendMessage: (params: OnMessageParams) => void;
-  constructor({
-    state,
-    onSendMessage,
-  }: {
-    state: BackgroundState;
-    onSendMessage: (params: OnMessageParams) => void;
-  }) {
-    this.state = state;
-    this.scheduleReconnect = this.scheduleReconnect.bind(this);
-    this.initializeCabalService = this.initializeCabalService.bind(this);
-    this.cleanCabalService = this.cleanCabalService.bind(this);
-    this.subscribe = this.subscribe.bind(this);
-    this.unsubscribe = this.unsubscribe.bind(this);
-    this.eventDict = this.eventDict.bind(this);
-    this.checkConnectionStatus = this.checkConnectionStatus.bind(this);
+	state: BackgroundState;
+	onSendMessage: (params: OnMessageParams) => void;
+	constructor({
+		state,
+		onSendMessage
+	}: {
+		state: BackgroundState;
+		onSendMessage: (params: OnMessageParams) => void;
+	}) {
+		this.state = state;
+		this.scheduleReconnect = this.scheduleReconnect.bind(this);
+		this.initializeCabalService = this.initializeCabalService.bind(this);
+		this.cleanCabalService = this.cleanCabalService.bind(this);
+		this.subscribe = this.subscribe.bind(this);
+		this.unsubscribe = this.unsubscribe.bind(this);
+		this.eventDict = this.eventDict.bind(this);
+		this.checkConnectionStatus = this.checkConnectionStatus.bind(this);
 
-    this.handleUserActivityConnected =
-      this.handleUserActivityConnected.bind(this);
-    this.handleUserActivityPong = this.handleUserActivityPong.bind(this);
-    this.handleUserActivityTradeStats =
-      this.handleUserActivityTradeStats.bind(this);
-    this.handleUAtxnCB = this.handleUAtxnCB.bind(this);
-    this.handleUAError = this.handleUAError.bind(this);
+		this.handleUserActivityConnected = this.handleUserActivityConnected.bind(this);
+		this.handleUserActivityPong = this.handleUserActivityPong.bind(this);
+		this.handleUserActivityTradeStats = this.handleUserActivityTradeStats.bind(this);
+		this.handleUAtxnCB = this.handleUAtxnCB.bind(this);
+		this.handleUAError = this.handleUAError.bind(this);
 
-    // trades
-    this.handleTradeStreamConnected =
-      this.handleTradeStreamConnected.bind(this);
-    this.handleTradeStreamPong = this.handleTradeStreamPong.bind(this);
-    this.handleTradeTokenStatus = this.handleTradeTokenStatus.bind(this);
-    this.handleTradeEvent = this.handleTradeEvent.bind(this);
-    this.handleTradeError = this.handleTradeError.bind(this);
+		// trades
+		this.handleTradeStreamConnected = this.handleTradeStreamConnected.bind(this);
+		this.handleTradeStreamPong = this.handleTradeStreamPong.bind(this);
+		this.handleTradeTokenStatus = this.handleTradeTokenStatus.bind(this);
+		this.handleTradeEvent = this.handleTradeEvent.bind(this);
+		this.handleTradeError = this.handleTradeError.bind(this);
 
-    this.onSendMessage = onSendMessage;
-  }
+		this.onSendMessage = onSendMessage;
+	}
 
-  sendMessageToActiveTab(params: OnMessageParams) {
-    this.onSendMessage(params);
-  }
+	sendMessageToActiveTab(params: OnMessageParams) {
+		this.onSendMessage(params);
+	}
 
-  scheduleReconnect() {
-    this.cleanCabalService();
+	scheduleReconnect() {
+		this.cleanCabalService();
 
-    // Schedule reconnect
-    this.state.reconnectTimeout = setTimeout(() => {
-      console.log('Attempting to reconnect...');
-      this.initializeCabalService();
-    }, config.reconnectTimeout);
-  }
+		// Schedule reconnect
+		this.state.reconnectTimeout = setTimeout(() => {
+			console.log('Attempting to reconnect...');
+			this.initializeCabalService();
+		}, config.reconnectTimeout);
+	}
 
-  async initializeCabalService() {
-    try {
-      console.log(
-        `initializeCabalService api key exists: ${String(!!this.state.apiKey)}`,
-      );
+	async initializeCabalService() {
+		try {
+			this.cleanCabalService();
+			if (!this.state.apiKey) {
+				console.log('[bg][connector][initializeCabalService]: no api key');
+				return;
+			}
+			this.state.cabal = new CabalService({
+				apiKey: this.state.apiKey,
+				apiUrl: config.apiUrl
+			});
 
-      this.cleanCabalService();
+			this.subscribe();
+			this.state.cabal.start();
+		} catch (error) {
+			console.error(`initializeCabalService`, error);
+		}
+	}
 
-      // const apiKey = await state.cabalStorage.getApiKey();
-      // state.apiKey = apiKey.apiKey;
-      console.log('### api key exists:', String(!!this.state.apiKey));
+	cleanCabalService() {
+		try {
+			this.state.isReady = false;
+			// Clear any existing reconnect timeout
+			if (this.state.reconnectTimeout) {
+				clearTimeout(this.state.reconnectTimeout);
+			}
 
-      if (!this.state.apiKey) {
-        console.log('no api key');
-        return;
-      }
-      this.state.cabal = new CabalService({
-        apiKey: this.state.apiKey,
-        apiUrl: config.apiUrl,
-      });
+			// Reset connection flags
+			this.state.isUserActivityConnected = false;
+			this.state.isTradeConnected = false;
 
-      this.subscribe();
-      this.state.cabal.start();
-    } catch (error) {
-      console.error(`initializeCabalService`, error);
-    }
-  }
+			if (this.state.cabal) {
+				this.unsubscribe();
+				this.state.cabal.stop();
+				this.state.cabal = null;
+			}
+			// TODO: replace
+			this.sendMessageToActiveTab({
+				state: this.state,
+				message: messagesToContent.readyStatus({ state: this.state })
+			});
+		} catch (error) {
+			console.error(`cleanCabalService`, error);
+		}
+	}
 
-  cleanCabalService() {
-    try {
-      this.state.isReady = false;
-      // Clear any existing reconnect timeout
-      if (this.state.reconnectTimeout) {
-        clearTimeout(this.state.reconnectTimeout);
-      }
+	subscribe() {
+		if (!this.state.cabal) {
+			console.log('no cabal instance');
+			return;
+		}
+		for (let [eventName, eventHandler] of Object.entries(this.eventDict())) {
+			this.state.cabal.on(eventName, eventHandler);
+		}
+	}
 
-      // Reset connection flags
-      this.state.isUserActivityConnected = false;
-      this.state.isTradeConnected = false;
+	unsubscribe() {
+		if (!this.state.cabal) {
+			console.log('no cabal instance');
+			return;
+		}
+		for (let [eventName, eventHandler] of Object.entries(this.eventDict())) {
+			this.state.cabal.off(eventName, eventHandler);
+		}
+	}
 
-      if (this.state.cabal) {
-        this.unsubscribe();
-        this.state.cabal.stop();
-        this.state.cabal = null;
-      }
-      // TODO: replace
-      this.sendMessageToActiveTab({
-        state: this.state,
-        message: messagesToContent.readyStatus({ state: this.state }),
-      });
-    } catch (error) {
-      console.error(`cleanCabalService`, error);
-    }
-  }
+	checkConnectionStatus() {
+		console.log(
+			`[bg][connector] check streams [ua], [trades]: ${String(this.state.isUserActivityConnected)}, ${String(this.state.isTradeConnected)}`
+		);
 
-  subscribe() {
-    if (!this.state.cabal) {
-      console.log('no cabal instance');
-      return;
-    }
-    for (let [eventName, eventHandler] of Object.entries(this.eventDict())) {
-      this.state.cabal.on(eventName, eventHandler);
-    }
-  }
+		if (!this.state.isUserActivityConnected || !this.state.isTradeConnected) {
+			return;
+		}
 
-  unsubscribe() {
-    if (!this.state.cabal) {
-      console.log('no cabal instance');
-      return;
-    }
-    for (let [eventName, eventHandler] of Object.entries(this.eventDict())) {
-      this.state.cabal.off(eventName, eventHandler);
-    }
-  }
+		this.state.setIsReady(true);
 
-  checkConnectionStatus() {
-    if (!this.state.isUserActivityConnected || this.state.isTradeConnected) {
-      return;
-    }
+		if (this.state._resolveSetApiKey) {
+			this.state._resolveSetApiKey({});
+		}
 
-    this.state.setIsReady(true);
+		if (config.showStreamConnected) {
+			console.log('Both streams connected successfully');
+		}
 
-    if (this.state._resolveSetApiKey) {
-      this.state._resolveSetApiKey({});
-    }
+		this.sendMessageToActiveTab({
+			state: this.state,
+			message: messagesToContent.readyStatus({ state: this.state })
+		});
 
-    if (config.showStreamConnected) {
-      console.log('Both streams connected successfully');
-    }
+		const listener = this.state.getTabListener(this.state.activeTab);
 
-    this.sendMessageToActiveTab({
-      state: this.state,
-      message: messagesToContent.readyStatus({ state: this.state }),
-    });
+		if (listener) {
+			this.state.subscribeToken(listener.mint);
+		}
+	}
 
-    const listener = this.state.getTabListener(this.state.activeTab);
+	eventDict() {
+		return {
+			[CabalUserActivityStreamMessages.userActivityConnected]: this.handleUserActivityConnected,
+			[CabalUserActivityStreamMessages.userActivityPong]: this.handleUserActivityPong,
 
-    if (listener) {
-      this.state.subscribeToken(listener.mint);
-    }
-  }
+			[CabalUserActivityStreamMessages.tradeStats]: this.handleUserActivityTradeStats,
+			[CabalUserActivityStreamMessages.txnCb]: this.handleUAtxnCB,
 
-  eventDict() {
-    return {
-      [CabalUserActivityStreamMessages.userActivityConnected]:
-        this.handleUserActivityConnected,
-      [CabalUserActivityStreamMessages.userActivityPong]:
-        this.handleUserActivityPong,
+			[CabalUserActivityStreamMessages.userActivityError]: this.handleUAError,
 
-      [CabalUserActivityStreamMessages.tradeStats]:
-        this.handleUserActivityTradeStats,
-      [CabalUserActivityStreamMessages.txnCb]: this.handleUAtxnCB,
+			// trade streams
+			[CabalTradeStreamMessages.tradeConnected]: this.handleTradeStreamConnected,
+			[CabalTradeStreamMessages.tradePong]: this.handleTradeStreamPong,
+			[CabalTradeStreamMessages.tokenStatus]: this.handleTradeTokenStatus,
 
-      [CabalUserActivityStreamMessages.userActivityError]: this.handleUAError,
+			[CabalTradeStreamMessages.tradeEvent]: this.handleTradeEvent,
+			[CabalTradeStreamMessages.tradeError]: this.handleTradeError
+		};
+	}
 
-      // trade streams
-      [CabalTradeStreamMessages.tradeConnected]:
-        this.handleTradeStreamConnected,
-      [CabalTradeStreamMessages.tradePong]: this.handleTradeStreamPong,
-      [CabalTradeStreamMessages.tokenStatus]: this.handleTradeTokenStatus,
+	handleUserActivityConnected() {
+		if (config.showUAConnected) {
+			console.log('[bg][connector][UA]: CONNECTED');
+		}
+		this.state.isUserActivityConnected = true;
+		this.checkConnectionStatus();
+	}
 
-      [CabalTradeStreamMessages.tradeEvent]: this.handleTradeEvent,
-      [CabalTradeStreamMessages.tradeError]: this.handleTradeError,
-    };
-  }
+	handleUserActivityPong(eventValue: UserResponse) {
+		try {
+			if (config.showHandleUserActivityPong) {
+				console.log('handleUserActivityPong', eventValue);
+			}
+			this.sendMessageToActiveTab({
+				state: this.state,
+				message: messagesToContent.pongUA({ state: this.state, eventValue })
+			});
+		} catch (error) {
+			console.error('error in handleUserActivityPong', error);
+		}
+	}
 
-  handleUserActivityConnected() {
-    if (config.showUAConnected) {
-      console.log('UA CONNECTED');
-    }
-    this.state.isUserActivityConnected = true;
-    this.checkConnectionStatus();
-  }
+	handleUserActivityTradeStats(event: { value: TokenTradeStats }) {
+		try {
+			if (config.showTradeStats) {
+				console.log('handleUserActivityTradeStats', event);
+			}
 
-  handleUserActivityPong(eventValue: UserResponse) {
-    try {
-      if (config.showHandleUserActivityPong) {
-        console.log('handleUserActivityPong', eventValue);
-      }
-      this.sendMessageToActiveTab({
-        state: this.state,
-        message: messagesToContent.pongUA({ state: this.state, eventValue }),
-      });
-    } catch (error) {
-      console.error('error in handleUserActivityPong', error);
-    }
-  }
+			this.sendMessageToActiveTab({
+				state: this.state,
+				message: messagesToContent.tradeStatsUA({ event, state: this.state })
+			});
+		} catch (error) {
+			console.error(`error in handleUserActivityTradeStats`, error);
+		}
+	}
 
-  handleUserActivityTradeStats(event: { value: TokenTradeStats }) {
-    try {
-      if (config.showTradeStats) {
-        console.log('handleUserActivityTradeStats', event);
-      }
+	handleUAtxnCB(event: { case: string; value: LandedTxnState }) {
+		try {
+			console.log('#### #### #### handleUAtxnCB', event);
+			const message = messagesToContent.txnCB({ event, state: this.state });
+			console.log('#### #### #### handleUAtxnCB-message', message);
+			if (!message) {
+				throw new Error('message cant parsed');
+			}
+			this.sendMessageToActiveTab({
+				state: this.state,
+				message
+			});
+		} catch (error) {
+			console.error(`error in handleUserActivityTradeStats`, error);
+		}
+	}
 
-      this.sendMessageToActiveTab({
-        state: this.state,
-        message: messagesToContent.tradeStatsUA({ event, state: this.state }),
-      });
-    } catch (error) {
-      console.error(`error in handleUserActivityTradeStats`, error);
-    }
-  }
+	async handleUAError(error: Error) {
+		console.error('User Activity Stream Error', error);
+		if (error instanceof ConnectError && error.rawMessage === CabalStreamErrors.BadAuth) {
+			await this.state.cabalStorage.setApiKey({ apiKey: null });
+			if (this.state._rejectedSetApiKey) {
+				this.state._rejectedSetApiKey({ message: 'bad auth' });
+			}
+		} else {
+			this.scheduleReconnect();
+		}
+		console.log('state::::', this.state);
+		this.sendMessageToActiveTab({
+			state: this.state,
+			message: messagesToContent.errorUA({ state: this.state })
+		});
+	}
 
-  handleUAtxnCB(event: { case: string; value: LandedTxnState }) {
-    try {
-      console.log('#### #### #### handleUAtxnCB', event);
-      const message = messagesToContent.txnCB({ event, state: this.state });
-      console.log('#### #### #### handleUAtxnCB-message', message);
-      if (!message) {
-        throw new Error('message cant parsed');
-      }
-      this.sendMessageToActiveTab({
-        state: this.state,
-        message,
-      });
-    } catch (error) {
-      console.error(`error in handleUserActivityTradeStats`, error);
-    }
-  }
-
-  async handleUAError(error: Error) {
-    console.error('User Activity Stream Error', error);
-    if (
-      error instanceof ConnectError &&
-      error.rawMessage === CabalStreamErrors.BadAuth
-    ) {
-      await this.state.cabalStorage.setApiKey({ apiKey: null });
-      if (this.state._rejectedSetApiKey) {
-        this.state._rejectedSetApiKey({ message: 'bad auth' });
-      }
-    } else {
-      this.scheduleReconnect();
-    }
-    console.log('state::::', this.state);
-    this.sendMessageToActiveTab({
-      state: this.state,
-      message: messagesToContent.errorUA({ state: this.state }),
-    });
-  }
-
-  /*
+	/*
     Trades
   */
 
-  handleTradeStreamConnected() {
-    if (config.showTradesConnected) {
-      console.log('Trades CONNECTED');
-    }
-    this.state.isTradeConnected = true;
-    this.checkConnectionStatus();
-    this.sendMessageToActiveTab({
-      state: this.state,
-      message: messagesToContent.tradesConnected({ state: this.state }),
-    });
-  }
+	handleTradeStreamConnected() {
+		if (config.showTradesConnected) {
+			console.log('Trades CONNECTED');
+		}
+		this.state.isTradeConnected = true;
+		this.checkConnectionStatus();
+		this.sendMessageToActiveTab({
+			state: this.state,
+			message: messagesToContent.tradesConnected({ state: this.state })
+		});
+	}
 
-  handleTradeStreamPong(eventValue: UserResponse) {
-    const message = messagesToContent.pongTrades({
-      state: this.state,
-      eventValue,
-    });
-    this.sendMessageToActiveTab({ state: this.state, message });
-  }
+	handleTradeStreamPong(eventValue: UserResponse) {
+		const message = messagesToContent.pongTrades({
+			state: this.state,
+			eventValue
+		});
+		this.sendMessageToActiveTab({ state: this.state, message });
+	}
 
-  handleTradeTokenStatus(eventValue: { value: { value: TokenStatus } }) {
-    try {
-      if (config.showTokenStatus) {
-        console.log('handleTradeTokenStatus', eventValue);
-      }
-      const message = messagesToContent.tradeTokenStates({
-        state: this.state,
-        eventValue,
-      });
-      this.sendMessageToActiveTab({ state: this.state, message });
-    } catch (error) {
-      console.error(`error in handleTradeTokenStatus`, error);
-    }
-  }
+	handleTradeTokenStatus(eventValue: { value: { value: TokenStatus } }) {
+		try {
+			if (config.showTokenStatus) {
+				console.log('handleTradeTokenStatus', eventValue);
+			}
+			const message = messagesToContent.tradeTokenStates({
+				state: this.state,
+				eventValue
+			});
+			this.sendMessageToActiveTab({ state: this.state, message });
+		} catch (error) {
+			console.error(`error in handleTradeTokenStatus`, error);
+		}
+	}
 
-  handleTradeEvent(eventValue: TradeEvent) {
-    try {
-      const message = messagesToContent.tradeEvent({
-        state: this.state,
-        eventValue,
-      });
-      this.sendMessageToActiveTab({ state: this.state, message });
-    } catch (error) {
-      console.error(`error in handleTradeEvent`, error);
-    }
-  }
+	handleTradeEvent(eventValue: TradeEvent) {
+		try {
+			const message = messagesToContent.tradeEvent({
+				state: this.state,
+				eventValue
+			});
+			this.sendMessageToActiveTab({ state: this.state, message });
+		} catch (error) {
+			console.error(`error in handleTradeEvent`, error);
+		}
+	}
 
-  handleTradeError = () => {
-    console.error('Trade Stream Error');
-    this.scheduleReconnect();
-    const message = messagesToContent.tradeError({ state: this.state });
-    this.sendMessageToActiveTab({ state: this.state, message });
-  };
+	handleTradeError = () => {
+		console.error('Trade Stream Error');
+		this.scheduleReconnect();
+		const message = messagesToContent.tradeError({ state: this.state });
+		this.sendMessageToActiveTab({ state: this.state, message });
+	};
 }
 
 export default CabalConnector;

@@ -1,263 +1,249 @@
 import {
-  CabalTradeStreamMessages,
-  CabalUserActivityStreamMessages,
-  Pong,
-  TokenStatus,
-  TokenTradeStats,
-  TradeEvent,
-  UserResponse,
-} from '../../services/cabal-clinet-sdk';
+	CabalTradeStreamMessages,
+	CabalUserActivityStreamMessages,
+	TokenStatus,
+	TokenTradeStats,
+	TradeEvent,
+	UserResponse
+} from '@/cabal-clinet-sdk/index';
 import {
-  Confirmed,
-  Failed,
-  LandedTxnState,
-  Lost,
-} from '../../services/cabal-clinet-sdk/cabal/CabalRpc/txncb_pb';
+	Confirmed,
+	Failed,
+	LandedTxnState,
+	Lost
+} from '@/cabal-clinet-sdk/cabal/CabalRpc/txncb_pb';
 import {
-  CabalCommonMessages,
-  CabalMessageType,
-  CabalMeta,
-  FromBackgroundConfigChanged,
-  FromBackgroundMessageTradeConnected,
-  FromBackgroundMessageTradeError,
-  FromBackgroundMessageTradeEvent,
-  FromBackgroundMessageTradePong,
-  FromBackgroundMessageTradeTokenStatus,
-  FromBackgroundMessageUAError,
-  FromBackgroundMessageUAPong,
-  FromBackgroundMessageUATradeStats,
-  FromBackgroundReadyStatusMessage,
-  FromBackgroundTxMessage,
-  txConfirmedParsed,
-  txFailedParsed,
-  txLostParsed,
-} from '../../shared/types';
+	CabalCommonMessages,
+	CabalMessageType,
+	FromBackgroundConfigChanged,
+	FromBackgroundMessageTradeConnected,
+	FromBackgroundMessageTradeError,
+	FromBackgroundMessageTradeEvent,
+	FromBackgroundMessageTradePong,
+	FromBackgroundMessageTradeTokenStatus,
+	FromBackgroundMessageUAError,
+	FromBackgroundMessageUAPong,
+	FromBackgroundMessageUATradeStats,
+	FromBackgroundReadyStatusMessage,
+	FromBackgroundTxMessage,
+	txConfirmedParsed,
+	txFailedParsed,
+	txLostParsed
+} from '@/shared/src/cabalSharedTypes';
+
 import { config } from '../backgroundConfig';
 import { BackgroundState } from '../types';
-import {
-  parseTokenStatus,
-  parseTradeEvent,
-  parseTradeStats,
-} from './cabalEventsToContentPayload';
-import { getTxEventTrades } from './getTxEventTrades';
 
-export const getMetaByState = (state: BackgroundState): CabalMeta => ({
-  mint: state.mint,
-  isReady: state.isReady,
-  shouldSetApiKey: !state.apiKey,
-  config: state.config,
-});
+import { parseTokenStatus, parseTradeEvent, parseTradeStats } from './cabalEventsToContentPayload';
+import { getTxEventTrades } from './getTxEventTrades';
+import { getMetaByState } from './getMetaByState';
 
 export const configChanged = ({
-  state,
+	state
 }: {
-  state: BackgroundState;
+	state: BackgroundState;
 }): FromBackgroundConfigChanged => ({
-  type: CabalMessageType.CabalEvent,
-  eventName: CabalCommonMessages.configChanged,
-  meta: getMetaByState(state),
+	type: CabalMessageType.CabalEvent,
+	eventName: CabalCommonMessages.configChanged,
+	meta: getMetaByState(state)
 });
 
 export const tradeStatsUA = ({
-  state,
-  event,
+	state,
+	event
 }: {
-  state: BackgroundState;
-  event: { value: TokenTradeStats };
+	state: BackgroundState;
+	event: { value: TokenTradeStats };
 }): FromBackgroundMessageUATradeStats => {
-  const data = parseTradeStats(event);
-  return {
-    type: CabalMessageType.CabalEvent,
-    eventName: CabalUserActivityStreamMessages.tradeStats,
-    meta: getMetaByState(state),
-    data,
-  };
+	const data = parseTradeStats(event);
+	return {
+		type: CabalMessageType.CabalEvent,
+		eventName: CabalUserActivityStreamMessages.tradeStats,
+		meta: getMetaByState(state),
+		data
+	};
 };
 
 export const pongUA = ({
-  state,
-  eventValue,
+	state,
+	eventValue
 }: {
-  state: BackgroundState;
-  eventValue: UserResponse;
+	state: BackgroundState;
+	eventValue: UserResponse;
 }): FromBackgroundMessageUAPong => ({
-  type: CabalMessageType.CabalEvent,
-  eventName: CabalUserActivityStreamMessages.userActivityPong,
-  meta: getMetaByState(state),
-  data: {
-    count: eventValue.count.count.toString(),
-  },
+	type: CabalMessageType.CabalEvent,
+	eventName: CabalUserActivityStreamMessages.userActivityPong,
+	meta: getMetaByState(state),
+	data: {
+		count: eventValue.count.count.toString()
+	}
 });
 
-export const errorUA = ({
-  state,
-}: {
-  state: BackgroundState;
-}): FromBackgroundMessageUAError => ({
-  type: CabalMessageType.CabalEvent,
-  eventName: CabalUserActivityStreamMessages.userActivityError,
-  meta: getMetaByState(state),
+export const errorUA = ({ state }: { state: BackgroundState }): FromBackgroundMessageUAError => ({
+	type: CabalMessageType.CabalEvent,
+	eventName: CabalUserActivityStreamMessages.userActivityError,
+	meta: getMetaByState(state)
 });
 
 export const tradesConnected = ({
-  state,
+	state
 }: {
-  state: BackgroundState;
+	state: BackgroundState;
 }): FromBackgroundMessageTradeConnected => ({
-  type: CabalMessageType.CabalEvent,
-  eventName: CabalTradeStreamMessages.tradeConnected,
-  meta: getMetaByState(state),
+	type: CabalMessageType.CabalEvent,
+	eventName: CabalTradeStreamMessages.tradeConnected,
+	meta: getMetaByState(state)
 });
 
 export const pongTrades = ({
-  state,
-  eventValue,
+	state,
+	eventValue
 }: {
-  state: BackgroundState;
-  eventValue: UserResponse;
+	state: BackgroundState;
+	eventValue: UserResponse;
 }): FromBackgroundMessageTradePong => ({
-  type: CabalMessageType.CabalEvent,
-  eventName: CabalTradeStreamMessages.tradePong,
-  meta: getMetaByState(state),
-  data: { count: eventValue.count.count.toString() },
+	type: CabalMessageType.CabalEvent,
+	eventName: CabalTradeStreamMessages.tradePong,
+	meta: getMetaByState(state),
+	data: { count: eventValue.count.count.toString() }
 });
 
 export const tradeTokenStates = ({
-  state,
-  eventValue,
+	state,
+	eventValue
 }: {
-  state: BackgroundState;
-  eventValue: {
-    value: { value: TokenStatus };
-  };
+	state: BackgroundState;
+	eventValue: {
+		value: { value: TokenStatus };
+	};
 }): FromBackgroundMessageTradeTokenStatus => ({
-  type: CabalMessageType.CabalEvent,
-  eventName: CabalTradeStreamMessages.tokenStatus,
-  meta: getMetaByState(state),
-  data: parseTokenStatus(eventValue),
+	type: CabalMessageType.CabalEvent,
+	eventName: CabalTradeStreamMessages.tokenStatus,
+	meta: getMetaByState(state),
+	data: parseTokenStatus(eventValue)
 });
 
 export const tradeEvent = ({
-  state,
-  eventValue,
+	state,
+	eventValue
 }: {
-  state: BackgroundState;
-  eventValue: TradeEvent;
+	state: BackgroundState;
+	eventValue: TradeEvent;
 }): FromBackgroundMessageTradeEvent => {
-  const data = parseTradeEvent({
-    mint: state.mint,
-    cabalTradeEvent: eventValue,
-  });
+	const data = parseTradeEvent({
+		mint: state.mint,
+		cabalTradeEvent: eventValue
+	});
 
-  if (!data) {
-    throw new Error('cant parse trade event', data);
-  }
+	if (!data) {
+		throw new Error('cant parse trade event', data);
+	}
 
-  if (config.showTradeEventLog) {
-    console.log('handleTradeEvent', data);
-  }
+	if (config.showTradeEventLog) {
+		console.log('handleTradeEvent', data);
+	}
 
-  return {
-    type: CabalMessageType.CabalEvent,
-    eventName: CabalTradeStreamMessages.tradeEvent,
-    meta: getMetaByState(state),
-    data,
-  };
+	return {
+		type: CabalMessageType.CabalEvent,
+		eventName: CabalTradeStreamMessages.tradeEvent,
+		meta: getMetaByState(state),
+		data
+	};
 };
 
 export const tradeError = ({
-  state,
+	state
 }: {
-  state: BackgroundState;
+	state: BackgroundState;
 }): FromBackgroundMessageTradeError => {
-  return {
-    type: CabalMessageType.CabalEvent,
-    eventName: CabalTradeStreamMessages.tradeError,
-    meta: getMetaByState(state),
-  };
+	return {
+		type: CabalMessageType.CabalEvent,
+		eventName: CabalTradeStreamMessages.tradeError,
+		meta: getMetaByState(state)
+	};
 };
 
 export const readyStatus = ({
-  state,
+	state
 }: {
-  state: BackgroundState;
+	state: BackgroundState;
 }): FromBackgroundReadyStatusMessage => ({
-  type: CabalMessageType.CabalEvent,
-  eventName: CabalCommonMessages.readyStatus,
-  meta: getMetaByState(state),
+	type: CabalMessageType.CabalEvent,
+	eventName: CabalCommonMessages.readyStatus,
+	meta: getMetaByState(state)
 });
 
 // TODO: to cabal service
 export const txnCB = ({
-  event,
-  state,
+	event,
+	state
 }: {
-  state: BackgroundState;
-  event: {
-    case: string;
-    value: LandedTxnState;
-  };
+	state: BackgroundState;
+	event: {
+		case: string;
+		value: LandedTxnState;
+	};
 }): undefined | FromBackgroundTxMessage => {
-  try {
-    console.log('#### #### #### handleUAtxnCB', event);
+	try {
+		console.log('#### #### #### handleUAtxnCB', event);
 
-    if (event.value.stateType.case === 'confirmed') {
-      const confirmed = event.value.stateType.value as unknown as Confirmed;
-      const messageData: txConfirmedParsed = {
-        type: event.case as CabalUserActivityStreamMessages.txnCb, // "txnCb"
-        txType: event.value.stateType.case, // 'confirmed'
-        cu: confirmed.cu, // 113076
-        signature: confirmed.signature, // "5QhqGRhiue4aRHZdoRSUrVSebBtj2Wo64PktCwJDRuNsw3esE1LQV5NNp3WvfXsSCA9NxSKNvZjgYHJ2Cks6B6uq"
-        slotDiff: confirmed.slotDiff, // 1
-        tipJito: confirmed.tips?.jito.toString(),
-        tipsPriority: confirmed.tips?.priority.toString(),
-        trades: getTxEventTrades(confirmed.trades),
-      };
-      return {
-        type: CabalMessageType.CabalEvent,
-        eventName: CabalUserActivityStreamMessages.txnCb,
-        meta: getMetaByState(state),
-        data: messageData,
-      };
-    }
+		if (event.value.stateType.case === 'confirmed') {
+			const confirmed = event.value.stateType.value as unknown as Confirmed;
+			const messageData: txConfirmedParsed = {
+				type: event.case as CabalUserActivityStreamMessages.txnCb, // "txnCb"
+				txType: event.value.stateType.case, // 'confirmed'
+				cu: confirmed.cu, // 113076
+				signature: confirmed.signature, // "5QhqGRhiue4aRHZdoRSUrVSebBtj2Wo64PktCwJDRuNsw3esE1LQV5NNp3WvfXsSCA9NxSKNvZjgYHJ2Cks6B6uq"
+				slotDiff: confirmed.slotDiff, // 1
+				tipJito: confirmed.tips?.jito.toString(),
+				tipsPriority: confirmed.tips?.priority.toString(),
+				trades: getTxEventTrades(confirmed.trades)
+			};
+			return {
+				type: CabalMessageType.CabalEvent,
+				eventName: CabalUserActivityStreamMessages.txnCb,
+				meta: getMetaByState(state),
+				data: messageData
+			};
+		}
 
-    if (event.value.stateType.case === 'failed') {
-      const failed = event.value.stateType.value as unknown as Failed;
-      const messageData: txFailedParsed = {
-        type: event.case as CabalUserActivityStreamMessages.txnCb, // "txnCb"
-        txType: event.value.stateType.case, // 'failed'
-        cu: failed.cu, // 113076
-        signature: failed.signature, // "5QhqGRhiue4aRHZdoRSUrVSebBtj2Wo64PktCwJDRuNsw3esE1LQV5NNp3WvfXsSCA9NxSKNvZjgYHJ2Cks6B6uq"
-        slotDiff: failed.slotDiff, // 1
-        tipJito: failed.tips?.jito.toString(),
-        tipsPriority: failed.tips?.priority.toString(),
-        err: failed.err,
-        orderId: failed.orderId?.toString(),
-      };
-      return {
-        type: CabalMessageType.CabalEvent,
-        eventName: CabalUserActivityStreamMessages.txnCb,
-        meta: getMetaByState(state),
-        data: messageData,
-      };
-    }
+		if (event.value.stateType.case === 'failed') {
+			const failed = event.value.stateType.value as unknown as Failed;
+			const messageData: txFailedParsed = {
+				type: event.case as CabalUserActivityStreamMessages.txnCb, // "txnCb"
+				txType: event.value.stateType.case, // 'failed'
+				cu: failed.cu, // 113076
+				signature: failed.signature, // "5QhqGRhiue4aRHZdoRSUrVSebBtj2Wo64PktCwJDRuNsw3esE1LQV5NNp3WvfXsSCA9NxSKNvZjgYHJ2Cks6B6uq"
+				slotDiff: failed.slotDiff, // 1
+				tipJito: failed.tips?.jito.toString(),
+				tipsPriority: failed.tips?.priority.toString(),
+				err: failed.err,
+				orderId: failed.orderId?.toString()
+			};
+			return {
+				type: CabalMessageType.CabalEvent,
+				eventName: CabalUserActivityStreamMessages.txnCb,
+				meta: getMetaByState(state),
+				data: messageData
+			};
+		}
 
-    if (event.value.stateType.case === 'lost') {
-      const lost = event.value.stateType.value as unknown as Lost;
-      const messageData: txLostParsed = {
-        type: event.case as CabalUserActivityStreamMessages.txnCb, // "txnCb"
-        txType: event.value.stateType.case, // 'lost'
-        signatures: lost.signatures, // "5QhqGRhiue4aRHZdoRSUrVSebBtj2Wo64PktCwJDRuNsw3esE1LQV5NNp3WvfXsSCA9NxSKNvZjgYHJ2Cks6B6uq"
-        orderId: lost.orderId?.toString(),
-      };
-      return {
-        type: CabalMessageType.CabalEvent,
-        eventName: CabalUserActivityStreamMessages.txnCb,
-        meta: getMetaByState(state),
-        data: messageData,
-      };
-    }
-  } catch (error) {
-    console.error(`error in handleUserActivityTradeStats`, error);
-  }
+		if (event.value.stateType.case === 'lost') {
+			const lost = event.value.stateType.value as unknown as Lost;
+			const messageData: txLostParsed = {
+				type: event.case as CabalUserActivityStreamMessages.txnCb, // "txnCb"
+				txType: event.value.stateType.case, // 'lost'
+				signatures: lost.signatures, // "5QhqGRhiue4aRHZdoRSUrVSebBtj2Wo64PktCwJDRuNsw3esE1LQV5NNp3WvfXsSCA9NxSKNvZjgYHJ2Cks6B6uq"
+				orderId: lost.orderId?.toString()
+			};
+			return {
+				type: CabalMessageType.CabalEvent,
+				eventName: CabalUserActivityStreamMessages.txnCb,
+				meta: getMetaByState(state),
+				data: messageData
+			};
+		}
+	} catch (error) {
+		console.error(`error in handleUserActivityTradeStats`, error);
+	}
 };

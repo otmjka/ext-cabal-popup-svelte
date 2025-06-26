@@ -14,13 +14,16 @@ import {
 
 import { CabalUserActivityStreamMessages, Direction, Side, Trigger } from '.';
 import { defaultState } from './cabalEnums';
-import { toLamports } from '../../shared/helpers/toLamports';
+import { toLamports } from '../../apps/backgroundScript/src/shared/helpers/toLamports';
 
 class CabalService extends EventEmitter {
 	client: ReturnType<typeof createGRPCCabalClient>;
 	userActivityStream: CabalStream<UserResponse> | undefined;
 	tradesStream: CabalStream<TradeEventResponse> | undefined;
 	ready: boolean;
+	uaDebugMode = false;
+	tradesDebugMode = false;
+
 	constructor({ apiKey, apiUrl }: { apiKey: string; apiUrl: string }) {
 		super();
 		this.client = createGRPCCabalClient({
@@ -41,7 +44,7 @@ class CabalService extends EventEmitter {
 			streamPinger: ({ count }: { count: bigint }) => this.client.userPing({ count }),
 			onMessage: this.handleUserActivityMessage,
 
-			debug: true
+			debug: this.uaDebugMode
 		});
 
 		return this.userActivityStream;
@@ -67,7 +70,7 @@ class CabalService extends EventEmitter {
 
 			onMessage: this.handleTradeMessage,
 
-			debug: true
+			debug: this.tradesDebugMode
 		});
 	}
 

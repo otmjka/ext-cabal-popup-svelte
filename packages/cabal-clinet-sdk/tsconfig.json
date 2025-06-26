@@ -12,8 +12,7 @@
 		"noEmit": true,
 		"isolatedModules": true,
 		"paths": {
-			"@/shared/*": ["../../packages/shared/*"],
-			"@/cabal-clinet-sdk/*": ["../../packages/cabal-clinet-sdk/*"]
+			"@/shared/*": ["../../packages/shared/*"]
 		}
 	}
 }
