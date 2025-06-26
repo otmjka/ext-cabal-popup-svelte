@@ -12,7 +12,7 @@ import {
 	AmountCase
 } from './CabalServiceTypes';
 
-import { CabalUserActivityStreamMessages, Direction, Side, Trigger } from '.';
+import { CabalUserActivityStreamMessages } from '.';
 import { defaultState } from './cabalEnums';
 import { toLamports } from '../../apps/backgroundScript/src/shared/helpers/toLamports';
 
@@ -107,7 +107,7 @@ class CabalService extends EventEmitter {
 			const result = await this.client.subscribeToken({
 				mint
 			});
-			console.log(`[subscribeToken][${mint}]`, result);
+			console.log(`[CS][subscribeToken][${mint}] result:`, result);
 			return { result };
 		} catch (error) {
 			console.error(`[subscribeToken][${mint}]`, error);

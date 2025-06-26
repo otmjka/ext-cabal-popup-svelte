@@ -6,7 +6,7 @@ export const subscribeTokenState = async function (
 	mint: string
 ): SubscribeTokenReturn {
 	try {
-		console.log(`[bg][subscribeTokenState]`, this);
+		console.log(`[bg][subscribeTokenState]`);
 		if (!this.cabal) {
 			throw new Error('cabal service is undefined');
 		}

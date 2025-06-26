@@ -25,14 +25,22 @@ export const handleSubscribeTokenMessage = async ({
 		}
 
 		sendResponse({
-			meta: getMetaByState(state)
+			meta: getMetaByState(state),
+			payload: {
+				error,
+				result: {
+					$typeName: result?.$typeName,
+					slot: String(result?.slot)
+				}
+			}
 		});
 	} catch (error) {
 		sendResponse({
 			meta: {
 				...getMetaByState(state),
 				error: `subscribe token error: ${(error as Error).message}`
-			}
+			},
+			payload: { error: true }
 		});
 	}
 };

@@ -1,17 +1,20 @@
-import type { TxMessageData } from '@/shared/src/cabalSharedTypes';
-import type { CabalConfig } from '@/types/cabalConfig';
+import { writable } from 'svelte/store';
+
+import type { CabalConfig } from '@/shared/src/cabalConfig';
+
 import type {
 	TokenStatusParsed,
 	TradeEventParsed,
-	TradeStatsParsed
-} from '@/types/cabalSharedTypes';
-import { writable } from 'svelte/store';
+	TradeStatsParsed,
+	TxMessageData
+} from '@/shared/src/cabalSharedTypes';
 
 export type ContentAppStore = {
 	tabMint: string | undefined;
 	mint: string | undefined;
 	isReady: boolean;
 	isWidgetReady: boolean;
+	focused: boolean;
 	url: string;
 	shouldSetApiKey: boolean;
 	apiKeyError?: string;
@@ -27,6 +30,7 @@ const initialState: ContentAppStore = {
 	mint: undefined,
 	isReady: false,
 	isWidgetReady: false,
+	focused: true,
 	url: '',
 	shouldSetApiKey: false,
 	apiKeyError: undefined,
