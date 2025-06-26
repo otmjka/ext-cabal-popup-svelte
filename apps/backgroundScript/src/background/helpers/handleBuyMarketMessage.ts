@@ -1,4 +1,4 @@
-import { BuyMarketPayloadMessage } from '../../shared/types';
+import { BuyMarketPayloadMessage } from '@/shared/src/cabalSharedTypes';
 import { BackgroundState } from '../types';
 import { queryActiveTab } from './queryActiveTab';
 

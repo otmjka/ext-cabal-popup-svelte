@@ -1,3 +1,4 @@
+import type { TxMessageData } from '@/shared/src/cabalSharedTypes';
 import type { CabalConfig } from '@/types/cabalConfig';
 import type {
 	TokenStatusParsed,
@@ -18,6 +19,7 @@ export type ContentAppStore = {
 	tokenStatus: null | TokenStatusParsed;
 	tradeStats: null | TradeStatsParsed;
 	lastTradeEvent: null | TradeEventParsed;
+	txLog: Array<TxMessageData>;
 };
 
 const initialState: ContentAppStore = {
@@ -31,7 +33,8 @@ const initialState: ContentAppStore = {
 	config: null,
 	tokenStatus: null,
 	tradeStats: null,
-	lastTradeEvent: null
+	lastTradeEvent: null,
+	txLog: []
 };
 
 const { subscribe, set, update: internalUpdate } = writable<ContentAppStore>(initialState);

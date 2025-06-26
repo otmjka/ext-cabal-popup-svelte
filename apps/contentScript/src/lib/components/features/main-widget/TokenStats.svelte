@@ -8,7 +8,7 @@
 		TxProcessorIcon
 	} from '@/components/icons';
 	import { contentAppStore } from '@/stores/contentAppStore';
-	import type { BuySellConfig } from '@/types/cabalConfig';
+	import type { BuySellConfig } from '@/shared/src/cabalConfig';
 	import { onDestroy } from 'svelte';
 
 	// props

@@ -1,4 +1,4 @@
-import CabalStorage from '../services/CabalStorage/CabalStorage';
+import CabalStorage from './services/CabalStorage/CabalStorage';
 import { addListenerState } from './helpers/stateHandlers/addListenerState';
 import { getIsReadyState } from './helpers/stateHandlers/getIsReadyState';
 import { getTabListenerState } from './helpers/stateHandlers/getTabListenerState';
@@ -9,39 +9,39 @@ import { subscribeTokenState } from './helpers/stateHandlers/subscribeTokenState
 import { BackgroundState } from './types';
 
 export const state: BackgroundState = {
-  cabal: null,
-  config: null,
-  readyPromise: undefined,
-  isUserActivityConnected: false,
-  isTradeConnected: false,
-  isReady: false,
-  reconnectTimeout: undefined,
-  mint: null,
-  activeTab: undefined,
-  tabListeners: [],
-  cabalStorage: new CabalStorage(),
-  apiKey: null,
+	cabal: null,
+	config: null,
+	readyPromise: undefined,
+	isUserActivityConnected: false,
+	isTradeConnected: false,
+	isReady: false,
+	reconnectTimeout: undefined,
+	mint: null,
+	activeTab: undefined,
+	tabListeners: [],
+	cabalStorage: new CabalStorage(),
+	apiKey: null,
 
-  setApiKeyPromise: null,
-  _resolveSetApiKey: undefined,
-  _rejectedSetApiKey: undefined,
+	setApiKeyPromise: null,
+	_resolveSetApiKey: undefined,
+	_rejectedSetApiKey: undefined,
 
-  getCabalInstance: () => state.cabal,
+	getCabalInstance: () => state.cabal,
 
-  subscribeToken: subscribeTokenState,
-  getActiveTab: function () {
-    return this.activeTab;
-  },
-  setActiveTab: setActiveTabState,
-  setActiveTabById: setActiveTabByIdState,
+	subscribeToken: subscribeTokenState,
+	getActiveTab: function () {
+		return this.activeTab;
+	},
+	setActiveTab: setActiveTabState,
+	setActiveTabById: setActiveTabByIdState,
 
-  addListener: addListenerState,
-  getTabListener: getTabListenerState,
+	addListener: addListenerState,
+	getTabListener: getTabListenerState,
 
-  setIsReady: setIsReadyState,
-  getIsReady: getIsReadyState,
+	setIsReady: setIsReadyState,
+	getIsReady: getIsReadyState
 };
-
+state.subscribeToken = state.subscribeToken.bind(state);
 state.subscribeToken = state.subscribeToken.bind(state);
 state.getActiveTab = state.getActiveTab.bind(state);
 state.setActiveTab = state.setActiveTab.bind(state);

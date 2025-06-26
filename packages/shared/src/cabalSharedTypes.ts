@@ -1,3 +1,4 @@
+import { ApiOrderParsed } from '../../cabal-clinet-sdk/CabalServiceTypes';
 import { type BuySellConfig, type CabalConfig } from './cabalConfig';
 
 export type StrBigInt = string;
@@ -56,6 +57,7 @@ export enum CabalMessageType {
 }
 
 export enum BackgroundMessages {
+	PLACE_LIMIT_ORDER = 'PLACE_LIMIT_ORDER',
 	SET_STORAGE_TO_DEFAULT = 'SET_STORAGE_TO_DEFAULT',
 	GET_CONFIG_PROMISE = 'GET_CONFIG_PROMISE',
 	POPUP_OPEN = 'POPUP_OPEN',
@@ -79,6 +81,11 @@ export type BgInitMessageResponse = {
 
 export type PopupOpenMessage = {
 	type: BackgroundMessages.POPUP_OPEN;
+};
+
+export type PlaceLimitOrderPayloadMessage = {
+	type: BackgroundMessages.PLACE_LIMIT_ORDER;
+	data: ApiOrderParsed;
 };
 
 export type SaveBuySellSettingsMessage = {
@@ -157,7 +164,8 @@ export type MessageToBgPayload =
 	| GetConfigPromisePayloadMessage
 	| SetConfigToDefaultPayloadMessage
 	| SendApiKeyPayloadMessage
-	| SaveBuySellSettingsMessage;
+	| SaveBuySellSettingsMessage
+	| PlaceLimitOrderPayloadMessage;
 
 export type SubscribeTokenResponse = {
 	meta: CabalMeta;
@@ -395,10 +403,12 @@ export type FromBackgroundReadyStatusMessage = {
 	meta: CabalMeta;
 };
 
+export type TxMessageData = txConfirmedParsed | txFailedParsed | txLostParsed;
+
 export type FromBackgroundTxMessage = {
 	type: CabalMessageType;
 	eventName: CabalUserActivityStreamMessages.txnCb;
-	data: txConfirmedParsed | txFailedParsed | txLostParsed;
+	data: TxMessageData;
 	meta: CabalMeta;
 };
 
