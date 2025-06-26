@@ -18,7 +18,8 @@ export const sendMessageToActiveTab = ({
 	if (
 		![
 			CabalUserActivityStreamMessages.userActivityPong,
-			CabalTradeStreamMessages.tradePong
+			CabalTradeStreamMessages.tradePong,
+			CabalTradeStreamMessages.tradeEvent
 		].includes(message.eventName)
 	) {
 		console.log(`[bg][sendMessageToActiveTab]: activeTab: [${activeTab}]; message:`, message);

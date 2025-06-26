@@ -79,8 +79,19 @@ const startListen = () => {
 	chrome.runtime.onMessage.addListener(messageHandler);
 };
 
-const subscribeToken = ({ mint }: { mint: string }) => {
-	chrome.runtime.sendMessage({ type: BackgroundMessages.SUBSCRIBE_TOKEN, data: { mint } });
+const subscribeToken = async ({ mint }: { mint: string }) => {
+	return new Promise((resolve, reject) => {
+		try {
+			chrome.runtime.sendMessage(
+				{ type: BackgroundMessages.SUBSCRIBE_TOKEN, data: { mint } },
+				(response) => {
+					resolve(response);
+				}
+			);
+		} catch (error) {
+			reject(error);
+		}
+	});
 };
 
 const marketBuy = ({ mint, amountSol }: { mint: string; amountSol: number }) => {

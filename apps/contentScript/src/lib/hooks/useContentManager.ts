@@ -1,4 +1,4 @@
-import type { Mint } from '../types/cabalSharedTypes';
+import type { Mint } from '@/shared/src/cabalSharedTypes';
 import { onMount } from 'svelte';
 import { useCabalService } from './useCabalService';
 import { contentAppStore, type ContentAppStore } from '../stores/contentAppStore';
@@ -25,21 +25,32 @@ export const useContentManager = ({ mint }: { mint: Mint }) => {
 		startListen();
 		registerTab({ mint: mint, locationHref: location.href });
 
-		const handleFocus = () => {
-			console.log('[content] focus');
-			contentAppStore.update((store) => ({
-				...store,
-				tokenStatus: null,
-				tradeStats: null,
-				lastTradeEvent: null,
-				isReady: false
-			}));
+		const handleFocus = async () => {
+			try {
+				console.log('[content] focus');
 
-			subscribeToken({ mint });
+				contentAppStore.update((store) => ({
+					...store,
+					tokenStatus: null,
+					tradeStats: null,
+					lastTradeEvent: null,
+					isReady: false,
+					focused: true
+				}));
+
+				const result = await subscribeToken({ mint });
+				console.log('[content][subscribeToken] result', result);
+			} catch (error) {
+				console.error('[content][subscribeToken] error', error);
+			}
 		};
 
 		const handleBlur = () => {
 			console.log('[content] blur');
+			contentAppStore.update((store) => ({
+				...store,
+				focused: false
+			}));
 		};
 
 		window.addEventListener('focus', handleFocus);
