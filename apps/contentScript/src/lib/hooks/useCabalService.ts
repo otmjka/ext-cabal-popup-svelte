@@ -110,6 +110,29 @@ const marketSell = ({ mint, amountBps }: { mint: string; amountBps: number }) =>
 	chrome.runtime.sendMessage(message);
 };
 
+// export const getTokenLimitOrders = async ({ mint }: { mint: string }) => {
+//   try {
+//     return state.cabal?.getTokenLimitOrders({ mint });
+//   } catch (error) {
+//     console.error('getTokenLimitOrders', error);
+//   }
+// };
+
+const getTokenLimitOrders = async ({ mint }: { mint: string }) => {
+	return new Promise((resolve, reject) => {
+		try {
+			chrome.runtime.sendMessage(
+				{ type: BackgroundMessages.GET_TOKEN_LIMIT_ORDERS, data: { mint } },
+				(response) => {
+					resolve(response);
+				}
+			);
+		} catch (error) {
+			reject(error);
+		}
+	});
+};
+
 export const useCabalService = () => {
-	return { registerTab, startListen, subscribeToken, marketBuy, marketSell };
+	return { registerTab, startListen, subscribeToken, getTokenLimitOrders, marketBuy, marketSell };
 };

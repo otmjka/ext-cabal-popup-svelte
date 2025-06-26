@@ -12,9 +12,10 @@ import {
 	AmountCase
 } from './CabalServiceTypes';
 
-import { CabalUserActivityStreamMessages } from '.';
+import { CabalUserActivityStreamMessages, ApiOrder, PlaceLimitOrdersResponse } from '.';
 import { defaultState } from './cabalEnums';
 import { toLamports } from '../../apps/backgroundScript/src/shared/helpers/toLamports';
+import { parseApiOrder } from './utils/parseApiOrder';
 
 class CabalService extends EventEmitter {
 	client: ReturnType<typeof createGRPCCabalClient>;
@@ -212,7 +213,7 @@ class CabalService extends EventEmitter {
 		mint: string;
 		amountBps: number;
 		slippageBps: number;
-		priorityFee: number;
+		priorityFee?: number;
 		tip: number;
 	}) {
 		try {
@@ -224,7 +225,7 @@ class CabalService extends EventEmitter {
 				mint,
 				slippageBps: slippageBps || defaultState.sell_slippage,
 				tip: tip ? toLamports(tip) : toLamports(defaultState.sell_tip),
-				priorityFee: priorityFee ? toLamports(priorityFee) : undefined
+				priorityFee: priorityFee ? toLamports(defaultState.sell_priority_fee) : undefined
 			};
 			console.log('### sell params', sellParams);
 			const result = await this.client.marketSell(sellParams);
@@ -235,6 +236,7 @@ class CabalService extends EventEmitter {
 			console.error('error token sell', error);
 		}
 	}
+
 	// CabalRpc -> MarketBuy
 	async marketBuy({
 		amount,
@@ -255,7 +257,7 @@ class CabalService extends EventEmitter {
 				mint,
 				slippageBps: slippageBps || defaultState.buy_slippage,
 				tip: tip ? toLamports(tip) : toLamports(defaultState.buy_tip),
-				priorityFee: priorityFee ? toLamports(priorityFee) : undefined
+				priorityFee: priorityFee ? toLamports(defaultState.buy_priority_fee) : undefined
 			};
 			console.log('### buy params', buyParams);
 			const result = await this.client.marketBuy(buyParams);
@@ -268,8 +270,42 @@ class CabalService extends EventEmitter {
 	}
 	// CabalRpc -> GetTokenLimitOrders
 
-	// CabalRpc -> DeleteLimitOrders
+	async getTokenLimitOrders({
+		mint
+	}: {
+		mint: string;
+	}): Promise<{ result?: ApiOrderParsed[]; error?: Error }> {
+		try {
+			const result = await this.client.getTokenLimitOrders({ mint });
 
+			const resultMint = result?.mint;
+			const resultOrders = result?.orders.map((order: ApiOrder) => {
+				return parseApiOrder({ apiOrder: order, mint: resultMint });
+			});
+			return { result: resultOrders };
+		} catch (error) {
+			console.error(`getTokenLimitOrders`, error);
+			return { error: error as Error };
+		}
+	}
+
+	// CabalRpc -> DeleteLimitOrders
+	async deleteLimitOrders({
+		mint,
+		ids
+	}: {
+		mint: string;
+		ids: string[];
+	}): Promise<{ result?: PlaceLimitOrdersResponse; error?: Error }> {
+		try {
+			const idsn = ids.map((item) => BigInt(item));
+			const result = await this.client.deleteLimitOrders({ mint, ids: idsn });
+			return { result };
+		} catch (error) {
+			console.error(`deleteLimitOrders`, error);
+			return { error: error as Error };
+		}
+	}
 	/* 
     private 
   */

@@ -15,7 +15,7 @@ export const handleSellMarketMessage = async ({
 	const tabId = tabs[0]?.id;
 	const listener = state.getTabListener(tabId);
 
-	console.log('### Buy Market ###', tabId, listener?.mint);
+	console.log('### Sell Market ###', tabId, listener?.mint);
 	const cabalValue = state.getCabalInstance();
 	const { mint: messageMint, amountBps } = message.data;
 	if (state.config && cabalValue && messageMint && amountBps) {

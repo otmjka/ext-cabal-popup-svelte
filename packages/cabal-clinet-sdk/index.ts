@@ -16,7 +16,7 @@ import { CabalUserActivityStreamMessages, CabalTradeStreamMessages } from './Cab
 export { CabalService };
 export { CabalUserActivityStreamMessages, CabalTradeStreamMessages };
 
-export type { ApiOrder } from './cabal/CabalRpc/orders_pb';
+export type { ApiOrder, PlaceLimitOrdersResponse } from './cabal/CabalRpc/orders_pb';
 export { Direction, Side, Trigger } from './cabal/CabalRpc/orders_pb';
 
 export type { Buy, ParsedTrade, Sell } from './cabal/CabalRpc/txncb_pb';
