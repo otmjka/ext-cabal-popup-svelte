@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss" prefix(e);
+
+.ff-chakra {
+  font-family: "Chakra Petch", sans-serif;
+  font-style: normal;
+}
+
+.widget-aside {
+  @apply e:select-none;
+}
+
+.text-buy {
+  color: #5BBE7B
+}
+.text-sell {
+  color: #E96B82
+}
+.text-light-gray {
+  color: #9B9C9E
+}
+
+/* Typography*/
+.text-12px {
+  font-size: 12px;
+  line-height: 12px;
+}
+.text-14px {
+  font-size: 14px;
+  line-height: 14px;
+}
+
+.text-16px {
+  font-size: 16px;
+  line-height: 16px;
+}
+.text-18px {
+  font-size: 18px;
+  line-height: 18px;
+}
+
+.font-700 {
+  font-weight: 700;
+}
+
+.scroll-hidden::-webkit-scrollbar {
+  display: none;
+}
+.scroll-hidden {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.input--controls-hidden {
+  -moz-appearance: textfield;
+}
+.input--controls-hidden::-webkit-inner-spin-button,
+.input--controls-hidden::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

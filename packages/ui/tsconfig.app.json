@@ -6,9 +6,8 @@
 		"module": "ESNext",
 		"resolveJsonModule": true,
 		"paths": {
-			"@/*": ["../../packages/ui/src/lib/*"],
-			"@/shared/*": ["../../packages/shared/*"],
-			"@src": ["../../packages/ui/src/*"]
+			"@/*": ["./src/lib/*"],
+			"@/shared/*": ["../../packages/shared/*"]
 		},
 		/**
 		 * Typecheck JS in `.svelte` and `.js` files by default.
