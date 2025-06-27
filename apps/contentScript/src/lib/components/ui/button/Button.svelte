@@ -21,6 +21,7 @@
       `e:px-[16px]`,
 			`ext-btn ff-chakra`,
 			`ext-bnt-${variant}`,
+			`ext-bnt-${size}`,
 			clipped ? 'ext-btn-clipped' : '',
 			other?.class
 		].join(' ');
@@ -49,6 +50,17 @@
 		@apply e:flex e:flex-nowrap e:items-center e:justify-center;
 		@apply e:whitespace-nowrap e:cursor-pointer e:select-none e:outline-none;
 		@apply e:text-[14px]/[14px];
+	}
+
+
+  .ext-bnt-md {
+    @apply e:text-[14px]/[14px];
+		@apply e:h-[32px];
+	}
+
+  .ext-bnt-lg {
+    @apply e:text-[18px]/[18px];
+		@apply e:h-[40px];
 	}
 
 	.ext-bnt-buy {

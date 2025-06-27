@@ -13,6 +13,7 @@
 		value = $bindable(),
 		type = 'text',
 		variant = 'default',
+    size = 'md',
 		icon = undefined,
 		inputClass = '',
 		disabled = false,
@@ -39,6 +40,7 @@
 			`ext-input`,
 			icon ? 'ext-input--with-icon' : '',
 			`ext-input--${variant}`,
+			`ext-input--${size}`,
 			inputClass
 		].join(' ');
 		return twMerge(classList);
@@ -73,10 +75,17 @@
 
 	.ext-input {
 		@apply e:outline-none;
-		@apply e:flex e:w-full e:h-[32px] e:px-[8px] e:border-[1px];
+		@apply e:flex e:w-full e:border-[1px];
 		@apply e:text-[14px]/[14px] e:text-white;
 	}
 
+  .ext-input--md {
+		@apply e:h-[32px] e:px-[8px];
+	}
+
+  .ext-input--lg {
+		@apply e:h-[40px] e:px-[8px];
+	}
 	.ext-input--with-icon {
 		@apply e:pr-[26px];
 	}

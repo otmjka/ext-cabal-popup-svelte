@@ -26,14 +26,3 @@
 <div class={cssClass}>
   {@render children?.()}
 </div>
-
-<!-- 
-<style >
-  @reference "@src/app.css";
-
-  .ext-segment-control-list {
-    @apply e:border-[1px] e:border-[#36383C];
-    @apply e:flex e:items-center;
-  }
-</style>
--->

@@ -2,6 +2,7 @@ import { writable } from 'svelte/store';
 
 import type { CabalConfig } from '@/shared/src/cabalConfig';
 
+
 import type {
 	TokenStatusParsed,
 	TradeEventParsed,
@@ -41,7 +42,12 @@ const initialState: ContentAppStore = {
 	txLog: []
 };
 
-const { subscribe, set, update: internalUpdate } = writable<ContentAppStore>(initialState);
+import { contentAppStoreMock } from '@/mocks/content-app-store';
+const IS_DEV_MODE = import.meta.env.DEV
+
+const defaultState: ContentAppStore = IS_DEV_MODE ? contentAppStoreMock : initialState
+
+const { subscribe, set, update: internalUpdate } = writable<ContentAppStore>(defaultState);
 
 const update = (updater: (state: ContentAppStore) => ContentAppStore) => {
 	internalUpdate((state) => {

@@ -1,0 +1,49 @@
+@import "tailwindcss" prefix(e);
+
+.toaster {
+  top: 70px !important;
+}
+
+:root {
+  --toastContainerTop: 12px;
+  /* --toastContainerBottom: 0; */
+  --toastContainerRight: 12px;
+  /* --toastContainerLeft: calc(50vw - 150px); */
+  --toastBorderRadius: 0px;
+  --toastWidth: 300px;
+  --toastMinHeight: 45px;
+  --toastMsgPadding: 6px 16px;
+  --toastBarHeight: 1px;
+  --toastBtnContent: ' ';
+  --toastBtnWidth: 100%;
+  --toastMargin: 0 0 4px 0;
+  /* --toastBackground:  #0000008f; */
+  --toastBarBackground: #5bbe7a80;
+
+  ._toastBtn  {
+    position: absolute;
+    background-color: transparent;
+  }
+}
+
+.toast-item--content {
+  font-size: 14px;
+  font-family: "Chakra Petch", sans-serif;
+  font-style: normal;
+}
+
+.toast-item--content  .toast-item--text {
+  color: #fff;
+}
+
+.toast-item--content .toast-item--title {
+  font-weight: 700;
+}
+
+.toast-item--content__error .toast-item--title {
+  color: #E96B82;
+}
+
+.toast-item--content__success .toast-item--title {
+  color: #5BBE7B;
+}
