@@ -1,12 +1,36 @@
 import { writable } from 'svelte/store';
+import type { TNavItem } from '@/types/app';
 
-const DEFAULT_STATE = {
-	amountBuy: undefined
+export const tradeTypes: TNavItem[] = [
+	{
+		label: 'Market',
+		key: 'market'
+	},
+	{
+		label: 'Limit',
+		key: 'limit'
+	},
+	{
+		label: 'Trailing',
+		key: 'trailing'
+	}
+];
+
+type TabBuySellStore = {
+	amountBuy: number | undefined;
+	limitAmount: number | undefined;
+	mcPercent: number;
+	tradeType: TNavItem;
 };
 
-const { subscribe, set, update } = writable<{
-	amountBuy: number | undefined;
-}>(DEFAULT_STATE);
+const DEFAULT_STATE = {
+	amountBuy: undefined,
+	limitAmount: undefined,
+	mcPercent: 0,
+	tradeType: tradeTypes[0]
+};
+
+const { subscribe, set, update } = writable<TabBuySellStore>(DEFAULT_STATE);
 const clear = () => set({ ...DEFAULT_STATE });
 
 const tabBuySellStore = {
