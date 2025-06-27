@@ -9,7 +9,8 @@ import {
 	CabalTradeStreamMessages,
 	SubscribeTokenReturn,
 	ApiOrderParsed,
-	AmountCase
+	AmountCase,
+	TargetTypeCase
 } from './CabalServiceTypes';
 
 import { CabalUserActivityStreamMessages, ApiOrder, PlaceLimitOrdersResponse } from '.';
@@ -172,7 +173,7 @@ class CabalService extends EventEmitter {
 				amount = {
 					amountType: {
 						case: item.amountCase,
-						value: BigInt(item.amountFixed) // 500, // 10%
+						value: BigInt(item.amountFixed) // 0.0017 * 1e9
 						// case: 'fixed'
 						// value: 1_000_000_000n, // 1 POPCAT, 9 decimals
 					}

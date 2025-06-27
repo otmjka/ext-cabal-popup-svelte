@@ -5,6 +5,7 @@ import { changeTab } from './background/helpers/changeTab';
 import { sendMessageToActiveTab } from './background/helpers/sendMessageToActiveTab';
 import * as messagesToContent from './background/helpers/messagesToContent';
 import { initConfig } from './background/services/CabalStorage/initConfig';
+import { subscribeSolanaPrice } from './background/helpers/subscribeSolanaPrice';
 
 const start = async () => {
 	console.log('[bg] cabal start', Date.now());
@@ -16,6 +17,14 @@ const start = async () => {
 		state,
 		onSendMessage: (params: OnMessageParams) => {
 			sendMessageToActiveTab(params);
+		}
+	});
+
+	await subscribeSolanaPrice({
+		state,
+		cb: (data) => {
+			state.solPriceUSD = data.result?.solana.usd || state.solPriceUSD;
+			console.log(`[bg][cb: subscribeSolanaPrice]`, data, state.solPriceUSD);
 		}
 	});
 

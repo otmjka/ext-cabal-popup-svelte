@@ -178,6 +178,13 @@ export type MessageToBgPayload =
 
 export type SubscribeTokenResponse = {
 	meta: CabalMeta;
+	payload: {
+		result?: {
+			$typeName: string;
+			slot: string;
+		};
+		error?: unknown;
+	};
 };
 
 export type SubscribeTokenPromiseResponse = {
@@ -209,7 +216,16 @@ export type GetConfigPromiseResponse = {
 
 export type SetConfigToDefaultResponse = {};
 
+export type GetTokenLimitOrdersResponse = {
+	meta: CabalMeta;
+	payload: {
+		result?: ApiOrderParsed[];
+		error?: unknown;
+	};
+};
+
 export type BgMessageResponse =
+	| GetTokenLimitOrdersResponse
 	| PopupOpenResponse
 	| SetApiKeyPromiseResponse
 	| GetConfigPromiseResponse
@@ -335,6 +351,7 @@ export type CabalMeta = {
 	isReady: boolean;
 	shouldSetApiKey: boolean;
 	config: CabalConfig | null;
+	solPriceUSD: null | number;
 	error?: string;
 };
 

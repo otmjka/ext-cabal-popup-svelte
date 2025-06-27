@@ -4,10 +4,13 @@ import {
 	CabalUserActivityStreamMessages,
 	type BuyMarketPayloadMessage,
 	type FromBackgroundMessage,
+	type GetTokenLimitOrdersResponse,
 	type Mint,
-	type SellMarketPayloadMessage
+	type SellMarketPayloadMessage,
+	type SubscribeTokenResponse
 } from '@/shared/src/cabalSharedTypes';
 import { contentAppStore } from '../stores/contentAppStore';
+import { type ApiOrderParsed } from '@/cabal-clinet-sdk/CabalServiceTypes';
 
 const metaToStatus = (message: FromBackgroundMessage) => {
 	console.log('[metaToStatus]', message);
@@ -15,6 +18,7 @@ const metaToStatus = (message: FromBackgroundMessage) => {
 		...store,
 		isReady: message.meta.isReady,
 		shouldSetApiKey: message.meta.shouldSetApiKey,
+		solPriceUSD: message.meta.solPriceUSD,
 		config: message.meta.config
 	}));
 };
@@ -84,7 +88,7 @@ const subscribeToken = async ({ mint }: { mint: string }) => {
 		try {
 			chrome.runtime.sendMessage(
 				{ type: BackgroundMessages.SUBSCRIBE_TOKEN, data: { mint } },
-				(response) => {
+				(response: SubscribeTokenResponse) => {
 					resolve(response);
 				}
 			);
@@ -110,20 +114,27 @@ const marketSell = ({ mint, amountBps }: { mint: string; amountBps: number }) =>
 	chrome.runtime.sendMessage(message);
 };
 
-// export const getTokenLimitOrders = async ({ mint }: { mint: string }) => {
-//   try {
-//     return state.cabal?.getTokenLimitOrders({ mint });
-//   } catch (error) {
-//     console.error('getTokenLimitOrders', error);
-//   }
-// };
-
 const getTokenLimitOrders = async ({ mint }: { mint: string }) => {
 	return new Promise((resolve, reject) => {
 		try {
 			chrome.runtime.sendMessage(
 				{ type: BackgroundMessages.GET_TOKEN_LIMIT_ORDERS, data: { mint } },
-				(response) => {
+				(response: GetTokenLimitOrdersResponse) => {
+					resolve(response);
+				}
+			);
+		} catch (error) {
+			reject(error);
+		}
+	});
+};
+
+export const placeLimitOrder = async (item: ApiOrderParsed) => {
+	return new Promise((resolve, reject) => {
+		try {
+			chrome.runtime.sendMessage(
+				{ type: BackgroundMessages.PLACE_LIMIT_ORDER, data: item },
+				(response: GetTokenLimitOrdersResponse) => {
 					resolve(response);
 				}
 			);
@@ -134,5 +145,13 @@ const getTokenLimitOrders = async ({ mint }: { mint: string }) => {
 };
 
 export const useCabalService = () => {
-	return { registerTab, startListen, subscribeToken, getTokenLimitOrders, marketBuy, marketSell };
+	return {
+		registerTab,
+		startListen,
+		subscribeToken,
+		getTokenLimitOrders,
+		placeLimitOrder,
+		marketBuy,
+		marketSell
+	};
 };

@@ -5,5 +5,6 @@ export const getMetaByState = (state: BackgroundState): CabalMeta => ({
 	mint: state.mint,
 	isReady: state.isReady,
 	shouldSetApiKey: !state.apiKey,
-	config: state.config
+	config: state.config,
+	solPriceUSD: state.solPriceUSD
 });

@@ -18,7 +18,7 @@
 	import { TRAILING_TYPES } from '@/constants/trailing';
 	import { getSolBalance } from '@/untils/formatters';
 	import { onDestroy } from 'svelte';
-	import type { ContentManagerHandlers } from '@/hooks/useContentManager';
+	import type { ContentManagerHandlers } from '@/hooks/useContentManager.svelte';
 
 	// Props
 	let props = $props<{
@@ -73,6 +73,11 @@
 	const onBuyClick = () => {
 		console.log('onBuyClick', amountBuy);
 		props.handlers.onMarketBuySol(amountBuy);
+	};
+
+	const onBuyLimitClick = () => {
+		console.log('onBuyLimitClick', { amountBuy, mcPercent });
+		props.handlers.onPlaceBuyLimitOrder({ amountBuy, mcPercent });
 	};
 
 	const onPlaceLimitOrderClick = () => {
@@ -177,6 +182,16 @@
 
 	{#if tradeType.key === 'market'}
 		<Button clipped variant="buy" class="e:w-full e:gap-x-[8px]" onclick={onBuyClick}>
+			<span class="e:flex e:gap-x-[4px]">
+				Buy {amountBuy}
+				<SolanaCircleIcon />
+			</span>
+			{ticker}
+		</Button>
+	{/if}
+
+	{#if tradeType.key === 'limit'}
+		<Button clipped variant="buy" class="e:w-full e:gap-x-[8px]" onclick={onBuyLimitClick}>
 			<span class="e:flex e:gap-x-[4px]">
 				Buy {amountBuy}
 				<SolanaCircleIcon />

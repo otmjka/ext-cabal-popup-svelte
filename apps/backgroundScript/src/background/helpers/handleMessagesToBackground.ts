@@ -5,7 +5,8 @@ import {
 	SellMarketPayloadMessage,
 	SubscribeTokenPayloadMessage,
 	SubscribeTokenPromisePayloadMessage,
-	PlaceLimitOrderPayloadMessage
+	PlaceLimitOrderPayloadMessage,
+	GetTokenLimitOrdersPayloadMessage
 } from '@/shared/src/cabalSharedTypes';
 
 import { BackgroundState } from '../types';
@@ -21,6 +22,7 @@ import { initCabalOnTab } from './initCabalOnTab';
 import { setApiKey } from './setApiKey';
 import { setApiKeyPromise } from './setApiKeyPromise';
 import { handlePlaceLimitOrder } from './handlePlaceLimitOrder';
+import { handleGetTokenLimitOrders } from './handleGetTokenLimitOrders';
 
 export const handleMessagesToBackground =
 	({ state }: { state: BackgroundState }) =>
@@ -78,10 +80,10 @@ export const handleMessagesToBackground =
 				});
 				return true;
 			case BackgroundMessages.GET_TOKEN_LIMIT_ORDERS:
-				handleSubscribeTokenMessage({
+				handleGetTokenLimitOrders({
 					sendResponse,
 					state,
-					message: message as SubscribeTokenPayloadMessage
+					message: message as GetTokenLimitOrdersPayloadMessage
 				});
 				return true;
 			case BackgroundMessages.BUY_MARKET:
@@ -105,11 +107,11 @@ export const handleMessagesToBackground =
 					message: message as PlaceLimitOrderPayloadMessage
 				});
 				return true;
-			case BackgroundMessages.GET:
-				handlePlaceLimitOrder({
+			case BackgroundMessages.GET_TOKEN_LIMIT_ORDERS:
+				handleGetTokenLimitOrders({
 					sendResponse,
 					state,
-					message: message as PlaceLimitOrderPayloadMessage
+					message: message as GetTokenLimitOrdersPayloadMessage
 				});
 				return true;
 			default:

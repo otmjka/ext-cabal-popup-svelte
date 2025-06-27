@@ -1,4 +1,7 @@
-import { SubscribeTokenPayloadMessage } from '@/shared/src/cabalSharedTypes';
+import {
+	SubscribeTokenPayloadMessage,
+	SubscribeTokenResponse
+} from '@/shared/src/cabalSharedTypes';
 import { config } from '../backgroundConfig';
 import { BackgroundState } from '../types';
 import { getMetaByState } from './getMetaByState';
@@ -8,7 +11,7 @@ export const handleSubscribeTokenMessage = async ({
 	state,
 	message
 }: {
-	sendResponse: (response?: any) => void;
+	sendResponse: (response?: SubscribeTokenResponse) => void;
 	state: BackgroundState;
 	message: SubscribeTokenPayloadMessage;
 }) => {
@@ -27,9 +30,8 @@ export const handleSubscribeTokenMessage = async ({
 		sendResponse({
 			meta: getMetaByState(state),
 			payload: {
-				error,
 				result: {
-					$typeName: result?.$typeName,
+					$typeName: result?.$typeName as string,
 					slot: String(result?.slot)
 				}
 			}

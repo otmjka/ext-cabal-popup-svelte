@@ -9,10 +9,11 @@
 	import quickBuyStore from '@/stores/quick-buy';
 	import quickSellStore from '@/stores/quick-sell';
 	import quickSellPercentStore from '@/stores/quick-sell-percent';
+	import tabBuySellStore from '@/stores/tab-buy-sell';
 	import { contentAppStore } from '@/stores/contentAppStore';
 	import { onDestroy } from 'svelte';
 	import { calculatePnL, formatTradeData } from '@/untils/formatters';
-	import type { ContentManagerHandlers } from '@/hooks/useContentManager';
+	import type { ContentManagerHandlers } from '@/hooks/useContentManager.svelte';
 
 	// Props
 	let props = $props<{
@@ -69,7 +70,7 @@
 	});
 
 	// Data
-	let amountBuy: number | undefined = $state();
+	// let amountBuy: number | undefined = $state();
 	let amountSell: number | undefined = $state();
 	let autoLimits = $state(true);
 	let sellUnittype: 'SOL' | 'percent' = $state('SOL');
@@ -81,8 +82,9 @@
 		amountSell = undefined;
 	};
 	const onBuyClick = () => {
-		console.log('onBuyClick', amountBuy);
-		props.handlers.onMarketBuySol(amountBuy);
+		console.log('onBuyClick', $tabBuySellStore.amountBuy);
+		debugger;
+		// props.handlers.onMarketBuySol($tabBuySellStore.amountBuy);
 	};
 
 	const onSellClick = () => {
@@ -109,7 +111,7 @@
 	};
 
 	const setBuyAmount = (amount: number) => {
-		amountBuy = amount;
+		$tabBuySellStore.amountBuy = amount;
 	};
 
 	const setSellAmount = (amount: number) => {
@@ -140,7 +142,7 @@
 		<QuickTradeActions type="buy" unit="SOL" actions={quickBuys} onclick={setBuyAmount} />
 		<div class="e:w-full e:grid e:grid-cols-4 e:gap-[10px]">
 			<Input
-				bind:value={amountBuy}
+				bind:value={$tabBuySellStore.amountBuy}
 				variant="buy"
 				type="number"
 				icon="sol"
@@ -150,7 +152,7 @@
 				max={100}
 				step={0.001}
 				onchange={() => {
-					console.log('amountBuy', amountBuy);
+					console.log('amountBuy', $tabBuySellStore.amountBuy);
 				}}
 			/>
 			<Button clipped variant="buy" class="e:w-full" onclick={onBuyClick}>Buy</Button>
