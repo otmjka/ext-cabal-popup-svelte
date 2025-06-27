@@ -40,7 +40,7 @@
 		class="e:absolute e:bottom-0 e:left-0 e:text-white e:bg-black e:w-[300px] e:h-[300px] e:overflow-auto"
 	>
 		<pre class="e:text-xs e:bg-gray-900 e:text-white e:p-2 e:rounded">
-					{JSON.stringify($contentAppStore.txLog, null, 2)}
-				</pre>
+			{JSON.stringify($contentAppStore.txLog, null, 2)}
+		</pre>
 	</div>
 </main>

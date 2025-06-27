@@ -1,0 +1,45 @@
+
+/**
+ * Font size
+ */
+.text-12px {
+  font-size: 12px;
+  line-height: 12px;
+}
+.text-14px {
+  font-size: 14px;
+  line-height: 14px;
+}
+
+.text-16px {
+  font-size: 16px;
+  line-height: 16px;
+}
+.text-18px {
+  font-size: 18px;
+  line-height: 18px;
+}
+.text-24px {
+  font-size: 24px;
+  line-height: 24px;
+}
+
+/**
+ * Font weight
+ */
+.font-700 {
+  font-weight: 700;
+}
+
+/**
+ * Colors
+ */
+.text-buy {
+  color: #5BBE7B
+}
+.text-sell {
+  color: #E96B82
+}
+.text-light-gray {
+  color: #9B9C9E
+}
