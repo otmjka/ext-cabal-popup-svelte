@@ -10,7 +10,7 @@
 
 	// Types
 	import type { TNavItem } from '@/types/app';
-	import type { ContentManagerHandlers } from '@/hooks/useContentManager';
+	import type { ContentManagerHandlers } from '@/hooks/useContentManager.svelte';
 
 	// Data
 	const tabs: TNavItem[] = [

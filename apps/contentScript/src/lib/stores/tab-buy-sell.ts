@@ -16,18 +16,39 @@ export const tradeTypes: TNavItem[] = [
 	}
 ];
 
+export const tabs: TNavItem[] = [
+	{
+		key: 'buy',
+		label: 'Buy'
+	},
+	{
+		key: 'sell',
+		label: 'Sell'
+	}
+];
+
 type TabBuySellStore = {
-	amountBuy: number | undefined;
-	limitAmount: number | undefined;
-	mcPercent: number;
-	tradeType: TNavItem;
+	main: {
+		amountBuy: number | undefined;
+		amountSell: number | undefined;
+		limitAmount: number | undefined;
+		mcPercent: number;
+		tradeType: TNavItem;
+
+		activeTab: TNavItem;
+	};
 };
 
 const DEFAULT_STATE = {
-	amountBuy: undefined,
-	limitAmount: undefined,
-	mcPercent: 0,
-	tradeType: tradeTypes[0]
+	main: {
+		amountBuy: undefined,
+		amountSell: undefined,
+		limitAmount: undefined,
+		mcPercent: 0,
+		tradeType: tradeTypes[0],
+
+		activeTab: tabs[0]
+	}
 };
 
 const { subscribe, set, update } = writable<TabBuySellStore>(DEFAULT_STATE);

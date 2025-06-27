@@ -9,17 +9,16 @@ import {
 	type ApiOrderParsed
 } from '@/cabal-clinet-sdk/CabalServiceTypes';
 import { Direction, Side, Trigger } from '@/cabal-clinet-sdk/index';
+import { parsedNumberSchema } from '@/untils/parsers';
 
 export type ContentManagerHandlers = {
 	onMarketSellSol: (amount: number) => void;
 	onMarketBuySol: (amount: number) => void;
 	onOpenSettings: () => void;
 	onMarketSellPerc: (value: number) => void;
-	onPlaceBuyLimitOrder: ({
-		amountBuy,
-		mcPercent
-	}: {
+	onPlaceBuyLimitOrder: (params: {
 		amountBuy: number;
+		limitBuy: number;
 		mcPercent: number;
 	}) => void;
 };
@@ -156,29 +155,60 @@ export const useContentManager = ({
 
 	const handlePlaceBuyLimitOrder = async ({
 		amountBuy,
+		limitBuy,
 		mcPercent
 	}: {
 		amountBuy: number;
+		limitBuy: number;
 		mcPercent: number;
 	}) => {
-		if (!contentStore?.tabMint || !contentStore.config) {
+		if (
+			!contentStore?.tabMint ||
+			!contentStore.config ||
+			!contentStore.tokenStatus ||
+			!contentStore.solPriceUSD
+		) {
 			return;
 		}
+		console.log(
+			`[content][handlePlaceBuyLimitOrder] 1 ${contentStore.tokenStatus.ticker}: ${contentStore.tokenInSol}`
+		);
+		const targetTypeValuePrice =
+			limitBuy /
+			((parsedNumberSchema.parse(contentStore.tokenStatus.supply) / 1e9) *
+				contentStore.solPriceUSD);
+		console.log(`[content][handlePlaceBuyLimitOrder] target price: ${targetTypeValuePrice}`);
 		const order: ApiOrderParsed = {
 			mint: contentStore?.tabMint,
-			slippageBps: 60,
+			slippageBps: contentStore.config.limit.buySlippage,
 			tip: String(contentStore.config.limit.buyTip),
+			priorityFee: String(contentStore.config.limit.buyPriorityFee),
 			side: Side.BUY,
-			targetTypeValueDirection: Direction.ABOVE,
+			targetTypeValueDirection: Direction.BELOW,
 
 			targetTypeCase: TargetTypeCase.price,
-			targetTypeValuePrice: 0.0008,
+			targetTypeValuePrice,
 			amountCase: AmountCase.fixed,
 
 			amountFixed: String(amountBuy * 1e9),
 			trigger: Trigger.IMMEDIATE
 		};
-		console.log(order);
+		console.log(`[!!! LIMIT !!!] params`, amountBuy, mcPercent, limitBuy);
+		console.log(`[!!! LIMIT !!!]`, order);
+		/*
+		{
+    "mint": "7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr",
+    "slippageBps": 25,
+    "tip": "0.001",
+    "side": 0,
+    "targetTypeValueDirection": 1,
+    "targetTypeCase": "price",
+    "targetTypeValuePrice": 0.0009271956721945024,
+    "amountCase": "fixed",
+    "amountFixed": "2000000",
+    "trigger": 0
+}
+		*/
 		placeLimitOrder(order);
 	};
 

@@ -8,6 +8,8 @@ import type {
 	TradeStatsParsed,
 	TxMessageData
 } from '@/shared/src/cabalSharedTypes';
+import { oneTokenPriceInSol } from '@/untils/token';
+import { parsedNumberSchema } from '@/untils/parsers';
 
 export type ContentAppStore = {
 	tabMint: string | undefined;
@@ -20,6 +22,8 @@ export type ContentAppStore = {
 	apiKeyError?: string;
 	config: CabalConfig | null;
 	solPriceUSD: null | number;
+	tokenInSol: number;
+	mc: number;
 	tokenStatus: null | TokenStatusParsed;
 	tradeStats: null | TradeStatsParsed;
 	lastTradeEvent: null | TradeEventParsed;
@@ -37,6 +41,8 @@ const initialState: ContentAppStore = {
 	apiKeyError: undefined,
 	config: null,
 	solPriceUSD: null,
+	tokenInSol: 0,
+	mc: 0,
 	tokenStatus: null,
 	tradeStats: null,
 	lastTradeEvent: null,
@@ -52,9 +58,28 @@ const update = (updater: (state: ContentAppStore) => ContentAppStore) => {
 		const shouldBeReady =
 			next.isReady && next.tokenStatus !== null && next.tradeStats !== null && next.config !== null;
 
+		let tokenInSol = 0;
+
+		if (next.tokenStatus && shouldBeReady) {
+			tokenInSol = oneTokenPriceInSol({
+				baseLiq: next.tokenStatus.baseLiq,
+				quoteLiq: next.tokenStatus.quoteLiq
+			});
+		}
+
+		let mc = 0;
+		if (next.solPriceUSD && next.tokenStatus && shouldBeReady) {
+			const tokenInUsd = tokenInSol * next.solPriceUSD;
+			const suppyAmount = parsedNumberSchema.parse(next.tokenStatus.supply) / 1e9;
+			mc = Math.round(tokenInUsd * suppyAmount);
+			console.log('[MC]', mc, tokenInSol);
+		}
+
 		return {
 			...next,
-			isWidgetReady: shouldBeReady
+			isWidgetReady: shouldBeReady,
+			tokenInSol,
+			mc
 		};
 	});
 };

@@ -14,7 +14,7 @@
 
 	// Types
 	import type { TNavItem } from '@/types/app';
-	import type { ContentManagerHandlers } from '@/hooks/useContentManager';
+	import type { ContentManagerHandlers } from '@/hooks/useContentManager.svelte';
 
 	// Constants
 	import { TRAILING_TYPES } from '@/constants/trailing';
@@ -47,7 +47,7 @@
 	let limitAmount: number | undefined = $state();
 	let mcPercent: number = $state(0);
 	let ticker = $state('-');
-	let quickSells = $state<number[]>([]);
+	let quickSellPerc = $state<number[]>([]);
 	let solBalance = $state<string>('0');
 	let unsubscribe = contentAppStore.subscribe(($store) => {
 		try {
@@ -58,7 +58,7 @@
 
 			ticker = $store.tokenStatus?.ticker || '-';
 			if ($store.config?.buySell.sellPresetsSol) {
-				quickSells = $store.config?.buySell.sellPresetsSol;
+				quickSellPerc = $store.config?.buySell.sellPresetsPerc;
 			}
 		} catch (error) {
 			console.error(error);
@@ -129,7 +129,13 @@
 				</SegmentControlList>
 			{/if}
 
-			<QuickTradeActions type="sell" actions={quickSells} onclick={setSellAmount} />
+			<!-- <QuickTradeActions type="sell" actions={quickSells} onclick={setSellAmount} /> -->
+			<QuickTradeActions
+				type="sell"
+				unit={'percent'}
+				actions={quickSellPerc}
+				onclick={setSellAmount}
+			/>
 
 			<div class="e:grid e:grid-cols-4 e:gap-[10px]">
 				<Button clipped variant="sell" class="e:w-full e:col-span-2 e:px-[8px]">
@@ -139,7 +145,7 @@
 					bind:value={amountSell}
 					variant="sell"
 					type="number"
-					icon="sol"
+					icon="percent"
 					class="e:col-span-2"
 					placeholder="Enter custom amount"
 					min={0.001}
