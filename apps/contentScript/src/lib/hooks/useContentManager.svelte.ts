@@ -3,20 +3,64 @@ import { onMount } from 'svelte';
 import { useCabalService } from './useCabalService';
 import { contentAppStore, type ContentAppStore } from '../stores/contentAppStore';
 import { getAmountBpsBySol } from '@/untils/token';
+import {
+	AmountCase,
+	TargetTypeCase,
+	type ApiOrderParsed
+} from '@/cabal-clinet-sdk/CabalServiceTypes';
+import { Direction, Side, Trigger } from '@/cabal-clinet-sdk/index';
 
 export type ContentManagerHandlers = {
 	onMarketSellSol: (amount: number) => void;
 	onMarketBuySol: (amount: number) => void;
 	onOpenSettings: () => void;
 	onMarketSellPerc: (value: number) => void;
+	onPlaceBuyLimitOrder: ({
+		amountBuy,
+		mcPercent
+	}: {
+		amountBuy: number;
+		mcPercent: number;
+	}) => void;
 };
 
-export const useContentManager = ({ mint }: { mint: Mint }) => {
-	const { registerTab, startListen, subscribeToken, marketBuy, marketSell } = useCabalService();
+export const useContentManager = ({
+	mint
+}: {
+	mint: Mint;
+}): { handlers: ContentManagerHandlers } => {
+	const {
+		registerTab,
+		startListen,
+		subscribeToken,
+		marketBuy,
+		marketSell,
+		getTokenLimitOrders,
+		placeLimitOrder
+	} = useCabalService();
 
 	let contentStore: ContentAppStore | undefined;
 	const unsubscribe = contentAppStore.subscribe((store) => {
 		contentStore = store;
+	});
+
+	$effect(() => {
+		const unsubscribe = contentAppStore.subscribe(async (state) => {
+			if (!state.isWidgetReady || !state.focused || !state.tabMint) {
+				return;
+			}
+			// Выполняем действие, когда isWidgetReady становится true
+			console.log('[content][get limits] Widget is ready! Performing action...', state);
+			// Здесь можно добавить вашу логику, например:
+			// - Запрос данных
+			// - Инициализация компонента
+			// - Отображение UI
+			const result = await getTokenLimitOrders({ mint: state.tabMint });
+			console.log(`[content][get limits]`, result);
+		});
+
+		// Очистка подписки при уничтожении эффекта
+		return () => unsubscribe();
 	});
 
 	onMount(() => {
@@ -110,12 +154,41 @@ export const useContentManager = ({ mint }: { mint: Mint }) => {
 		marketSell({ mint: tabMint, amountBps });
 	};
 
+	const handlePlaceBuyLimitOrder = async ({
+		amountBuy,
+		mcPercent
+	}: {
+		amountBuy: number;
+		mcPercent: number;
+	}) => {
+		if (!contentStore?.tabMint || !contentStore.config) {
+			return;
+		}
+		const order: ApiOrderParsed = {
+			mint: contentStore?.tabMint,
+			slippageBps: 60,
+			tip: String(contentStore.config.limit.buyTip),
+			side: Side.BUY,
+			targetTypeValueDirection: Direction.ABOVE,
+
+			targetTypeCase: TargetTypeCase.price,
+			targetTypeValuePrice: 0.0008,
+			amountCase: AmountCase.fixed,
+
+			amountFixed: String(amountBuy * 1e9),
+			trigger: Trigger.IMMEDIATE
+		};
+		console.log(order);
+		placeLimitOrder(order);
+	};
+
 	return {
 		handlers: {
 			onMarketSellSol: handleMarketSellSol,
 			onMarketSellPerc: handleMarketSellPerc,
 			onMarketBuySol: handleMarketBuySol,
-			onOpenSettings: handleOpenSettings
+			onOpenSettings: handleOpenSettings,
+			onPlaceBuyLimitOrder: handlePlaceBuyLimitOrder
 		}
 	};
 };

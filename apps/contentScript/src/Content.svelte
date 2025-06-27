@@ -1,7 +1,7 @@
 <script lang="ts">
 	import FloatingWidget from '@/components/features/floating-widget/FloatingWidget.svelte';
 	import { contentAppStore } from '@/stores/contentAppStore';
-	import { useContentManager } from '@/hooks/useContentManager';
+	import { useContentManager } from '@/hooks/useContentManager.svelte';
 	import MainWidget from '@/components/features/main-widget/MainWidget.svelte';
 	const { mint } = $props<{ mint: string }>();
 	let isWidgetReady = $state<boolean>(false);
@@ -16,12 +16,14 @@
 			<MainWidget {handlers} />
 		{:else}
 			<div class="e:text-white e:bg-black e:p-2 e:rounded-md">
-				<div>Loading…</div>
-				<div>
+				<div
+					class="e:absolute e:top-0 e:right-0 e:text-white e:bg-black e:w-[300px] e:h-screen e:overflow-auto"
+				>
 					<pre class="e:text-xs e:bg-gray-900 e:text-white e:p-2 e:rounded">
 						{JSON.stringify($contentAppStore, null, 2)}
 					</pre>
 				</div>
+				<div>Loading…</div>
 			</div>
 		{/if}
 	</div>

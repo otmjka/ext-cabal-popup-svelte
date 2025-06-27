@@ -26,6 +26,9 @@ export const state: BackgroundState = {
 	_resolveSetApiKey: undefined,
 	_rejectedSetApiKey: undefined,
 
+	solSubscribeOn: true,
+	solPriceUSD: null,
+
 	getCabalInstance: () => state.cabal,
 
 	subscribeToken: subscribeTokenState,

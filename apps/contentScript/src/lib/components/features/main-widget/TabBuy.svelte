@@ -10,6 +10,7 @@
 	// Stores
 	import quickMcLimitsStore from '@/stores/quick-mc-limits';
 	import { contentAppStore } from '@/stores/contentAppStore';
+	import tabBuySellStore from '@/stores/tab-buy-sell';
 
 	// Types
 	import type { TNavItem } from '@/types/app';
@@ -18,7 +19,7 @@
 	import { TRAILING_TYPES } from '@/constants/trailing';
 	import { getSolBalance } from '@/untils/formatters';
 	import { onDestroy } from 'svelte';
-	import type { ContentManagerHandlers } from '@/hooks/useContentManager';
+	import type { ContentManagerHandlers } from '@/hooks/useContentManager.svelte';
 
 	// Props
 	let props = $props<{
@@ -42,14 +43,24 @@
 	];
 	let tradeType: TNavItem = $state(tradeTypes[0]);
 	let tailingType: TNavItem = $state(TRAILING_TYPES[1]);
-	let amountBuy: number | undefined = $state();
-	let limitAmount: number | undefined = $state();
+
+	let amountBuy = $state<number | undefined>();
+	let limitAmount = $state<number | undefined>();
 	let mcPercent: number = $state(0);
 	let ticker = $state('-');
 	let quickBuys = $state<number[]>([]);
 	let solBalance = $state<string>('0');
+	let unsubscribeTabBuySellStore = tabBuySellStore.subscribe(($store) => {
+		console.log(`[content][tabBuySellStore.subscribe]`, $store);
+		tradeType = $store.tradeType;
+		amountBuy = $store.amountBuy;
+		limitAmount = $store.limitAmount;
+	});
+
 	let unsubscribe = contentAppStore.subscribe(($store) => {
 		try {
+			console.log(`[content][contentAppStore.subscribe]`, $store);
+
 			if (!$store.tradeStats) {
 				return;
 			}
@@ -65,14 +76,22 @@
 	});
 	// Methods
 	const onTradeTypeClick = (el: TNavItem) => {
-		tradeType = el;
-		amountBuy = 0;
-		limitAmount = 0;
+		console.log(`[onTradeTypeClick]`, $tabBuySellStore.tradeType);
+		tabBuySellStore.update((store) => ({ ...store, tradeType: el }));
+		console.log(`[onTradeTypeClick]`, $tabBuySellStore.tradeType);
+
+		$tabBuySellStore.amountBuy = 0;
+		$tabBuySellStore.limitAmount = 0;
 	};
 
 	const onBuyClick = () => {
 		console.log('onBuyClick', amountBuy);
 		props.handlers.onMarketBuySol(amountBuy);
+	};
+
+	const onBuyLimitClick = () => {
+		console.log('onBuyLimitClick', { amountBuy, mcPercent });
+		props.handlers.onPlaceBuyLimitOrder({ amountBuy, mcPercent });
 	};
 
 	const onPlaceLimitOrderClick = () => {
@@ -91,7 +110,10 @@
 		tailingType = el;
 	};
 
-	onDestroy(unsubscribe);
+	onDestroy(() => {
+		unsubscribe();
+		unsubscribeTabBuySellStore();
+	});
 </script>
 
 <div class="e:flex e:flex-col e:gap-[8px] e:h-full">
@@ -129,7 +151,7 @@
 
 			<QuickTradeActions type="buy" actions={quickBuys} onclick={setBuyAmount} />
 			<Input
-				bind:value={amountBuy}
+				bind:value={$tabBuySellStore.amountBuy}
 				variant="buy"
 				type="number"
 				icon="sol"
@@ -139,14 +161,14 @@
 				max={100}
 				step={0.001}
 				onchange={() => {
-					console.log('amountBuy', amountBuy);
+					console.log('amountBuy', $tabBuySellStore.amountBuy);
 				}}
 			/>
 		</Section>
 
 		{#if tradeType.key === 'limit' || tradeType.key === 'trailing'}
 			<div class="e:w-full e:relative">
-				<Input bind:value={limitAmount} variant="default" />
+				<Input bind:value={$tabBuySellStore.limitAmount} variant="default" />
 				<span
 					class="e:absolute e:top-[10px] e:right-[10px] text-12px e:text-white/50 e:font-normal"
 				>
@@ -177,6 +199,16 @@
 
 	{#if tradeType.key === 'market'}
 		<Button clipped variant="buy" class="e:w-full e:gap-x-[8px]" onclick={onBuyClick}>
+			<span class="e:flex e:gap-x-[4px]">
+				Buy {amountBuy}
+				<SolanaCircleIcon />
+			</span>
+			{ticker}
+		</Button>
+	{/if}
+
+	{#if tradeType.key === 'limit'}
+		<Button clipped variant="buy" class="e:w-full e:gap-x-[8px]" onclick={onBuyLimitClick}>
 			<span class="e:flex e:gap-x-[4px]">
 				Buy {amountBuy}
 				<SolanaCircleIcon />

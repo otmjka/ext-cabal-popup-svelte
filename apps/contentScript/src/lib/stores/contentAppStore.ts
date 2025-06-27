@@ -20,6 +20,7 @@ export type ContentAppStore = {
 	shouldSetApiKey: boolean;
 	apiKeyError?: string;
 	config: CabalConfig | null;
+	solPriceUSD: null | number;
 	tokenStatus: null | TokenStatusParsed;
 	tradeStats: null | TradeStatsParsed;
 	lastTradeEvent: null | TradeEventParsed;
@@ -36,6 +37,7 @@ const initialState: ContentAppStore = {
 	shouldSetApiKey: false,
 	apiKeyError: undefined,
 	config: null,
+	solPriceUSD: null,
 	tokenStatus: null,
 	tradeStats: null,
 	lastTradeEvent: null,
