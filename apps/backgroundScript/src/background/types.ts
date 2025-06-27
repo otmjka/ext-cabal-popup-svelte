@@ -30,6 +30,9 @@ export type BackgroundState = {
 	apiKey: string | null;
 
 	setApiKeyPromise: null | Promise<unknown>;
+	solSubscribeOn: boolean;
+	solPriceUSD: number | null;
+
 	_resolveSetApiKey?: (value: unknown) => void;
 	_rejectedSetApiKey?: (value: unknown) => void;
 

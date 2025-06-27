@@ -1,7 +1,7 @@
 <script lang="ts">
 	import FloatingWidget from '@/components/features/floating-widget/FloatingWidget.svelte';
 	import { contentAppStore } from '@/stores/contentAppStore';
-	import { useContentManager } from '@/hooks/useContentManager';
+	import { useContentManager } from '@/hooks/useContentManager.svelte';
 	import MainWidget from '@/components/features/main-widget/MainWidget.svelte';
 	const { mint } = $props<{ mint: string }>();
 	let isWidgetReady = $state<boolean>(false);

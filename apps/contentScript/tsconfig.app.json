@@ -6,8 +6,9 @@
 		"module": "ESNext",
 		"resolveJsonModule": true,
 		"paths": {
-			"@/*": ["./src/lib/*"],
-			"@/shared/*": ["../../packages/shared/*"]
+			"@/cabal-clinet-sdk/*": ["../../packages/cabal-clinet-sdk/*"],
+			"@/shared/*": ["../../packages/shared/*"],
+			"@/*": ["./src/lib/*"]
 		},
 		/**
 		 * Typecheck JS in `.svelte` and `.js` files by default.

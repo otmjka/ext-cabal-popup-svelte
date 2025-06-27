@@ -6,6 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
 	resolve: {
 		alias: {
+			'@/cabal-clinet-sdk': path.resolve(__dirname, '../../packages/cabal-clinet-sdk'), // Путь к cabal-clinet-sdk
 			'@/shared': path.resolve(__dirname, '../../packages/shared'), // Путь к shared
 			'@': path.resolve(__dirname, './src/lib'),
 			'@src': path.resolve(__dirname, './src')
