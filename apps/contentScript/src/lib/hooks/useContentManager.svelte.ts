@@ -15,10 +15,20 @@ export type ContentManagerHandlers = {
 	onMarketBuySol: (amount: number) => void;
 	onOpenSettings: () => void;
 	onMarketSellPerc: (value: number) => void;
-	onPlaceLimitOrders: ({ amountBuy, mcPercent }: { amountBuy: number; mcPercent: number }) => void;
+	onPlaceBuyLimitOrder: ({
+		amountBuy,
+		mcPercent
+	}: {
+		amountBuy: number;
+		mcPercent: number;
+	}) => void;
 };
 
-export const useContentManager = ({ mint }: { mint: Mint }) => {
+export const useContentManager = ({
+	mint
+}: {
+	mint: Mint;
+}): { handlers: ContentManagerHandlers } => {
 	const {
 		registerTab,
 		startListen,
