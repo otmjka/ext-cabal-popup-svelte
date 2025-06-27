@@ -18,6 +18,7 @@
 		inputClass = '',
 		disabled = false,
 		onchange = () => {},
+    onkeyup = () => {},
 		...other
 	}: IInput = $props();
 
@@ -47,12 +48,28 @@
 	});
 
 	const onChange = (e: Event) => {
-		if (type) onchange?.(e);
+		if (type) {
+      onchange?.(e);
+    };
+	};
+
+  const onKeyUp = (e: KeyboardEvent) => {
+		if (type) {
+      onkeyup?.(e);
+    };
 	};
 </script>
 
 <div class={wrapperCssClass}>
-	<input {...other} {disabled} {type} class={inputCssClass} bind:value onchange={onChange} />
+	<input 
+    {...other} 
+    {disabled} 
+    {type} 
+    class={inputCssClass} 
+    bind:value 
+    onchange={onChange} 
+    onkeyup={onKeyUp}
+  />
 
 	{#if icon}
 		<span class="e:absolute e:right-[8px]">

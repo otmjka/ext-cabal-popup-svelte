@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount } from "svelte";
+
   // Components
   import { Button, SegmentControlItem, SegmentControlList, Switcher, InfoIcon } from "@/components/ui";
   import { AutoLimitsEditor } from "@/components/shared";
@@ -6,37 +8,26 @@
   // Helpers
   import { toaster } from "@/config/toast";
 
+  // Constants
+  import { 
+    DEFAULT_BUY_AUTO_LIMIT, 
+    DEFAULT_SELL_AUTO_LIMIT 
+  } from "@/constants/auto-limits";
+
+  // Types
+  import type { 
+    IAutoLimitBuyRecord, 
+    IAutoLimitSellRecord, 
+  } from "@/types/limits";
+
   // Data
   let presets: number[] = $state([1,2,3]);
   let selectedPreset = $state(presets[0]);
   let offAutolimitsOnTrade = $state(false);
 
-
-  const record = {
-    "amount": 50,
-    "color": "red",
-    "priorityFee": 0.0005,
-    "slippage": 25,
-    "target": 100,
-    "tip": 0.005,
-    "type": "TakeProfit Trailing"
-  };
-
-  let sell = $state([]);
-  let buy = $state([]);
-
-  let sellDraft = [];
-  let buDraft = [];
-
-  Array(4).keys().forEach(() => {
-    sellDraft.push(record);
-  });
-  sell = sellDraft;
-
-  Array(8).keys().forEach(() => {
-    buDraft.push(record);
-  });
-  buy = buDraft;
+  // Тут должны быть данные из сторов, но я замокал этот кусок
+  let sell: IAutoLimitSellRecord[] = $state([]);
+  let buy: IAutoLimitBuyRecord[] = $state([]);
 
   // Methods
   const onPresetSelect = (preset: number) => {
@@ -46,6 +37,15 @@
   const onSaveClick = () => {
     toaster.message("Settings was successfully saved", "Saved");
   }
+
+  onMount(() => {
+    if (sell.length === 0) {
+      sell.push({...DEFAULT_SELL_AUTO_LIMIT});
+    }
+    if (buy.length === 0) {
+      buy.push({...DEFAULT_BUY_AUTO_LIMIT});
+    }
+  })
 </script>
 
 <div class="e:w-full e:max-w-[764px] e:flex e:flex-col e:gap-[32px] e:p-[32px] e:bg-[#04070C] e:border-[1px] e:border-white/20">
@@ -84,10 +84,7 @@
         <span class="text-sell">Sell</span> Limit Orders 
         <InfoIcon tip="Sell Limit Orders " />
       </h4>
-
-      {#if sell.length}
-        <AutoLimitsEditor type="sell" bind:records={sell} />
-      {/if}
+      <AutoLimitsEditor type="sell" bind:records={sell} />
     </div>
 
     <div class="e:w-full e:flex e:flex-col e:gap-y-[16px]">
@@ -95,7 +92,6 @@
         <span class="text-buy">Buy</span> Limit Orders 
         <InfoIcon tip="Sell Limit Orders " />
       </h4>
-
       <AutoLimitsEditor type="buy" bind:records={buy} />
     </div>
   </div>

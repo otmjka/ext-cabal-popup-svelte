@@ -14,5 +14,6 @@ export interface IInput {
   step?: number,
   inputClass?: string,
   disabled?: boolean,
-  onchange?: (event: Event) => void
+  onchange?: (event: Event) => void,
+  onkeyup?: (event: KeyboardEvent) => void
 }
