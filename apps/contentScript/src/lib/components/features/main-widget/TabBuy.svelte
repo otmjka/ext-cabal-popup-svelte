@@ -41,9 +41,9 @@
 	let quickMcLimits = $state<number[]>([]);
 	let unsubscribeTabBuySellStore = tabBuySellStore.subscribe(($store) => {
 		console.log(`[content][tabBuySellStore.subscribe]`, $store);
-		tradeType = $store.tradeType;
-		amountBuy = $store.amountBuy;
-		mcPercent = $store.mcPercent;
+		tradeType = $store.main.tradeType;
+		amountBuy = $store.main.amountBuy;
+		mcPercent = $store.main.mcPercent;
 	});
 
 	let unsubscribe = contentAppStore.subscribe(($store) => {
@@ -67,9 +67,9 @@
 	});
 	// Methods
 	const onTradeTypeClick = (el: TNavItem) => {
-		$tabBuySellStore.tradeType = el;
-		$tabBuySellStore.amountBuy = 0;
-		$tabBuySellStore.limitAmount = 0;
+		$tabBuySellStore.main.tradeType = el;
+		$tabBuySellStore.main.amountBuy = 0;
+		$tabBuySellStore.main.limitAmount = 0;
 	};
 
 	const onBuyClick = () => {
@@ -78,7 +78,7 @@
 	};
 
 	const onBuyLimitClick = () => {
-		const params = { amountBuy, mcPercent, limitBuy: $tabBuySellStore.limitAmount };
+		const params = { amountBuy, mcPercent, limitBuy: $tabBuySellStore.main.limitAmount };
 		console.log('onBuyLimitClick', params);
 		props.handlers.onPlaceBuyLimitOrder(params);
 	};
@@ -88,12 +88,12 @@
 	};
 
 	const setBuyAmount = (amount: number) => {
-		$tabBuySellStore.amountBuy = amount;
+		$tabBuySellStore.main.amountBuy = amount;
 	};
 
 	const setMcPercent = (amount: number) => {
-		$tabBuySellStore.mcPercent = amount;
-		$tabBuySellStore.limitAmount = $contentAppStore.mc + (amount * $contentAppStore.mc) / 100;
+		$tabBuySellStore.main.mcPercent = amount;
+		$tabBuySellStore.main.limitAmount = $contentAppStore.mc + (amount * $contentAppStore.mc) / 100;
 	};
 
 	const setTrailingType = (el: TNavItem) => {
@@ -141,7 +141,7 @@
 
 			<QuickTradeActions type="buy" actions={quickBuys} onclick={setBuyAmount} />
 			<Input
-				bind:value={$tabBuySellStore.amountBuy}
+				bind:value={$tabBuySellStore.main.amountBuy}
 				variant="buy"
 				type="number"
 				icon="sol"
@@ -151,14 +151,14 @@
 				max={100}
 				step={0.001}
 				onchange={() => {
-					console.log('amountBuy', $tabBuySellStore.amountBuy);
+					console.log('amountBuy', $tabBuySellStore.main.amountBuy);
 				}}
 			/>
 		</Section>
 
 		{#if tradeType.key === 'limit' || tradeType.key === 'trailing'}
 			<div class="e:w-full e:relative">
-				<Input bind:value={$tabBuySellStore.limitAmount} variant="default" />
+				<Input bind:value={$tabBuySellStore.main.limitAmount} variant="default" />
 				<span
 					class="e:absolute e:top-[10px] e:right-[10px] text-12px e:text-white/50 e:font-normal"
 				>
@@ -180,7 +180,7 @@
 					</SegmentControlList>
 				</div>
 
-				<Input bind:value={$tabBuySellStore.mcPercent} variant="default" icon="percent" />
+				<Input bind:value={$tabBuySellStore.main.mcPercent} variant="default" icon="percent" />
 			</div>
 		{/if}
 	</div>

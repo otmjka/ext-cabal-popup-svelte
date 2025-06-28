@@ -20,6 +20,7 @@
 	import { TRAILING_TYPES } from '@/constants/trailing';
 	import { getSolBalance } from '@/untils/formatters';
 	import { onDestroy } from 'svelte';
+	import tabBuySellStore, { tradeTypes } from '@/stores/tab-buy-sell';
 
 	// Props
 	let props = $props<{
@@ -27,20 +28,7 @@
 	}>();
 
 	// Data
-	const tradeTypes: TNavItem[] = [
-		{
-			label: 'Market',
-			key: 'market'
-		},
-		{
-			label: 'Limit',
-			key: 'limit'
-		},
-		{
-			label: 'Trailing',
-			key: 'trailing'
-		}
-	];
+
 	let tradeType: TNavItem = $state(tradeTypes[0]);
 	let tailingType: TNavItem = $state(TRAILING_TYPES[1]);
 	let amountSell: number | undefined = $state();
@@ -49,6 +37,15 @@
 	let ticker = $state('-');
 	let quickSellPerc = $state<number[]>([]);
 	let solBalance = $state<string>('0');
+
+	let quickMcLimits = $state<number[]>([]);
+	let unsubscribeTabBuySellStore = tabBuySellStore.subscribe(($store) => {
+		console.log(`[content][tabBuySellStore.subscribe]`, $store);
+		tradeType = $store.main.tradeType;
+		amountSell = $store.main.amountSell;
+		mcPercent = $store.main.mcPercent;
+	});
+
 	let unsubscribe = contentAppStore.subscribe(($store) => {
 		try {
 			if (!$store.tradeStats) {
@@ -59,6 +56,10 @@
 			ticker = $store.tokenStatus?.ticker || '-';
 			if ($store.config?.buySell.sellPresetsSol) {
 				quickSellPerc = $store.config?.buySell.sellPresetsPerc;
+			}
+
+			if ($store.config?.limit.mcPerc) {
+				quickMcLimits = $store.config?.limit.mcPerc;
 			}
 		} catch (error) {
 			console.error(error);
@@ -93,7 +94,10 @@
 		tailingType = el;
 	};
 
-	onDestroy(unsubscribe);
+	onDestroy(() => {
+		unsubscribe();
+		unsubscribeTabBuySellStore();
+	});
 </script>
 
 <div class="e:flex e:flex-col e:gap-[12px] e:h-full">
