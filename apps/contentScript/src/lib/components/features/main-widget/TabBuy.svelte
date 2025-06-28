@@ -10,7 +10,7 @@
 	// Stores
 	import quickMcLimitsStore from '@/stores/quick-mc-limits';
 	import { contentAppStore } from '@/stores/contentAppStore';
-	import tabBuySellStore from '@/stores/tab-buy-sell';
+	import tabBuySellStore, { tradeTypes } from '@/stores/tab-buy-sell';
 
 	// Types
 	import type { TNavItem } from '@/types/app';
@@ -20,6 +20,7 @@
 	import { getSolBalance } from '@/untils/formatters';
 	import { onDestroy } from 'svelte';
 	import type { ContentManagerHandlers } from '@/hooks/useContentManager.svelte';
+	import { oneTokenPriceInSol } from '@/untils/token';
 
 	// Props
 	let props = $props<{
@@ -27,40 +28,30 @@
 	}>();
 
 	// Data
-	const tradeTypes: TNavItem[] = [
-		{
-			label: 'Market',
-			key: 'market'
-		},
-		{
-			label: 'Limit',
-			key: 'limit'
-		},
-		{
-			label: 'Trailing',
-			key: 'trailing'
-		}
-	];
+
 	let tradeType: TNavItem = $state(tradeTypes[0]);
 	let tailingType: TNavItem = $state(TRAILING_TYPES[1]);
 
 	let amountBuy = $state<number | undefined>();
-	let limitAmount = $state<number | undefined>();
 	let mcPercent: number = $state(0);
 	let ticker = $state('-');
 	let quickBuys = $state<number[]>([]);
 	let solBalance = $state<string>('0');
+
+	let quickMcLimits = $state<number[]>([]);
 	let unsubscribeTabBuySellStore = tabBuySellStore.subscribe(($store) => {
 		console.log(`[content][tabBuySellStore.subscribe]`, $store);
-		tradeType = $store.tradeType;
-		amountBuy = $store.amountBuy;
-		limitAmount = $store.limitAmount;
+		tradeType = $store.main.tradeType;
+		amountBuy = $store.main.amountBuy;
+		mcPercent = $store.main.mcPercent;
 	});
 
 	let unsubscribe = contentAppStore.subscribe(($store) => {
 		try {
 			console.log(`[content][contentAppStore.subscribe]`, $store);
-
+			if ($store.config?.limit.mcPerc) {
+				quickMcLimits = [...$store.config?.limit.mcPerc];
+			}
 			if (!$store.tradeStats) {
 				return;
 			}
@@ -76,12 +67,9 @@
 	});
 	// Methods
 	const onTradeTypeClick = (el: TNavItem) => {
-		console.log(`[onTradeTypeClick]`, $tabBuySellStore.tradeType);
-		tabBuySellStore.update((store) => ({ ...store, tradeType: el }));
-		console.log(`[onTradeTypeClick]`, $tabBuySellStore.tradeType);
-
-		$tabBuySellStore.amountBuy = 0;
-		$tabBuySellStore.limitAmount = 0;
+		$tabBuySellStore.main.tradeType = el;
+		$tabBuySellStore.main.amountBuy = 0;
+		$tabBuySellStore.main.limitAmount = 0;
 	};
 
 	const onBuyClick = () => {
@@ -90,20 +78,22 @@
 	};
 
 	const onBuyLimitClick = () => {
-		console.log('onBuyLimitClick', { amountBuy, mcPercent });
-		props.handlers.onPlaceBuyLimitOrder({ amountBuy, mcPercent });
+		const params = { amountBuy, mcPercent, limitBuy: $tabBuySellStore.main.limitAmount };
+		console.log('onBuyLimitClick', params);
+		props.handlers.onPlaceBuyLimitOrder(params);
 	};
 
-	const onPlaceLimitOrderClick = () => {
+	const onPlaceTrailingLimitOrderClick = () => {
 		console.log('onPlaceLimitOrderClick');
 	};
 
 	const setBuyAmount = (amount: number) => {
-		amountBuy = amount;
+		$tabBuySellStore.main.amountBuy = amount;
 	};
 
 	const setMcPercent = (amount: number) => {
-		mcPercent = amount;
+		$tabBuySellStore.main.mcPercent = amount;
+		$tabBuySellStore.main.limitAmount = $contentAppStore.mc + (amount * $contentAppStore.mc) / 100;
 	};
 
 	const setTrailingType = (el: TNavItem) => {
@@ -151,7 +141,7 @@
 
 			<QuickTradeActions type="buy" actions={quickBuys} onclick={setBuyAmount} />
 			<Input
-				bind:value={$tabBuySellStore.amountBuy}
+				bind:value={$tabBuySellStore.main.amountBuy}
 				variant="buy"
 				type="number"
 				icon="sol"
@@ -161,14 +151,14 @@
 				max={100}
 				step={0.001}
 				onchange={() => {
-					console.log('amountBuy', $tabBuySellStore.amountBuy);
+					console.log('amountBuy', $tabBuySellStore.main.amountBuy);
 				}}
 			/>
 		</Section>
 
 		{#if tradeType.key === 'limit' || tradeType.key === 'trailing'}
 			<div class="e:w-full e:relative">
-				<Input bind:value={$tabBuySellStore.limitAmount} variant="default" />
+				<Input bind:value={$tabBuySellStore.main.limitAmount} variant="default" />
 				<span
 					class="e:absolute e:top-[10px] e:right-[10px] text-12px e:text-white/50 e:font-normal"
 				>
@@ -179,7 +169,7 @@
 			<div class="e:w-full e:relative e:grid e:grid-cols-4 e:gap-x-[12px]">
 				<div class="e:col-span-3">
 					<SegmentControlList class="e:w-full" size="lg">
-						{#each $quickMcLimitsStore as mcLimit}
+						{#each quickMcLimits as mcLimit}
 							<SegmentControlItem
 								active={mcPercent == mcLimit}
 								onclick={() => setMcPercent(mcLimit)}
@@ -190,7 +180,7 @@
 					</SegmentControlList>
 				</div>
 
-				<Input bind:value={mcPercent} variant="default" icon="percent" />
+				<Input bind:value={$tabBuySellStore.main.mcPercent} variant="default" icon="percent" />
 			</div>
 		{/if}
 	</div>
@@ -218,7 +208,12 @@
 	{/if}
 
 	{#if tradeType.key === 'trailing'}
-		<Button clipped variant="buy" class="e:w-full e:gap-x-[8px]" onclick={onPlaceLimitOrderClick}>
+		<Button
+			clipped
+			variant="buy"
+			class="e:w-full e:gap-x-[8px]"
+			onclick={onPlaceTrailingLimitOrderClick}
+		>
 			Place Limit Order
 		</Button>
 	{/if}

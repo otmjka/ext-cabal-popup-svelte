@@ -187,6 +187,17 @@ export type SubscribeTokenResponse = {
 	};
 };
 
+export type BgPlaceLimitOrdersResponse = {
+	meta: CabalMeta;
+	payload: {
+		result?: {
+			ids: string[];
+			tokenOrdersNum: number;
+		};
+		error?: unknown;
+	};
+};
+
 export type SubscribeTokenPromiseResponse = {
 	tokenStatus: TokenStatusParsed;
 	tradeStats: TradeStatsParsed;

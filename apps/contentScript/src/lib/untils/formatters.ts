@@ -1,4 +1,4 @@
-import type { StrBigInt, TokenStatusParsed, TradeStatsParsed } from '@/types/cabalSharedTypes';
+import type { StrBigInt, TokenStatusParsed, TradeStatsParsed } from '@/shared/src/cabalSharedTypes';
 import { parsedNumberSchema } from './parsers';
 import { oneTokenPriceInSol } from './token';
 

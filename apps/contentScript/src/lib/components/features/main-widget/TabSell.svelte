@@ -14,12 +14,13 @@
 
 	// Types
 	import type { TNavItem } from '@/types/app';
-	import type { ContentManagerHandlers } from '@/hooks/useContentManager';
+	import type { ContentManagerHandlers } from '@/hooks/useContentManager.svelte';
 
 	// Constants
 	import { TRAILING_TYPES } from '@/constants/trailing';
 	import { getSolBalance } from '@/untils/formatters';
 	import { onDestroy } from 'svelte';
+	import tabBuySellStore, { tradeTypes } from '@/stores/tab-buy-sell';
 
 	// Props
 	let props = $props<{
@@ -27,28 +28,24 @@
 	}>();
 
 	// Data
-	const tradeTypes: TNavItem[] = [
-		{
-			label: 'Market',
-			key: 'market'
-		},
-		{
-			label: 'Limit',
-			key: 'limit'
-		},
-		{
-			label: 'Trailing',
-			key: 'trailing'
-		}
-	];
+
 	let tradeType: TNavItem = $state(tradeTypes[0]);
 	let tailingType: TNavItem = $state(TRAILING_TYPES[1]);
 	let amountSell: number | undefined = $state();
 	let limitAmount: number | undefined = $state();
 	let mcPercent: number = $state(0);
 	let ticker = $state('-');
-	let quickSells = $state<number[]>([]);
+	let quickSellPerc = $state<number[]>([]);
 	let solBalance = $state<string>('0');
+
+	let quickMcLimits = $state<number[]>([]);
+	let unsubscribeTabBuySellStore = tabBuySellStore.subscribe(($store) => {
+		console.log(`[content][tabBuySellStore.subscribe]`, $store);
+		tradeType = $store.main.tradeType;
+		amountSell = $store.main.amountSell;
+		mcPercent = $store.main.mcPercent;
+	});
+
 	let unsubscribe = contentAppStore.subscribe(($store) => {
 		try {
 			if (!$store.tradeStats) {
@@ -58,7 +55,11 @@
 
 			ticker = $store.tokenStatus?.ticker || '-';
 			if ($store.config?.buySell.sellPresetsSol) {
-				quickSells = $store.config?.buySell.sellPresetsSol;
+				quickSellPerc = $store.config?.buySell.sellPresetsPerc;
+			}
+
+			if ($store.config?.limit.mcPerc) {
+				quickMcLimits = $store.config?.limit.mcPerc;
 			}
 		} catch (error) {
 			console.error(error);
@@ -93,7 +94,10 @@
 		tailingType = el;
 	};
 
-	onDestroy(unsubscribe);
+	onDestroy(() => {
+		unsubscribe();
+		unsubscribeTabBuySellStore();
+	});
 </script>
 
 <div class="e:flex e:flex-col e:gap-[12px] e:h-full">
@@ -129,7 +133,13 @@
 				</SegmentControlList>
 			{/if}
 
-			<QuickTradeActions type="sell" actions={quickSells} onclick={setSellAmount} />
+			<!-- <QuickTradeActions type="sell" actions={quickSells} onclick={setSellAmount} /> -->
+			<QuickTradeActions
+				type="sell"
+				unit={'percent'}
+				actions={quickSellPerc}
+				onclick={setSellAmount}
+			/>
 
 			<div class="e:grid e:grid-cols-4 e:gap-[10px]">
 				<Button clipped variant="sell" class="e:w-full e:col-span-2 e:px-[8px]">
@@ -139,7 +149,7 @@
 					bind:value={amountSell}
 					variant="sell"
 					type="number"
-					icon="sol"
+					icon="percent"
 					class="e:col-span-2"
 					placeholder="Enter custom amount"
 					min={0.001}

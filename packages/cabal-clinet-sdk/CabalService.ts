@@ -117,7 +117,9 @@ class CabalService extends EventEmitter {
 		}
 	}
 	// CabalRpc -> PlaceLimitOrders
-	async placeLimitOrders(item: ApiOrderParsed) {
+	async placeLimitOrders(
+		item: ApiOrderParsed
+	): Promise<{ result?: PlaceLimitOrdersResponse; error?: unknown }> {
 		debugger;
 		try {
 			let target;
@@ -179,14 +181,14 @@ class CabalService extends EventEmitter {
 					}
 				};
 			}
-
-			const result = await this.client.placeLimitOrders({
+			const limitOrdersParams = {
 				mint: item.mint, // 7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr
 				orders: [
 					{
 						id: item.id ? BigInt(item.id) : undefined,
 						slippageBps: item.slippageBps, // 20
 						tip: toLamports(Number(item.tip)), // 0.001 * 1_000_000_000
+						priorityFee: toLamports(Number(item.priorityFee)), // 0.00001 * 1e9
 						target: target,
 
 						side: item.side,
@@ -194,12 +196,15 @@ class CabalService extends EventEmitter {
 						trigger: item.trigger
 					}
 				]
-			});
+			};
+			console.log(`[bg][CS][placeLimitOrders] limitOrdersParams:`, limitOrdersParams);
+			const result = await this.client.placeLimitOrders(limitOrdersParams);
 
-			console.log('sell result::::', result);
-			return result;
+			console.log(`[bg][CS][placeLimitOrders]`, result);
+			return { result };
 		} catch (error) {
-			console.error('error token sell', error);
+			console.error(`[bg][CS][placeLimitOrders] error:`, error);
+			return { error };
 		}
 	}
 

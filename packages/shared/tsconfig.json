@@ -7,12 +7,7 @@
 		"allowSyntheticDefaultImports": true,
 		"esModuleInterop": true,
 		"jsx": "preserve",
-		"types": ["vite/client", "chrome"],
 		"noEmit": true,
-		"isolatedModules": true,
-		"paths": {
-			"@/shared/*": ["../../packages/shared/*"],
-			"@/cabal-clinet-sdk/*": ["../../packages/cabal-clinet-sdk/*"]
-		}
+		"isolatedModules": true
 	}
 }

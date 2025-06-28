@@ -76,7 +76,8 @@ export type ApiOrderParsed = {
 	mint: string;
 	id?: string;
 	slippageBps: number;
-	tip: string; // bigint // 0.001
+	tip: string; // 0.001 => bigint
+	priorityFee?: string; // 0.00001 => bigint
 	side: Side;
 
 	// target

@@ -13,18 +13,10 @@
 	// Types
 	import type { TNavItem } from '@/types/app';
 	import type { ContentManagerHandlers } from '@/hooks/useContentManager.svelte';
+	import tabBuySellStore, { tabs } from '@/stores/tab-buy-sell';
+	import { onDestroy } from 'svelte';
 
 	// Data
-	const tabs: TNavItem[] = [
-		{
-			key: 'buy',
-			label: 'Buy'
-		},
-		{
-			key: 'sell',
-			label: 'Sell'
-		}
-	];
 
 	// Props
 
@@ -50,14 +42,23 @@
 	let collapsed = $state(false);
 	let activeTab: TNavItem = $state(tabs[0]);
 
+	let unsubscribeTabBuySellStore = tabBuySellStore.subscribe(($store) => {
+		console.log(`[content][tabBuySellStore.subscribe]`, $store);
+		activeTab = $store.main.activeTab;
+	});
+
 	// Methods
 	const onTabClick = (tab: TNavItem) => {
-		activeTab = tab;
+		$tabBuySellStore.main.activeTab = tab;
 	};
 
 	const onMenuClick = () => {
 		showMenu = !showMenu;
 	};
+
+	onDestroy(() => {
+		unsubscribeTabBuySellStore();
+	});
 </script>
 
 <WidgetAside {draggable} width={320} height={356}>

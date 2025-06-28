@@ -1,4 +1,7 @@
-import { PlaceLimitOrderPayloadMessage } from '@/shared/src/cabalSharedTypes';
+import {
+	BgPlaceLimitOrdersResponse,
+	PlaceLimitOrderPayloadMessage
+} from '@/shared/src/cabalSharedTypes';
 import { BackgroundState } from '../types';
 import { getMetaByState } from './getMetaByState';
 
@@ -7,14 +10,32 @@ export const handlePlaceLimitOrder = async ({
 	state,
 	message
 }: {
-	sendResponse: (response?: any) => void;
+	sendResponse: (response?: BgPlaceLimitOrdersResponse) => void;
 	state: BackgroundState;
 	message: PlaceLimitOrderPayloadMessage;
 }) => {
 	try {
-		state.cabal?.placeLimitOrders(message.data);
+		const resultValue = await state.cabal?.placeLimitOrders(message.data);
+		let parsedResult;
+		if (resultValue?.result) {
+			parsedResult = {
+				ids: resultValue?.result.ids.map(String),
+				tokenOrdersNum: resultValue?.result.tokenOrdersNum
+			};
+			sendResponse({
+				meta: getMetaByState(state),
+				payload: {
+					error: resultValue?.error,
+					result: parsedResult
+				}
+			});
+		}
 	} catch (error) {
-	} finally {
-		sendResponse({ meta: getMetaByState(state) });
+		sendResponse({
+			meta: getMetaByState(state),
+			payload: {
+				error: (error as Error).message
+			}
+		});
 	}
 };

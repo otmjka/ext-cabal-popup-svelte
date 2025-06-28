@@ -1,6 +1,6 @@
 // 1 token price in SOL
 
-import type { StrBigInt, TokenStatusParsed, TradeStatsParsed } from '@/types/cabalSharedTypes';
+import type { StrBigInt, TokenStatusParsed, TradeStatsParsed } from '@/shared/src/cabalSharedTypes';
 import { parsedNumberSchema } from './parsers';
 
 // quoteLiq / baseLiq = 33,062,018,174,929 / 16,139,087,229,039,483 ≈ 0.002048 SOL
