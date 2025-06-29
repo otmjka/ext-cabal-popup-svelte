@@ -1,25 +1,27 @@
 <script lang="ts">
 	import FloatingWidget from '@/components/features/floating-widget/FloatingWidget.svelte';
 	import { contentAppStore } from '@/stores/contentAppStore';
-	import { useContentManager } from '@/hooks/useContentManager.svelte';
+	import { useContentManager } from '@/hooks/useContentManager/useContentManager.svelte';
 	import MainWidget from '@/components/features/main-widget/MainWidget.svelte';
+	import { onDestroy } from 'svelte';
 	const { mint } = $props<{ mint: string }>();
 	let isWidgetReady = $state<boolean>(false);
-	contentAppStore.subscribe(($store) => (isWidgetReady = $store.isWidgetReady));
+	let unsubscribe = contentAppStore.subscribe(($store) => (isWidgetReady = $store.isWidgetReady));
+
 	const { handlers } = useContentManager({ mint });
+
+	onDestroy(() => {
+		unsubscribe();
+	});
 </script>
 
 <main>
-	{#if isWidgetReady}
-		<div class="e:absolute e:top-[300px] e:left-[50px] e:z-[200]">
-			<FloatingWidget {handlers} />
-		</div>
-	{/if}
-	{#if isWidgetReady}
-		<div class="e:absolute e:top-[400px] e:right-[20px] e:z-[200]">
-			<MainWidget {handlers} />
-		</div>
-	{/if}
+	<div class="e:absolute e:top-[300px] e:left-[50px] e:z-[200]">
+		<FloatingWidget {handlers} />
+	</div>
+	<div class="e:absolute e:top-[400px] e:right-[20px] e:z-[200]">
+		<MainWidget {handlers} />
+	</div>
 
 	{#if !isWidgetReady}
 		<div class="e:text-white e:bg-black e:p-2 e:rounded-md">

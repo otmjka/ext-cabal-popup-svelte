@@ -13,12 +13,12 @@
 		value = $bindable(),
 		type = 'text',
 		variant = 'default',
-    size = 'md',
+		size = 'md',
 		icon = undefined,
 		inputClass = '',
 		disabled = false,
 		onchange = () => {},
-    onkeyup = () => {},
+		onkeyup = () => {},
 		...other
 	}: IInput = $props();
 
@@ -49,27 +49,27 @@
 
 	const onChange = (e: Event) => {
 		if (type) {
-      onchange?.(e);
-    };
+			onchange?.(e);
+		}
 	};
 
-  const onKeyUp = (e: KeyboardEvent) => {
+	const onKeyUp = (e: KeyboardEvent) => {
 		if (type) {
-      onkeyup?.(e);
-    };
+			onkeyup?.(e);
+		}
 	};
 </script>
 
 <div class={wrapperCssClass}>
-	<input 
-    {...other} 
-    {disabled} 
-    {type} 
-    class={inputCssClass} 
-    bind:value 
-    onchange={onChange} 
-    onkeyup={onKeyUp}
-  />
+	<input
+		{...other}
+		{disabled}
+		{type}
+		class={inputCssClass}
+		bind:value
+		onchange={onChange}
+		onkeyup={onKeyUp}
+	/>
 
 	{#if icon}
 		<span class="e:absolute e:right-[8px]">
@@ -96,11 +96,11 @@
 		@apply e:text-[14px]/[14px] e:text-white;
 	}
 
-  .ext-input--md {
+	.ext-input--md {
 		@apply e:h-[32px] e:px-[8px];
 	}
 
-  .ext-input--lg {
+	.ext-input--lg {
 		@apply e:h-[40px] e:px-[8px];
 	}
 	.ext-input--with-icon {

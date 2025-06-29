@@ -10,51 +10,44 @@
 
 	// Types
 	import type { TNavItem } from '@/types/app';
-	import type { ContentManagerHandlers } from '@/hooks/useContentManager.svelte';
+	import type { ContentManagerHandlers } from '@/hooks/useContentManager/useContentManager.svelte';
+	import { contentAppStore } from '@/stores/contentAppStore';
+	import tabBuySellStore, { tabsFloating } from '@/stores/tab-buy-sell';
 
 	// Data
-	const tabs: TNavItem[] = [
-		{
-			key: 'trade',
-			label: 'Buy/Sell'
-		},
-		{
-			key: 'migration',
-			label: 'Migration'
-		},
-		{
-			key: 'limits',
-			label: 'Limits'
-		}
-	];
 
 	let props = $props<{
 		handlers: ContentManagerHandlers;
 	}>();
 
 	let collapsed = $state(false);
-	let activeTab: TNavItem = $state(tabs[0]);
 
 	// Methods
 	const onTabClick = (tab: TNavItem) => {
-		activeTab = tab;
+		$tabBuySellStore.floating.activeTab = tab;
+
+		if ($tabBuySellStore.floating.activeTab.key === 'limits') {
+			props.handlers.getTokenLimitOrders();
+		}
 	};
 
 	const onSettingsClick = () => {
 		props.handlers.onOpenSettings();
 	};
+
+	let isWidgetReady = $derived($contentAppStore.isWidgetReady);
 </script>
 
 <WidgetAside draggable width={320} height={380}>
 	{#snippet header()}
 		<header class="e:flex e:justify-between">
 			<TabList>
-				{#each tabs as tab}
+				{#each tabsFloating as tab}
 					<TabItem
 						onclick={() => {
 							onTabClick(tab);
 						}}
-						active={activeTab.key === tab.key}
+						active={$tabBuySellStore.floating.activeTab.key === tab.key}
 					>
 						{tab.label}
 					</TabItem>
@@ -69,15 +62,16 @@
 			</div>
 		</header>
 	{/snippet}
-
-	{#if activeTab.key === 'trade'}
-		<TabBuySell handlers={props.handlers} />
-		<!-- onSell={props.widgetState.onMarketSell} onAutoLimit={props.widgetState.onAutoLimitClick} -->
-	{/if}
-	{#if activeTab.key === 'migration'}
-		<TabMigration />
-	{/if}
-	{#if activeTab.key === 'limits'}
-		<TabLimits />
+	{#if isWidgetReady}
+		{#if $tabBuySellStore.floating.activeTab.key === 'trade'}
+			<TabBuySell handlers={props.handlers} />
+			<!-- onSell={props.widgetState.onMarketSell} onAutoLimit={props.widgetState.onAutoLimitClick} -->
+		{/if}
+		{#if $tabBuySellStore.floating.activeTab.key === 'migration'}
+			<TabMigration />
+		{/if}
+		{#if $tabBuySellStore.floating.activeTab.key === 'limits'}
+			<TabLimits />
+		{/if}
 	{/if}
 </WidgetAside>

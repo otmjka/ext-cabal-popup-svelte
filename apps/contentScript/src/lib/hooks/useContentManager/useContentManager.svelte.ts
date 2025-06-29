@@ -1,26 +1,19 @@
 import type { Mint } from '@/shared/src/cabalSharedTypes';
 import { onMount } from 'svelte';
-import { useCabalService } from './useCabalService';
-import { contentAppStore, type ContentAppStore } from '../stores/contentAppStore';
+import { useCabalService } from '../useCabalService';
+import { contentAppStore, type ContentAppStore } from '../../stores/contentAppStore';
 import { getAmountBpsBySol } from '@/untils/token';
-import {
-	AmountCase,
-	TargetTypeCase,
-	type ApiOrderParsed
-} from '@/cabal-clinet-sdk/CabalServiceTypes';
-import { Direction, Side, Trigger } from '@/cabal-clinet-sdk/index';
-import { parsedNumberSchema } from '@/untils/parsers';
+
+import { createBuyLimitOrderData, createSellLimitOrderData } from './orders';
 
 export type ContentManagerHandlers = {
 	onMarketSellSol: (amount: number) => void;
 	onMarketBuySol: (amount: number) => void;
 	onOpenSettings: () => void;
 	onMarketSellPerc: (value: number) => void;
-	onPlaceBuyLimitOrder: (params: {
-		amountBuy: number;
-		limitBuy: number;
-		mcPercent: number;
-	}) => void;
+	onPlaceBuyLimitOrder: (params: { amount: number; target: string }) => void;
+	onPlaceSellLimitOrder: (params: { amount: number; target: string }) => void;
+	getTokenLimitOrders: () => void;
 };
 
 export const useContentManager = ({
@@ -41,25 +34,6 @@ export const useContentManager = ({
 	let contentStore: ContentAppStore | undefined;
 	const unsubscribe = contentAppStore.subscribe((store) => {
 		contentStore = store;
-	});
-
-	$effect(() => {
-		const unsubscribe = contentAppStore.subscribe(async (state) => {
-			if (!state.isWidgetReady || !state.focused || !state.tabMint) {
-				return;
-			}
-			// Выполняем действие, когда isWidgetReady становится true
-			console.log('[content][get limits] Widget is ready! Performing action...', state);
-			// Здесь можно добавить вашу логику, например:
-			// - Запрос данных
-			// - Инициализация компонента
-			// - Отображение UI
-			const result = await getTokenLimitOrders({ mint: state.tabMint });
-			console.log(`[content][get limits]`, result);
-		});
-
-		// Очистка подписки при уничтожении эффекта
-		return () => unsubscribe();
 	});
 
 	onMount(() => {
@@ -108,14 +82,15 @@ export const useContentManager = ({
 
 	const handleOpenSettings = () => window.open(chrome.runtime.getURL('home.html'), '_blank');
 
-	const handleMarketBuySol = (value: number) => {
+	const handleMarketBuySol = (amountSol: number) => {
+		// 0.002
 		const tabMint = contentStore?.tabMint;
 
-		console.log('[handleMarketBuySol]', value, tabMint);
-		if (!value || !tabMint) {
+		console.log('[handleMarketBuySol]', amountSol, tabMint);
+		if (!amountSol || !tabMint) {
 			return;
 		}
-		marketBuy({ mint: tabMint, amountSol: value });
+		marketBuy({ mint: tabMint, amountSol });
 	};
 
 	const handleMarketSellPerc = (value: number) => {
@@ -153,63 +128,53 @@ export const useContentManager = ({
 		marketSell({ mint: tabMint, amountBps });
 	};
 
-	const handlePlaceBuyLimitOrder = async ({
-		amountBuy,
-		limitBuy,
-		mcPercent
-	}: {
-		amountBuy: number;
-		limitBuy: number;
-		mcPercent: number;
-	}) => {
-		if (
-			!contentStore?.tabMint ||
-			!contentStore.config ||
-			!contentStore.tokenStatus ||
-			!contentStore.solPriceUSD
-		) {
+	const handleGetTokenLimitOrders = async () => {
+		console.log(`[content][handleGetTokenLimitOrders]`);
+		if (!contentStore?.tabMint) {
 			return;
 		}
-		console.log(
-			`[content][handlePlaceBuyLimitOrder] 1 ${contentStore.tokenStatus.ticker}: ${contentStore.tokenInSol}`
-		);
-		const targetTypeValuePrice =
-			limitBuy /
-			((parsedNumberSchema.parse(contentStore.tokenStatus.supply) / 1e9) *
-				contentStore.solPriceUSD);
-		console.log(`[content][handlePlaceBuyLimitOrder] target price: ${targetTypeValuePrice}`);
-		const order: ApiOrderParsed = {
-			mint: contentStore?.tabMint,
-			slippageBps: contentStore.config.limit.buySlippage,
-			tip: String(contentStore.config.limit.buyTip),
-			priorityFee: String(contentStore.config.limit.buyPriorityFee),
-			side: Side.BUY,
-			targetTypeValueDirection: Direction.BELOW,
+		const result = await getTokenLimitOrders({ mint: contentStore.tabMint });
+		console.log(`[content][handleGetTokenLimitOrders] result`, result);
+	};
 
-			targetTypeCase: TargetTypeCase.price,
-			targetTypeValuePrice,
-			amountCase: AmountCase.fixed,
+	const handlePlaceBuyLimitOrder = async ({
+		amount,
+		target
+	}: {
+		amount: number;
+		target: string; // $0.23
+	}) => {
+		try {
+			const order = createBuyLimitOrderData({
+				amount,
+				target,
+				contentStore
+			});
+			const result = await placeLimitOrder(order);
 
-			amountFixed: String(amountBuy * 1e9),
-			trigger: Trigger.IMMEDIATE
-		};
-		console.log(`[!!! LIMIT !!!] params`, amountBuy, mcPercent, limitBuy);
-		console.log(`[!!! LIMIT !!!]`, order);
-		/*
-		{
-    "mint": "7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr",
-    "slippageBps": 25,
-    "tip": "0.001",
-    "side": 0,
-    "targetTypeValueDirection": 1,
-    "targetTypeCase": "price",
-    "targetTypeValuePrice": 0.0009271956721945024,
-    "amountCase": "fixed",
-    "amountFixed": "2000000",
-    "trigger": 0
-}
-		*/
-		placeLimitOrder(order);
+			handleGetTokenLimitOrders();
+		} catch (error) {
+			console.error(`[handlePlaceBuyLimitOrder]`, error);
+		}
+	};
+
+	const handlePlaceSellLimitOrder = async ({
+		target,
+		amount
+	}: {
+		target: string;
+		amount: number;
+	}) => {
+		try {
+			const order = createSellLimitOrderData({
+				amount,
+				target,
+				contentStore
+			});
+			const result = await placeLimitOrder(order);
+		} catch (error) {
+			console.error(`[handlePlaceBuyLimitOrder]`, error);
+		}
 	};
 
 	return {
@@ -218,7 +183,9 @@ export const useContentManager = ({
 			onMarketSellPerc: handleMarketSellPerc,
 			onMarketBuySol: handleMarketBuySol,
 			onOpenSettings: handleOpenSettings,
-			onPlaceBuyLimitOrder: handlePlaceBuyLimitOrder
+			onPlaceBuyLimitOrder: handlePlaceBuyLimitOrder,
+			onPlaceSellLimitOrder: handlePlaceSellLimitOrder,
+			getTokenLimitOrders: handleGetTokenLimitOrders
 		}
 	};
 };

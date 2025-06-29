@@ -15,6 +15,7 @@ export const handlePlaceLimitOrder = async ({
 	message: PlaceLimitOrderPayloadMessage;
 }) => {
 	try {
+		state.cabalStorage.addLimitOrder(message.data);
 		const resultValue = await state.cabal?.placeLimitOrders(message.data);
 		let parsedResult;
 		if (resultValue?.result) {

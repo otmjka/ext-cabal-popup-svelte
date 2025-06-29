@@ -2,7 +2,6 @@ import { writable } from 'svelte/store';
 
 import type { CabalConfig } from '@/shared/src/cabalConfig';
 
-
 import type {
 	TokenStatusParsed,
 	TradeEventParsed,
@@ -29,6 +28,7 @@ export type ContentAppStore = {
 	tradeStats: null | TradeStatsParsed;
 	lastTradeEvent: null | TradeEventParsed;
 	txLog: Array<TxMessageData>;
+	limitOrders: Array<ApiOrderParsed>;
 };
 
 const initialState: ContentAppStore = {
@@ -47,13 +47,15 @@ const initialState: ContentAppStore = {
 	tokenStatus: null,
 	tradeStats: null,
 	lastTradeEvent: null,
+	limitOrders: [],
 	txLog: []
 };
 
 import { contentAppStoreMock } from '@/mocks/content-app-store';
-const IS_DEV_MODE = import.meta.env.DEV
+import type { ApiOrderParsed } from '@/cabal-clinet-sdk/CabalServiceTypes';
+const IS_DEV_MODE = import.meta.env.DEV;
 
-const defaultState: ContentAppStore = IS_DEV_MODE ? contentAppStoreMock : initialState
+const defaultState: ContentAppStore = IS_DEV_MODE ? contentAppStoreMock : initialState;
 
 const { subscribe, set, update: internalUpdate } = writable<ContentAppStore>(defaultState);
 

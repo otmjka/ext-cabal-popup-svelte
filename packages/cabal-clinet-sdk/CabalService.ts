@@ -17,6 +17,8 @@ import { CabalUserActivityStreamMessages, ApiOrder, PlaceLimitOrdersResponse } f
 import { defaultState } from './cabalEnums';
 import { toLamports } from '../../apps/backgroundScript/src/shared/helpers/toLamports';
 import { parseApiOrder } from './utils/parseApiOrder';
+import { TokenLimitOrders } from './cabal/CabalRpc/orders_pb';
+import { createLimitOrderParams } from './utils/createLimitOrderParams';
 
 class CabalService extends EventEmitter {
 	client: ReturnType<typeof createGRPCCabalClient>;
@@ -122,81 +124,8 @@ class CabalService extends EventEmitter {
 	): Promise<{ result?: PlaceLimitOrdersResponse; error?: unknown }> {
 		debugger;
 		try {
-			let target;
-			if (item.targetTypeCase === TargetTypeCase.price && item.targetTypeValuePrice) {
-				target = {
-					targetType: {
-						case: 'price' as 'price',
-						value: {
-							price: item.targetTypeValuePrice, // priceOneTokenInSol,
-							direction: item.targetTypeValueDirection
-						}
-					}
-				};
-			}
+			const limitOrdersParams = createLimitOrderParams({ mint: item.mint, items: [item] });
 
-			if (item.targetTypeCase === TargetTypeCase.profit && item.targetTypeValueProfitPerc) {
-				target = {
-					targetType: {
-						case: 'profit' as 'profit',
-						value: {
-							profitPerc: item.targetTypeValueProfitPerc / 100,
-							direction: item.targetTypeValueDirection
-						}
-					}
-				};
-			}
-
-			if (item.targetTypeCase === TargetTypeCase.movingPerc && item.targetTypeValuePricePerc) {
-				target = {
-					targetType: {
-						case: 'movingPerc' as 'movingPerc',
-						value: {
-							pricePerc: item.targetTypeValuePricePerc / 100,
-							direction: item.targetTypeValueDirection
-						}
-					}
-				};
-			}
-
-			let amount;
-			if (item.amountCase === AmountCase.percBps && item.amountPercBps) {
-				amount = {
-					amountType: {
-						case: item.amountCase,
-						value: item.amountPercBps // 500, // 10%
-						// case: 'fixed'
-						// value: 1_000_000_000n, // 1 POPCAT, 9 decimals
-					}
-				};
-			}
-
-			if (item.amountCase === AmountCase.fixed && item.amountFixed) {
-				amount = {
-					amountType: {
-						case: item.amountCase,
-						value: BigInt(item.amountFixed) // 0.0017 * 1e9
-						// case: 'fixed'
-						// value: 1_000_000_000n, // 1 POPCAT, 9 decimals
-					}
-				};
-			}
-			const limitOrdersParams = {
-				mint: item.mint, // 7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr
-				orders: [
-					{
-						id: item.id ? BigInt(item.id) : undefined,
-						slippageBps: item.slippageBps, // 20
-						tip: toLamports(Number(item.tip)), // 0.001 * 1_000_000_000
-						priorityFee: toLamports(Number(item.priorityFee)), // 0.00001 * 1e9
-						target: target,
-
-						side: item.side,
-						amount,
-						trigger: item.trigger
-					}
-				]
-			};
 			console.log(`[bg][CS][placeLimitOrders] limitOrdersParams:`, limitOrdersParams);
 			const result = await this.client.placeLimitOrders(limitOrdersParams);
 
