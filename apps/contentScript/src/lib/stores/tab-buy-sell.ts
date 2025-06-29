@@ -1,6 +1,32 @@
 import { writable } from 'svelte/store';
 import type { TNavItem } from '@/types/app';
 
+export const segments: TNavItem[] = [
+	{
+		label: 'Recent',
+		key: 'recent'
+	},
+	{
+		label: 'Worth',
+		key: 'worth'
+	}
+];
+
+export const tabsFloating: TNavItem[] = [
+	{
+		key: 'trade',
+		label: 'Buy/Sell'
+	},
+	{
+		key: 'migration',
+		label: 'Migration'
+	},
+	{
+		key: 'limits',
+		label: 'Limits'
+	}
+];
+
 export const tradeTypes: TNavItem[] = [
 	{
 		label: 'Market',
@@ -36,6 +62,14 @@ type TabBuySellStore = {
 		tradeType: TNavItem;
 
 		activeTab: TNavItem;
+		targetPrice: number | undefined;
+	};
+	floating: {
+		sellUnittype: 'SOL' | 'percent';
+		amountBuy: number | undefined;
+		amountSell: number | undefined;
+		activeTab: TNavItem;
+		segment: TNavItem;
 	};
 };
 
@@ -47,7 +81,17 @@ const DEFAULT_STATE = {
 		mcPercent: 0,
 		tradeType: tradeTypes[0],
 
-		activeTab: tabs[0]
+		activeTab: tabs[0],
+
+		targetPrice: undefined
+	},
+	floating: {
+		sellUnittype: 'percent' as const,
+		amountBuy: undefined,
+		amountSell: undefined,
+
+		activeTab: tabsFloating[0],
+		segment: segments[0]
 	}
 };
 

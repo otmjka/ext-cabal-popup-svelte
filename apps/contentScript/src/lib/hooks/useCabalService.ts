@@ -74,6 +74,14 @@ const messageHandler = (message: FromBackgroundMessage, sender, sendResponse) =>
 				...store,
 				txLog: [{ ...message.data }, ...store.txLog]
 			}));
+
+			const ussubscribe = contentAppStore.subscribe((store) => {
+				if (!store.tabMint) {
+					return;
+				}
+				subscribeToken({ mint: store.tabMint });
+			});
+			ussubscribe();
 			break;
 	}
 	sendResponse({ ok: true });
@@ -114,12 +122,20 @@ const marketSell = ({ mint, amountBps }: { mint: string; amountBps: number }) =>
 	chrome.runtime.sendMessage(message);
 };
 
-const getTokenLimitOrders = async ({ mint }: { mint: string }) => {
+const getTokenLimitOrders = async ({
+	mint
+}: {
+	mint: string;
+}): Promise<GetTokenLimitOrdersResponse> => {
 	return new Promise((resolve, reject) => {
 		try {
 			chrome.runtime.sendMessage(
 				{ type: BackgroundMessages.GET_TOKEN_LIMIT_ORDERS, data: { mint } },
 				(response: GetTokenLimitOrdersResponse) => {
+					contentAppStore.update((store) => ({
+						...store,
+						limitOrders: [...(response.payload.result || [])]
+					}));
 					resolve(response);
 				}
 			);

@@ -12,9 +12,10 @@
 
 	// Types
 	import type { TNavItem } from '@/types/app';
-	import type { ContentManagerHandlers } from '@/hooks/useContentManager.svelte';
+	import type { ContentManagerHandlers } from '@/hooks/useContentManager/useContentManager.svelte';
 	import tabBuySellStore, { tabs } from '@/stores/tab-buy-sell';
 	import { onDestroy } from 'svelte';
+	import { contentAppStore } from '@/stores/contentAppStore';
 
 	// Data
 
@@ -55,6 +56,8 @@
 	const onMenuClick = () => {
 		showMenu = !showMenu;
 	};
+
+	let isWidgetReady = $derived($contentAppStore.isWidgetReady);
 
 	onDestroy(() => {
 		unsubscribeTabBuySellStore();
@@ -100,10 +103,12 @@
 		</header>
 	{/snippet}
 
-	{#if activeTab.key === 'buy'}
-		<TabBuy handlers={props.handlers} />
-	{/if}
-	{#if activeTab.key === 'sell'}
-		<TabSell handlers={props.handlers} />
+	{#if isWidgetReady}
+		{#if activeTab.key === 'buy'}
+			<TabBuy handlers={props.handlers} />
+		{/if}
+		{#if activeTab.key === 'sell'}
+			<TabSell handlers={props.handlers} />
+		{/if}
 	{/if}
 </WidgetAside>

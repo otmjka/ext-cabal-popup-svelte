@@ -5,10 +5,8 @@
 	import { SolanaCircleIcon } from '@/components/icons';
 	import TokenStats from './TokenStats.svelte';
 	import TradeStats from './TradeStats.svelte';
-	// import Footer from './Footer.svelte';
 
 	// Stores
-	import quickMcLimitsStore from '@/stores/quick-mc-limits';
 	import { contentAppStore } from '@/stores/contentAppStore';
 	import tabBuySellStore, { tradeTypes } from '@/stores/tab-buy-sell';
 
@@ -19,8 +17,7 @@
 	import { TRAILING_TYPES } from '@/constants/trailing';
 	import { getSolBalance } from '@/untils/formatters';
 	import { onDestroy } from 'svelte';
-	import type { ContentManagerHandlers } from '@/hooks/useContentManager.svelte';
-	import { oneTokenPriceInSol } from '@/untils/token';
+	import type { ContentManagerHandlers } from '@/hooks/useContentManager/useContentManager.svelte';
 
 	// Props
 	let props = $props<{
@@ -40,7 +37,6 @@
 
 	let quickMcLimits = $state<number[]>([]);
 	let unsubscribeTabBuySellStore = tabBuySellStore.subscribe(($store) => {
-		console.log(`[content][tabBuySellStore.subscribe]`, $store);
 		tradeType = $store.main.tradeType;
 		amountBuy = $store.main.amountBuy;
 		mcPercent = $store.main.mcPercent;
@@ -48,7 +44,6 @@
 
 	let unsubscribe = contentAppStore.subscribe(($store) => {
 		try {
-			console.log(`[content][contentAppStore.subscribe]`, $store);
 			if ($store.config?.limit.mcPerc) {
 				quickMcLimits = [...$store.config?.limit.mcPerc];
 			}
@@ -78,7 +73,7 @@
 	};
 
 	const onBuyLimitClick = () => {
-		const params = { amountBuy, mcPercent, limitBuy: $tabBuySellStore.main.limitAmount };
+		const params = { amount: amountBuy, target: $tabBuySellStore.main.limitAmount };
 		console.log('onBuyLimitClick', params);
 		props.handlers.onPlaceBuyLimitOrder(params);
 	};

@@ -4,26 +4,18 @@
 	import { Button, ToggleButton, Input, Section } from '@/components/ui';
 	import { QuickTradeActions } from '@/components/shared';
 	import { SellSwitchIcon, SolanaCircleIcon } from '@/components/icons';
-
+	import { toaster } from '@/config/toast';
 	// Stores
-	import quickBuyStore from '@/stores/quick-buy';
-	import quickSellStore from '@/stores/quick-sell';
-	import quickSellPercentStore from '@/stores/quick-sell-percent';
 	import tabBuySellStore from '@/stores/tab-buy-sell';
 	import { contentAppStore } from '@/stores/contentAppStore';
 	import { onDestroy } from 'svelte';
 	import { calculatePnL, formatTradeData } from '@/untils/formatters';
-	import type { ContentManagerHandlers } from '@/hooks/useContentManager.svelte';
+	import type { ContentManagerHandlers } from '@/hooks/useContentManager/useContentManager.svelte';
 
 	// Props
 	let props = $props<{
 		handlers: ContentManagerHandlers;
 	}>();
-
-	let ticker = $state('-');
-	let quickBuys = $state<number[]>([]);
-	let quickSells = $state<number[]>([]);
-	let quickSellPerc = $state<number[]>([]);
 
 	let buys = $state<string>('0');
 	let buyQoute = $state<string>('0');
@@ -34,18 +26,6 @@
 	let unsubscribe = contentAppStore.subscribe(($store) => {
 		try {
 			console.log('Store changed:', $store);
-
-			ticker = $store.tokenStatus?.ticker || '-';
-			if ($store.config?.buySell.buyPresetsSol) {
-				quickBuys = $store.config?.buySell.buyPresetsSol;
-			}
-
-			if ($store.config?.buySell.sellPresetsSol) {
-				quickSells = $store.config?.buySell.sellPresetsSol;
-			}
-			if ($store.config?.buySell.sellPresetsPerc) {
-				quickSellPerc = $store.config?.buySell.sellPresetsPerc;
-			}
 
 			if (!$store.tradeStats || !$store.tokenStatus) {
 				return;
@@ -71,30 +51,34 @@
 
 	// Data
 	// let amountBuy: number | undefined = $state();
-	let amountSell: number | undefined = $state();
 	let autoLimits = $state(true);
-	let sellUnittype: 'SOL' | 'percent' = $state('SOL');
 
 	// Methods
 
 	const toggleSellUnit = () => {
-		sellUnittype = sellUnittype === 'SOL' ? 'percent' : 'SOL';
-		amountSell = undefined;
+		$tabBuySellStore.floating.sellUnittype =
+			$tabBuySellStore.floating.sellUnittype === 'SOL' ? 'percent' : 'SOL';
+		$tabBuySellStore.floating.amountSell = undefined;
 	};
 	const onBuyClick = () => {
-		console.log('onBuyClick', $tabBuySellStore.amountBuy);
-		debugger;
-		// props.handlers.onMarketBuySol($tabBuySellStore.amountBuy);
+		console.log('onBuyClick', $tabBuySellStore.floating.amountBuy);
+
+		toaster.message('proba');
+		props.handlers.onMarketBuySol($tabBuySellStore.floating.amountBuy);
 	};
 
 	const onSellClick = () => {
-		console.log('onSellClick', amountSell, sellUnittype);
-		if (sellUnittype === 'SOL') {
-			props.handlers.onMarketSellSol(amountSell);
+		console.log(
+			'onSellClick',
+			$tabBuySellStore.floating.amountSell,
+			$tabBuySellStore.floating.sellUnittype
+		);
+		if ($tabBuySellStore.floating.sellUnittype === 'SOL') {
+			props.handlers.onMarketSellSol($tabBuySellStore.floating.amountSell);
 		}
 
-		if (sellUnittype === 'percent') {
-			props.handlers.onMarketSellPerc(amountSell);
+		if ($tabBuySellStore.floating.sellUnittype === 'percent') {
+			props.handlers.onMarketSellPerc($tabBuySellStore.floating.amountSell);
 		}
 	};
 
@@ -111,14 +95,14 @@
 	};
 
 	const setBuyAmount = (amount: number) => {
-		$tabBuySellStore.amountBuy = amount;
+		$tabBuySellStore.floating.amountBuy = amount;
 	};
 
 	const setSellAmount = (amount: number) => {
-		amountSell = amount;
+		$tabBuySellStore.floating.amountSell = amount;
 	};
 	const setSellPercent = (amount: number) => {
-		amountSell = amount;
+		$tabBuySellStore.floating.amountSell = amount;
 	};
 
 	onDestroy(unsubscribe);
@@ -139,10 +123,17 @@
 				</span>
 			</div>
 		</div>
-		<QuickTradeActions type="buy" unit="SOL" actions={quickBuys} onclick={setBuyAmount} />
+		{#if $contentAppStore.config?.buySell.buyPresetsSol}
+			<QuickTradeActions
+				type="buy"
+				unit="SOL"
+				actions={$contentAppStore.config?.buySell.buyPresetsSol}
+				onclick={setBuyAmount}
+			/>
+		{/if}
 		<div class="e:w-full e:grid e:grid-cols-4 e:gap-[10px]">
 			<Input
-				bind:value={$tabBuySellStore.amountBuy}
+				bind:value={$tabBuySellStore.floating.amountBuy}
 				variant="buy"
 				type="number"
 				icon="sol"
@@ -152,7 +143,7 @@
 				max={100}
 				step={0.001}
 				onchange={() => {
-					console.log('amountBuy', $tabBuySellStore.amountBuy);
+					console.log('amountBuy', $tabBuySellStore.floating.amountBuy);
 				}}
 			/>
 			<Button clipped variant="buy" class="e:w-full" onclick={onBuyClick}>Buy</Button>
@@ -167,7 +158,7 @@
 
 			<div class="text-12px e:flex e:gap-x-[8px] e:items-center">
 				<span class="e:flex e:items-center">
-					{ticker}
+					{$contentAppStore.tokenStatus?.ticker}
 					{tokenBalance}
 				</span>
 				<span class="e:flex e:gap-x-[4px] e:items-center">
@@ -183,18 +174,22 @@
 			</div>
 		</div>
 
-		<QuickTradeActions
-			type="sell"
-			unit={sellUnittype}
-			actions={sellUnittype === 'SOL' ? quickSells : quickSellPerc}
-			onclick={(value) => {
-				if (sellUnittype === 'SOL') {
-					setSellAmount(value);
-				} else {
-					setSellPercent(value);
-				}
-			}}
-		/>
+		{#if $contentAppStore.config}
+			<QuickTradeActions
+				type="sell"
+				unit={$tabBuySellStore.floating.sellUnittype}
+				actions={$tabBuySellStore.floating.sellUnittype === 'SOL'
+					? $contentAppStore.config.buySell.sellPresetsSol
+					: $contentAppStore.config.buySell.buyPresetsPerc}
+				onclick={(value) => {
+					if ($tabBuySellStore.floating.sellUnittype === 'SOL') {
+						setSellAmount(value);
+					} else {
+						setSellPercent(value);
+					}
+				}}
+			/>
+		{/if}
 
 		<div class="e:w-full e:grid e:grid-cols-8 e:gap-[10px]">
 			<Button
@@ -206,7 +201,7 @@
 				Sell initials
 			</Button>
 			<Input
-				bind:value={amountSell}
+				bind:value={$tabBuySellStore.floating.amountSell}
 				variant="sell"
 				type="number"
 				icon="sol"
